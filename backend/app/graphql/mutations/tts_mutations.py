@@ -13,13 +13,6 @@ def generate_speech(input: TTSInput) -> TTSResponse:
             language=input.language
         )
 
-        return TTSResponse(
-            success=True,
-            message="Speech generated successfully",
-            audio_url=audio_content,
-            audio_content=audio_content
-        )
-
         # Check if audio_content is bytes or already a string/dict
         if isinstance(audio_content, bytes):
             # Convert audio content to base64 for GraphQL response
@@ -28,8 +21,7 @@ def generate_speech(input: TTSInput) -> TTSResponse:
             return TTSResponse(
                 success=True,
                 message="Speech generated successfully",
-                audio_url=f"data:audio/mp3;base64,{audio_base64}",
-                audio_content=audio_base64
+                audio_content=f"data:audio/mp3;base64,{audio_base64}"
             )
         else:
             # Handle case where TTS API returns different format

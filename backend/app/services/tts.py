@@ -5,9 +5,6 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Get token from environment variables
-TOKEN = os.getenv("BASHINI_API_TOKEN")
-
 class TextToSpeechService:
     @staticmethod
     def get_supported_languages():
@@ -16,45 +13,49 @@ class TextToSpeechService:
             "languages": [
                 {"code": "hi", "name": "Hindi"},
                 {"code": "en", "name": "English"},
-                {"code": "te", "name": "Telugu"},
-                {"code": "ta", "name": "Tamil"},
-                {"code": "kn", "name": "Kannada"},
-                {"code": "ml", "name": "Malayalam"},
-                {"code": "bn", "name": "Bengali"},
+                # {"code": "te", "name": "Telugu"},
+                # {"code": "ta", "name": "Tamil"},
+                # {"code": "kn", "name": "Kannada"},
+                # {"code": "ml", "name": "Malayalam"},
+                # {"code": "bn", "name": "Bengali"},
                 {"code": "gu", "name": "Gujarati"},
                 {"code": "mr", "name": "Marathi"},
-                {"code": "pa", "name": "Punjabi"}
+                # {"code": "pa", "name": "Punjabi"}
             ]
         }
     
     @staticmethod
-    def get_api_url_for_language(language: str) -> str:
-        """Get the appropriate API URL for the specified language"""
+    def get_api_token_url_for_language(language: str) -> str:
+        """Get the appropriate API and token URL for the specified language"""
         # Convert language code to uppercase for environment variable format
         language_code = language.upper()
         
         # Get the language-specific URL or fall back to default
-        env_var_name = f"BASHINI_TTS_API_URL_{language_code}"
-        api_url = os.getenv(env_var_name)
-        
+        api_env_var_name = f"BASHINI_TTS_API_URL_{language_code}"
+        print(f"DEBUG: Looking for env var {api_env_var_name}")  # Debug logging
+        api_url = os.getenv(api_env_var_name)
+        token_env_var_name = f"BASHINI_API_TOKEN_{language_code}"
+        print(f"DEBUG: Looking for env var {token_env_var_name}")  # Debug logging
+        token = os.getenv(token_env_var_name)
+
         if not api_url:
             # Fall back to default URL if language-specific URL not found
             api_url = os.getenv("BASHINI_TTS_API_URL_DEFAULT")
             
-        return api_url
+        return api_url, token
     
     @staticmethod
     def generate_speech(text: str, gender: str, language: str = "en"):
         """Generate speech audio from text using Bashini TTS API"""
         
         # Get the appropriate API URL for the specified language
-        tts_api_url = TextToSpeechService.get_api_url_for_language(language)
+        tts_api_url, token = TextToSpeechService.get_api_token_url_for_language(language)
         
         if not tts_api_url:
             raise Exception("TTS API URL not configured. Please check environment variables.")
         
         headers = {
-            "access-token": TOKEN
+            "access-token": token
         }
         
         payload = {
@@ -74,8 +75,8 @@ class TextToSpeechService:
                 return response.content
             # For JSON response with audio URL or content
             try:
-                data = response.json()
-                return data["data"]["s3_url"]
+                JsonResponse = response.json()
+                data = JsonResponse["data"]
                 print(f"DEBUG: TTS API Response: {data}")  # Debug logging
 
                 if "s3_url" in data:
