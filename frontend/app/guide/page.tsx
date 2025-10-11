@@ -7,7 +7,6 @@ import {
   Phone, 
   Users, 
   Lightbulb, 
-  MapPin, 
   Utensils, 
   Camera, 
   Train, 
@@ -29,8 +28,9 @@ import {
 import { useState } from 'react';
 import PageWrapper from '@/components/PageWrapper';
 import { GET_EMERGENCY_CONTACTS, GET_CULTURE_TIPS } from '@/graphql/queries';
+import { LucideIcon } from 'lucide-react';
 
-const categoryIcons: Record<string, any> = {
+const categoryIcons: Record<string, LucideIcon> = {
   greeting: Users,
   food: Utensils,
   clothing: Heart,
@@ -56,7 +56,7 @@ const categoryColors: Record<string, string> = {
   language: 'from-teal-500 to-green-500',
 };
 
-const serviceTypeIcons: Record<string, any> = {
+const serviceTypeIcons: Record<string, LucideIcon> = {
   police: Siren,
   medical: Cross,
   fire: Flame,
@@ -88,25 +88,25 @@ export default function GuidePage() {
   const cultureTips = cultureData?.getCultureTips || [];
 
   // Group culture tips by category
-  const groupedTips = cultureTips.reduce((acc: any, tip: any) => {
+  const groupedTips = cultureTips.reduce((acc: Record<string, typeof cultureTips>, tip: typeof cultureTips[0]) => {
     if (!acc[tip.tipCategory]) {
       acc[tip.tipCategory] = [];
     }
     acc[tip.tipCategory].push(tip);
     return acc;
-  }, {});
+  }, {} as Record<string, typeof cultureTips>);
 
   // Get unique categories
   const categories = Object.keys(groupedTips).sort();
 
   // Group emergency contacts by service type
-  const groupedEmergency = emergencyContacts.reduce((acc: any, contact: any) => {
+  const groupedEmergency = emergencyContacts.reduce((acc: Record<string, typeof emergencyContacts>, contact: typeof emergencyContacts[0]) => {
     if (!acc[contact.serviceType]) {
       acc[contact.serviceType] = [];
     }
     acc[contact.serviceType].push(contact);
     return acc;
-  }, {});
+  }, {} as Record<string, typeof emergencyContacts>);
 
   return (
     <PageWrapper gradient={false}>
@@ -169,7 +169,7 @@ export default function GuidePage() {
                             {serviceType.replace(/_/g, ' ')}
                           </h3>
                           <div className="space-y-2 mt-2">
-                            {contacts.map((contact: any) => (
+                            {contacts.map((contact: typeof emergencyContacts[0]) => (
                               <div key={contact.id} className="text-sm">
                                 <a
                                   href={`tel:${contact.number}`}
@@ -269,7 +269,7 @@ export default function GuidePage() {
                         </div>
                       </div>
                       <div className="p-5 space-y-4 bg-card">
-                        {tips.map((tip: any) => (
+                        {tips.map((tip: typeof cultureTips[0]) => (
                           <div key={tip.id} className="flex gap-3">
                             <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                             <p className="text-sm leading-relaxed text-card-foreground">{tip.tipText}</p>

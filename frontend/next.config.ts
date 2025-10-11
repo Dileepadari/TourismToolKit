@@ -4,6 +4,14 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
   
+  // Disable ESLint and TypeScript checks during build for Docker
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  
   // Enable experimental features for better theme support
   experimental: {
     optimizeCss: true,

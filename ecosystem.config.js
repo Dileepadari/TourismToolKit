@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'tourism-backend',
-      script: './backend/start-backend.sh', // point to shell script
+      script: './scripts/start-backend.sh', // point to shell script
       cwd: './backend',
       instances: 1,
       exec_mode: 'fork',                    // fork mode for Python

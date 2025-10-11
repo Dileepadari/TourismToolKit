@@ -46,7 +46,7 @@ function ThemeToggleContent({
   className, 
   showLabel = false 
 }: ThemeToggleProps) {
-  const { theme, setTheme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   const sizeClasses = {
     sm: 'w-4 h-4',

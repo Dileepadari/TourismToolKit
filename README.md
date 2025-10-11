@@ -1,755 +1,401 @@
-# 🛠️ TourismToolKit - Complete Setup Guide
+# 🌍 TourismToolKit - Multilingual Tourism Platform
 
-## What is this
-The project is for making tourists not feeling fear or helplessness when they have gone for a tour or for some work, they should be able to navigate and conversate easily with anyopne without language barries, so we had this project of TourismToolKit featuring FastApi, Postgresql, GraphQl, Next.js with Tailwind and the most important API's from Bhasini models, one of the best models for translation. 
+> Breaking language barriers for travelers in India with AI-powered translation and cultural guidance
 
-This project is majorly done by people with help of copilot as their debugging companion and yes obviously we have used ai for repeating some patterns and for seeding the random data and setting up initial project, later AI gave up on the project, we did not. 
+![TourismToolKit](https://img.shields.io/badge/Tourism-ToolKit-orange?style=for-the-badge)
+![Docker](https://img.shields.io/badge/Docker-Ready-blue?style=for-the-badge)
+![Languages](https://img.shields.io/badge/Languages-13+-green?style=for-the-badge)
+![GraphQL](https://img.shields.io/badge/API-GraphQL-purple?style=for-the-badge)
 
-This guide covers everything you need to set up, configure, and deploy TourismToolKit from scratch.
+## ✨ What is TourismToolKit?
 
----
+TourismToolKit is a comprehensive multilingual platform designed to help tourists navigate India seamlessly. It combines AI-powered translation, cultural guidance, local information, and emergency assistance in one unified application.
 
-## 📋 Table of Contents
+**This project was built with determination and Copilot as a debugging companion. When AI gave up, we didn't.**
 
-1. [Prerequisites](#prerequisites)
-2. [First-Time Setup](#first-time-setup)
-3. [Database Configuration](#database-configuration)
-4. [Environment Variables](#environment-variables)
-5. [Running the Application](#running-the-application)
-6. [Deployment](#deployment)
-7. [Troubleshooting](#troubleshooting)
+### 🎯 Key Features
 
----
-
-## Prerequisites
-
-### Required Software
-
-| Software | Minimum Version | Recommended | Purpose |
-|----------|----------------|-------------|---------|
-| Python | 3.8 | 3.11+ | Backend runtime |
-| Node.js | 18.0 | 20.x LTS | Frontend runtime |
-| npm/yarn | 8.0 | Latest | Package manager |
-| PostgreSQL | 12.0 | 15.x | Production database |
-| Git | 2.x | Latest | Version control |
-
-### Optional Tools
-
-- **PM2** - Process manager for production
-- **Docker** - Containerization (optional)
-- **ngrok** - For testing webhooks locally
-
-### System Requirements
-
-- **RAM**: Minimum 4GB (8GB recommended)
-- **Storage**: Minimum 2GB free space
-- **OS**: Linux, macOS, or Windows with WSL2
+- **🗣️ Real-time Translation** - 13+ Indian languages (Hindi, Telugu, Tamil, Kannada, Malayalam, Bengali, Gujarati, Marathi, Punjabi, Urdu, Assamese, Odia)
+- **🎤 Voice Translation** - Speech-to-text and text-to-speech capabilities
+- **📷 OCR Text Extraction** - Extract text from signs, menus, and documents
+- **📖 Personal Dictionary** - Save and organize favorite phrases with translations
+- **📍 Tourist Places** - Comprehensive database of Indian landmarks and destinations
+- **🆘 Emergency Contacts** - Quick access to police, medical, fire services, and tourist helplines
+- **🌏 Cultural Guide** - Essential etiquette and customs for travelers
+- **🌙 Dark/Light Themes** - Beautiful India-inspired design with dual themes
 
 ---
 
-## First-Time Setup
+## 🚀 Quick Start (Docker - Recommended)
 
-### Step 1: Clone the Repository
+### Prerequisites
+- Docker & Docker Compose (v2.0+)
+- 4GB+ RAM, 10GB+ disk space
 
+### 1-Command Setup
 ```bash
-git clone https://github.com/Dileepadari/TourismToolKit.git
+# Clone and start everything
+git clone https://github.com/dileepadari/TourismToolKit.git
 cd TourismToolKit
+docker compose up -d --build
 ```
 
-### Step 2: Backend Setup
-
-#### 2.1 Create Virtual Environment
-
-```bash
-cd backend
-python3 -m venv venv
-
-# Activate virtual environment
-# On Linux/macOS:
-source venv/bin/activate
-
-# On Windows:
-venv\Scripts\activate
+To seed data initially use
+```
+RESET_DB=true docker compose up -d --build
 ```
 
-#### 2.2 Install Python Dependencies
+**That's it!** 🎉 This automatically:
+- ✅ Sets up PostgreSQL database
+- ✅ Runs database migrations and seeding
+- ✅ Starts backend API (GraphQL)
+- ✅ Starts frontend application
+- ✅ Seeds sample data for all modules
 
-```bash
-pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-**Dependencies installed:**
-- fastapi - Web framework
-- strawberry-graphql - GraphQL
-- sqlalchemy - ORM
-- uvicorn - ASGI server
-- python-jose - JWT
-- bcrypt - Password hashing
-- python-multipart - File uploads
-- And more...
-
-#### 2.3 Initialize Database
-
-Run the setup script to create tables and seed data:
-
-```bash
-python3 setup_database.py
-```
-
-This will:
-1. Create all database tables
-2. Seed 5 demo users (admin, test, demo, etc.)
-3. Add 120 dictionary entries
-4. Add 20 tourist places
-5. Add 18 emergency contacts
-6. Add 26 culture tips
-
-**Output should show:**
-```
-==================================================================
-  TOURISM TOOLKIT - FIRST TIME SETUP
-==================================================================
-
-This script will:
-  1. Create all database tables
-  2. Seed initial data (users, dictionary, places, guide)
-
-⚠️  WARNING: This should only be run once during initial setup!
-
-Do you want to continue? (yes/no): yes
-
-==================================================================
-  CREATING DATABASE TABLES
-==================================================================
-✓ All database tables created successfully
-
-==================================================================
-  SEEDING DATABASE
-==================================================================
-
-📦 Seeding Users...
-✓ Seeded 5 users
-
-📦 Seeding Dictionary Entries...
-✓ Seeded 120 dictionary entries
-
-📦 Seeding Tourist Places...
-✓ Seeded 20 places
-
-📦 Seeding Guide Data (Emergency Contacts & Culture Tips)...
-✓ Seeded 18 emergency contacts
-✓ Seeded 26 culture tips
-
-==================================================================
-  SETUP COMPLETE!
-==================================================================
-
-✓ Database setup completed successfully!
-```
-
-### Step 3: Frontend Setup
-
-#### 3.1 Install Node Dependencies
-
-```bash
-cd ../frontend
-npm install
-```
-
-**Key dependencies:**
-- next - React framework
-- react - UI library
-- @apollo/client - GraphQL client
-- tailwindcss - Styling
-- framer-motion - Animations
-- lucide-react - Icons
-- And more...
-
-#### 3.2 Build Assets (Optional)
-
-```bash
-npm run build
-```
+### Access Points
+- **🌐 Frontend**: http://localhost:3000
+- **⚡ Backend API**: http://localhost:8000
+- **🔍 GraphQL Playground**: http://localhost:8000/graphql
+- **📊 API Docs**: http://localhost:8000/docs
 
 ---
 
-## Database Configuration
+## 🏗️ Architecture & Tech Stack
 
-### SQLite (Development - Default)
+### Frontend
+- **Next.js 15** - React framework with App Router
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Utility-first styling with India-themed colors
+- **Apollo Client** - GraphQL state management
+- **Framer Motion** - Smooth animations
+- **Next-themes** - Dark/light mode support
 
-TourismToolKit uses SQLite by default for development. No additional configuration needed!
+### Backend
+- **FastAPI** - Modern Python web framework
+- **Strawberry GraphQL** - Schema-first GraphQL
+- **SQLModel** - Type-safe database models
+- **PostgreSQL** - Robust database system
+- **Alembic** - Database migrations
+- **Bhashini API** - AI translation services
 
-**Location**: `backend/tourism.db`
-
-### PostgreSQL (Production)
-
-#### 1. Install PostgreSQL
-
-**On Ubuntu/Debian:**
-```bash
-sudo apt update
-sudo apt install postgresql postgresql-contrib
-```
-
-**On macOS:**
-```bash
-brew install postgresql
-brew services start postgresql
-```
-
-**On Windows:**
-Download from [postgresql.org](https://www.postgresql.org/download/windows/)
-
-#### 2. Create Database
-
-```bash
-# Login to PostgreSQL
-sudo -u postgres psql
-
-# Create database and user
-CREATE DATABASE tourism_db;
-CREATE USER tourism_user WITH PASSWORD 'your_password_here';
-GRANT ALL PRIVILEGES ON DATABASE tourism_db TO tourism_user;
-\q
-```
-
-#### 3. Update Database Configuration
-
-Edit `backend/app/config.py`:
-
-```python
-# For PostgreSQL
-DATABASE_URL = "postgresql://tourism_user:your_password_here@localhost:5432/tourism_db"
-
-# For SQLite (development)
-DATABASE_URL = "sqlite:///./tourism.db"
-```
-
-#### 4. Run Migrations
-
-```bash
-cd backend
-source venv/bin/activate
-python3 setup_database.py
-```
+### DevOps
+- **Docker & Docker Compose** - Containerization
+- **Automated Seeding** - Sample data initialization
+- **Health Checks** - Service monitoring
+- **Hot Reload** - Development efficiency
 
 ---
 
-## Environment Variables
+## 📊 Sample Data Included
 
-### Backend Environment (.env)
+The application comes pre-loaded with comprehensive sample data:
 
-Create `backend/.env`:
+### Dictionary Entries (120+)
+- **Languages**: English ↔ Hindi, Telugu, Tamil, Kannada, Malayalam, Bengali, Gujarati, Marathi, Punjabi, Urdu, Assamese, Odia
+- **Categories**: Greetings, food, directions, emergency terms, numbers, travel vocabulary
 
-```bash
-# Application
-APP_NAME=TourismToolKit
-DEBUG=True
-PORT=8000
+### Tourist Places (20+)
+- **Destinations**: Taj Mahal, Golden Temple, Kerala Backwaters, Hampi, Goa Beaches
+- **Details**: Images, ratings, entry fees, best visiting times, languages spoken
 
-# Database
-DATABASE_URL=sqlite:///./tourism.db
-# DATABASE_URL=postgresql://tourism_user:password@localhost:5432/tourism_db
+### Emergency Contacts (18+)
+- **National**: Police (100), Medical (108), Fire (101), Tourist Helpline (1363)
+- **State-specific**: Tourism offices for major states
+- **Services**: Women helpline, child helpline, disaster management
 
-# JWT Authentication
-SECRET_KEY=your-super-secret-jwt-key-change-this-in-production
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=10080  # 7 days
-
-# Bhashini API (Optional - for translation services)
-BHASHINI_USER_ID=your_user_id_here
-BHASHINI_API_KEY=your_api_key_here
-BHASHINI_PIPELINE_ID=your_pipeline_id_here
-
-# CORS
-CORS_ORIGINS=http://localhost:3000,http://localhost:3001
-
-# Logging
-LOG_LEVEL=INFO
-```
-
-### Frontend Environment (.env.local)
-
-Create `frontend/.env.local`:
-
-```bash
-# API URLs
-NEXT_PUBLIC_API_URL=http://localhost:8000
-NEXT_PUBLIC_GRAPHQL_URL=http://localhost:8000/graphql
-
-# App Configuration
-NEXT_PUBLIC_APP_NAME=TourismToolKit
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-
-# Analytics (Optional)
-# NEXT_PUBLIC_GA_ID=your_ga_id
-```
-
-### Generating Secret Keys
-
-```bash
-# Generate a secure secret key
-python3 -c "import secrets; print(secrets.token_urlsafe(32))"
-```
+### Culture Tips (26+)
+- **Categories**: Greetings, food etiquette, clothing, religious customs, photography
+- **Importance**: High, medium, low priority tips
+- **Languages**: Available in multiple Indian languages
 
 ---
 
-## Running the Application
+## 🧪 Test User Accounts
 
-### Development Mode
+The system includes pre-created test accounts:
 
-#### Option 1: Manual Start (Recommended for development)
+| Email | Password | Role | Description |
+|-------|----------|------|-------------|
+| admin@tourismtoolkit.com | admin123 | Admin | Full access account |
+| test@example.com | password123 | User | Standard test user |
+| demo@tourismtoolkit.com | demo123 | Demo | Demo purposes |
+| tourist@india.com | tourist123 | Tourist | Tourist-focused account |
 
-**Terminal 1 - Backend:**
+---
+
+## 🛠️ Development Commands
+
+### Docker Operations
 ```bash
+# View logs
+docker compose logs -f
+docker compose logs backend
+docker compose logs frontend
+
+# Restart services
+docker compose restart
+docker compose restart backend
+
+# Stop everything
+docker compose down
+
+# Reset database (with fresh seeding)
+RESET_DB=true docker compose up -d
+```
+
+### Database Management
+```bash
+# Database shell
+docker compose exec db psql -U tourism_user -d tourism_db
+
+# Check seeded data
+docker compose exec backend python -c "
+from app.database.db import SessionLocal
+from app.database.models import *
+db = SessionLocal()
+print(f'Dictionary: {db.query(DictionaryEntry).count()}')
+print(f'Places: {db.query(Place).count()}')
+print(f'Emergency: {db.query(EmergencyContact).count()}')
+print(f'Culture: {db.query(CultureTip).count()}')
+db.close()
+"
+
+# Re-seed data
+docker compose exec backend python -c "
+from app.database.seed_data import seed_all
+seed_all()
+"
+```
+
+### Manual Development Setup
+```bash
+# Backend setup
 cd backend
+python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
-python3 -m uvicorn app.main:app --reload --port 8000 --host 0.0.0.0
-```
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
 
-**Terminal 2 - Frontend:**
-```bash
+# Frontend setup
 cd frontend
+npm install
 npm run dev
 ```
 
-#### Option 2: Using start.sh Script
+---
 
-```bash
-# Make executable
-chmod +x start.sh
+## 🌐 Multilingual Support
 
-# Run
-./start.sh
-```
+### Supported Languages (13+)
+| Language | Code | Native Name | Script |
+|----------|------|-------------|--------|
+| English | en | English | Latin |
+| Hindi | hi | हिन्दी | Devanagari |
+| Telugu | te | తెలుగు | Telugu |
+| Tamil | ta | தமிழ் | Tamil |
+| Kannada | kn | ಕನ್ನಡ | Kannada |
+| Malayalam | ml | മലയാളം | Malayalam |
+| Bengali | bn | বাংলা | Bengali |
+| Gujarati | gu | ગુજરાતી | Gujarati |
+| Marathi | mr | मराठी | Devanagari |
+| Punjabi | pa | ਪੰਜਾਬੀ | Gurmukhi |
+| Urdu | ur | اردو | Arabic/Nastaliq |
+| Assamese | as | অসমীয়া | Bengali-Assamese |
+| Odia | or | ଓଡ଼ିଆ | Odia |
 
-#### Option 3: Using PM2
-
-```bash
-# Install PM2 globally
-npm install -g pm2
-
-# Start all services
-pm2 start ecosystem.config.js
-
-# View logs
-pm2 logs
-
-# Monitor
-pm2 monit
-
-# Stop all
-pm2 stop all
-
-# Restart
-pm2 restart all
-```
-
-### Access Points
-
-| Service | URL | Description |
-|---------|-----|-------------|
-| Frontend | http://localhost:3000 | Main application |
-| Backend API | http://localhost:8000 | REST API |
-| GraphQL Playground | http://localhost:8000/graphql | Interactive GraphQL IDE |
-| API Docs | http://localhost:8000/docs | Swagger documentation |
+### Translation Features
+- **Real-time switching** - Instant language change without reload
+- **Native scripts** - Languages displayed in authentic writing systems
+- **Persistent selection** - Language choice saved across sessions
+- **Type-safe** - TypeScript ensures translation completeness
+- **Fallback system** - Graceful fallback to English if translation missing
 
 ---
 
-## Deployment
-
-### Production Checklist
-
-- [ ] Change `DEBUG=False` in backend config
-- [ ] Use strong `SECRET_KEY`
-- [ ] Configure PostgreSQL database
-- [ ] Set up proper CORS origins
-- [ ] Enable HTTPS/SSL
-- [ ] Configure firewall rules
-- [ ] Set up monitoring and logging
-- [ ] Configure backup strategy
-
-### Deploy with PM2 (Production)
-
-#### 1. Configure PM2
-
-The `ecosystem.config.js` is already set up:
-
-```javascript
-module.exports = {
-  apps: [
-    {
-      name: 'tourism-backend',
-      cwd: './backend',
-      script: 'venv/bin/uvicorn',
-      args: 'app.main:app --host 0.0.0.0 --port 8000',
-      instances: 1,
-      exec_mode: 'fork',
-      env: {
-        PYTHONPATH: '.',
-      },
-    },
-    {
-      name: 'tourism-frontend',
-      cwd: './frontend',
-      script: 'npm',
-      args: 'start',
-      instances: 1,
-      exec_mode: 'cluster',
-    }
-  ]
-};
-```
-
-#### 2. Build Frontend
-
-```bash
-cd frontend
-npm run build
-```
-
-#### 3. Start PM2
-
-```bash
-pm2 start ecosystem.config.js
-pm2 save
-pm2 startup  # Enable auto-start on system boot
-```
-
-#### 4. Monitor
-
-```bash
-# View all processes
-pm2 list
-
-# View logs
-pm2 logs
-
-# Monitor CPU/Memory
-pm2 monit
-
-# Restart if needed
-pm2 restart all
-```
-
-### Deploy with Docker
-
-#### 1. Create Dockerfile (Backend)
-
-```dockerfile
-FROM python:3.11-slim
-
-WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
-```
-
-#### 2. Create Dockerfile (Frontend)
-
-```dockerfile
-FROM node:20-alpine
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci
-
-COPY . .
-RUN npm run build
-
-CMD ["npm", "start"]
-```
-
-#### 3. Docker Compose
-
-```yaml
-version: '3.8'
-
-services:
-  backend:
-    build: ./backend
-    ports:
-      - "8000:8000"
-    environment:
-      - DATABASE_URL=postgresql://tourism_user:password@db:5432/tourism_db
-    depends_on:
-      - db
-
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    environment:
-      - NEXT_PUBLIC_API_URL=http://backend:8000
-
-  db:
-    image: postgres:15
-    environment:
-      - POSTGRES_DB=tourism_db
-      - POSTGRES_USER=tourism_user
-      - POSTGRES_PASSWORD=password
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-volumes:
-  postgres_data:
-```
-
-#### 4. Run
-
-```bash
-docker-compose up -d
-```
-
-### Deploy to Cloud
-
-#### Vercel (Frontend)
-
-```bash
-cd frontend
-npm install -g vercel
-vercel login
-vercel --prod
-```
-
-#### Railway/Render (Backend)
-
-1. Create account on Railway/Render
-2. Connect GitHub repository
-3. Configure environment variables
-4. Deploy
-
----
-
-## Troubleshooting
+## 🚨 Troubleshooting
 
 ### Common Issues
 
-#### Backend won't start
-
-**Error: `ModuleNotFoundError`**
+**1. Services won't start**
 ```bash
-# Solution: Activate virtual environment
-cd backend
-source venv/bin/activate
-pip install -r requirements.txt
+# Check if ports are busy
+lsof -i :3000 :8000 :5432
+# Stop conflicting services
+pm2 stop all
 ```
 
-**Error: `Database connection failed`**
+**2. Database connection error**
 ```bash
-# Solution: Check database configuration
-# For SQLite: Ensure backend/tourism.db exists
-# For PostgreSQL: Check credentials in config.py
+# Check database status
+docker compose ps db
+docker compose logs db
 ```
 
-#### Frontend won't start
-
-**Error: `Module not found`**
+**3. Reset everything**
 ```bash
-# Solution: Reinstall dependencies
+# Complete reset
+docker compose down -v
+RESET_DB=true docker compose up -d --build
+```
+
+**4. Frontend build issues**
+```bash
+# Clear cache and rebuild
 cd frontend
-rm -rf node_modules package-lock.json
+rm -rf .next node_modules package-lock.json
 npm install
-```
-
-**Error: `Port 3000 already in use`**
-```bash
-# Solution: Kill process or use different port
-# Kill process:
-lsof -ti:3000 | xargs kill -9
-
-# Or use different port:
-PORT=3001 npm run dev
-```
-
-#### GraphQL errors
-
-**Error: `Cannot query field`**
-- Check GraphQL schema matches frontend queries
-- Restart backend after schema changes
-- Clear Apollo Client cache
-
-**Error: `Authentication failed`**
-- Check JWT token is being sent in headers
-- Verify token hasn't expired
-- Check SECRET_KEY matches between requests
-
-#### Database issues
-
-**Error: `Table doesn't exist`**
-```bash
-# Solution: Run setup script
-cd backend
-python3 setup_database.py
-```
-
-**Error: `Permission denied`**
-```bash
-# For SQLite:
-chmod 666 tourism.db
-
-# For PostgreSQL:
-# Check user permissions in database
-```
-
-### Logs
-
-#### View Backend Logs
-
-```bash
-# PM2
-pm2 logs tourism-backend
-
-# Manual
-# Logs are in backend/logs/
-tail -f backend/logs/backend-out-0.log
-```
-
-#### View Frontend Logs
-
-```bash
-# PM2
-pm2 logs tourism-frontend
-
-# Manual
-# Check console in browser
-# Or frontend/logs/
-```
-
-### Reset Database
-
-```bash
-cd backend
-source venv/bin/activate
-
-# Delete database
-rm tourism.db  # For SQLite
-
-# Re-run setup
-python3 setup_database.py
-```
-
-### Performance Optimization
-
-#### Backend
-
-1. **Enable production mode**:
-```python
-# config.py
-DEBUG = False
-```
-
-2. **Use PostgreSQL** instead of SQLite
-
-3. **Add caching**:
-```bash
-pip install redis
-# Configure Redis caching
-```
-
-#### Frontend
-
-1. **Build for production**:
-```bash
 npm run build
-npm start
 ```
 
-2. **Enable compression**:
-```javascript
-// next.config.ts
-module.exports = {
-  compress: true
+---
+
+## 📚 API Documentation
+
+### GraphQL Queries
+```graphql
+# Get tourist places
+query {
+  getPlaces(country: "India", limit: 10) {
+    id name description city state rating
+  }
+}
+
+# Search dictionary
+query {
+  searchDictionary(query: "Hello", languageFrom: "en", languageTo: "hi") {
+    id word translation pronunciation
+  }
+}
+
+# Get emergency contacts
+query {
+  getEmergencyContacts(country: "India") {
+    serviceType number description
+  }
 }
 ```
 
-3. **Image optimization**: Already enabled with Next.js Image component
+### GraphQL Mutations
+```graphql
+# Translate text
+mutation {
+  translateText(input: {
+    text: "Hello"
+    sourceLang: "en"
+    targetLang: "hi"
+  }) {
+    translatedText success
+  }
+}
 
----
-
-## Testing
-
-### Backend Tests
-
-```bash
-cd backend
-source venv/bin/activate
-pytest
-
-# With coverage
-pytest --cov=app tests/
+# User authentication
+mutation {
+  login(input: {
+    email: "test@example.com"
+    password: "password123"
+  }) {
+    token user { id username }
+  }
+}
 ```
 
-### Frontend Tests
-
-```bash
-cd frontend
-
-# Unit tests
-npm test
-
-# E2E tests
-npm run test:e2e
-```
-
-### Manual Testing
-
-1. **Authentication Flow**:
-   - Register new user
-   - Login
-   - Access protected routes
-   - Logout
-
-2. **Translation**:
-   - Test text translation
-   - Test voice input/output
-   - Test OCR
-
-3. **Dictionary**:
-   - Add entries
-   - Search
-   - Toggle favorites
-   - Auto-translate
-
-4. **Places**:
-   - Browse destinations
-   - Filter by category
-   - View details
-
-5. **Guide**:
-   - View emergency contacts
-   - Browse culture tips
-   - Filter by category
+For complete API documentation, visit http://localhost:8000/graphql
 
 ---
 
-## Additional Resources
+## 🎨 Design System
 
-- **Main README**: [README.md](./README.md)
-- **API Documentation**: [API.md](./API.md)
-- **GraphQL Playground**: http://localhost:8000/graphql
-- **Swagger Docs**: http://localhost:8000/docs
+### India-Themed Color Palette
+- **🧡 Saffron**: `#f97316` - Primary actions, highlights
+- **💚 Heritage**: `#22c55e` - Success, nature elements
+- **💙 Royal**: `#3b82f6` - Information, trust
+- **💛 Golden**: `#f59e0b` - Accent, warmth
 
----
-
-## Support
-
-If you encounter issues not covered in this guide:
-
-1. Check existing [GitHub Issues](https://github.com/yourusername/TourismToolKit/issues)
-2. Search [Discussions](https://github.com/yourusername/TourismToolKit/discussions)
-3. Create a new issue with:
-   - Error message
-   - Steps to reproduce
-   - System information
-   - Logs
+### Themes
+- **Light Mode**: Clean, bright India-inspired design
+- **Dark Mode**: Rich, elegant dark theme with proper contrast
+- **System**: Automatically follows OS preference
 
 ---
 
-**Happy Coding! 🇮🇳**
+## 🤝 Contributing
+
+### Development Workflow
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Make changes and test thoroughly
+4. Commit: `git commit -m 'Add amazing feature'`
+5. Push: `git push origin feature/amazing-feature`
+6. Open a Pull Request
+
+### Code Standards
+- **TypeScript**: Full type safety required
+- **Testing**: Add tests for new features
+- **Documentation**: Update docs for API changes
+- **Formatting**: Use ESLint/Prettier configurations
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- **[Bhashini](https://bhashini.gov.in/)** - AI translation services
+- **[Canvas IIIT](https://canvas.iiit.ac.in/)** - OCR services
+- **[IIIT Hyderabad](https://www.iiit.ac.in/)** - Infrastructure support
+- **GitHub Copilot** - AI development assistant
+- **Open Source Community** - Framework and library authors
+
+---
+
+## 📧 Support & Contact
+
+### Getting Help
+- **Documentation**: Check `DEVELOPMENT.md` for detailed development guide
+- **GraphQL Playground**: http://localhost:8000/graphql for API testing
+- **Issues**: Create GitHub issues for bug reports or feature requests
+
+### Project Stats
+- **Languages**: 13+ Indian languages supported
+- **API Endpoints**: 50+ GraphQL queries and mutations
+- **Database Tables**: 6 main entities with relationships
+- **Seeded Data**: 180+ records across all modules
+- **Docker Services**: 3 containers (database, backend, frontend)
+
+---
+
+## 🗺️ Roadmap
+
+### Current (v1.0)
+- ✅ Multilingual translation with 13+ languages
+- ✅ Voice translation capabilities
+- ✅ OCR text extraction
+- ✅ Personal dictionary management
+- ✅ Tourist places database
+- ✅ Emergency contacts and cultural tips
+- ✅ Docker deployment with seeding
+- ✅ Dark/light theme support
+
+### Planned (v2.0)
+- [ ] Mobile app (React Native)
+- [ ] Offline mode support
+- [ ] AR translation features
+- [ ] Real-time conversation translation
+- [ ] Travel itinerary planner
+- [ ] Currency converter
+- [ ] Community features
+- [ ] Advanced AI recommendations
+
+---
+
+**Made with ❤️ for travelers exploring India**
+
+*"When AI gave up on this project, we didn't."*
+
+---
+
+**Happy Traveling! 🇮🇳**

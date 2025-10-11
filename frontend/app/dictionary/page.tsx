@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery, useMutation } from '@apollo/client';
 import { 
@@ -29,12 +29,6 @@ import {
 import toast from 'react-hot-toast';
 import { useAuth } from '@/providers/AuthProvider';
 
-interface User {
-  id: string;
-  email: string;
-  name?: string;
-}
-
 interface DictionaryEntry {
   id: string;
   word: string;
@@ -55,7 +49,7 @@ interface Language {
 }
 
 export default function Dictionary() {
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [languageFrom, setLanguageFrom] = useState('');
   const [languageTo, setLanguageTo] = useState('');
@@ -179,7 +173,7 @@ export default function Dictionary() {
     }
   };
 
-  const handleSpeak = async (text: string, language: string) => {
+  const handleSpeak = async (text: string) => {
     if (!text.trim()) {
       toast.error('No text to speak');
       return;
@@ -671,7 +665,7 @@ export default function Dictionary() {
                           <Heart className={`w-5 h-5 ${entry.isFavorite ? 'fill-red-500' : ''}`} />
                         </button>
                         <button 
-                          onClick={() => handleSpeak(entry.word, entry.languageFrom)}
+                          onClick={() => handleSpeak(entry.word)}
                           className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
                         >
                           <Volume2 className="w-5 h-5" />
@@ -769,7 +763,7 @@ export default function Dictionary() {
                           <Heart className={`w-5 h-5 ${entry.isFavorite ? 'fill-red-500' : ''}`} />
                         </button>
                         <button 
-                          onClick={() => handleSpeak(entry.word, entry.languageFrom)}
+                          onClick={() => handleSpeak(entry.word)}
                           className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
                         >
                           <Volume2 className="w-5 h-5" />
