@@ -64,3 +64,7 @@ env/
 ENV/
 .venv/
 .ENV/
+
+# PM2 logs
+logs/
+*.log
