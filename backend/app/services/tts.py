@@ -1,28 +1,12 @@
-import io
 import os
 import requests
 from dotenv import load_dotenv
-from fastapi import APIRouter, HTTPException, Depends, Body
-from typing import Optional, Dict, Any
-from pydantic import BaseModel
-from fastapi.responses import StreamingResponse
 
 # Load environment variables
 load_dotenv()
 
 # Get token from environment variables
 TOKEN = os.getenv("BASHINI_API_TOKEN")
-
-# TTS request model
-class TTSRequest(BaseModel):
-    text: str
-    gender: str
-    language: str = "en"
-    # voice_id: ptional[str] = None
-    # speed: Optional[float] = 1.0
-
-# Create router
-router = APIRouter(prefix="/tts", tags=["Text to Speech"])
 
 class TextToSpeechService:
     @staticmethod
@@ -67,10 +51,7 @@ class TextToSpeechService:
         tts_api_url = TextToSpeechService.get_api_url_for_language(language)
         
         if not tts_api_url:
-            raise HTTPException(
-                status_code=500,
-                detail="TTS API URL not configured. Please check environment variables."
-            )
+            raise Exception("TTS API URL not configured. Please check environment variables.")
         
         headers = {
             "access-token": TOKEN
@@ -82,51 +63,53 @@ class TextToSpeechService:
         }
         
         try:
-            response = requests.post(tts_api_url, headers=headers, json=payload)
+            response = requests.post(tts_api_url, headers=headers, json=payload, verify=False)
             
             if response.status_code != 200:
-                raise HTTPException(
-                    status_code=response.status_code,
-                    detail=f"TTS API error: {response.text}"
-                )
+                raise Exception(f"TTS API error (Status {response.status_code}): {response.text}")
             
             # For binary audio response
-            if "audio" in response.headers.get("Content-Type", ""):
+            content_type = response.headers.get("Content-Type", "")
+            if "data" in content_type:
                 return response.content
-            
-            # For JSON response with audio URL
-            data = response.json()
-            if "audio_url" in data:
-                audio_response = requests.get(data["audio_url"])
-                return audio_response.content
-                
-            raise HTTPException(
-                status_code=500,
-                detail="Unexpected response format from TTS API"
-            )
+            # For JSON response with audio URL or content
+            try:
+                data = response.json()
+                return data["data"]["s3_url"]
+                print(f"DEBUG: TTS API Response: {data}")  # Debug logging
+
+                if "s3_url" in data:
+                    audio_response = requests.get(data["s3_url"], verify=False)
+                    if audio_response.status_code == 200:
+                        return audio_response.content
+                    else:
+                        raise Exception(f"Failed to download audio from URL: {audio_response.status_code}")
+                        
+                elif "audioContent" in data:
+                    # If the response contains base64 audio content directly
+                    import base64
+                    return base64.b64decode(data["audioContent"])
+                    
+                elif "audio" in data:
+                    # If the response contains audio data in another field
+                    if isinstance(data["audio"], str):
+                        import base64
+                        return base64.b64decode(data["audio"])
+                    else:
+                        return data["audio"]
+                        
+                elif "data" in data and isinstance(data["data"], str):
+                    # Some APIs return audio as base64 in a "data" field
+                    import base64
+                    return base64.b64decode(data["data"])
+                    
+                else:
+                    # Return the raw response for debugging
+                    raise Exception(f"Unexpected response format from TTS API. Response keys: {list(data.keys())}")
+                    
+            except ValueError as json_error:
+                # Response is not JSON, might be raw audio
+                return response.content
                 
         except requests.RequestException as e:
-            raise HTTPException(
-                status_code=500,
-                detail=f"Error communicating with TTS API: {str(e)}"
-            )
-
-@router.post("/generate")
-async def generate_speech_endpoint(request: TTSRequest):
-    """Generate speech from text using specified language"""
-    audio_content = TextToSpeechService.generate_speech(
-        text=request.text,
-        # language=request.language,
-        gender=request.gender
-    )
-    
-    return StreamingResponse(
-        io.BytesIO(audio_content),
-        media_type="audio/mp3",
-        headers={"Content-Disposition": f"attachment; filename=speech.mp3"}
-    )
-
-@router.get("/languages")
-async def get_languages():
-    """Get list of supported languages for text-to-speech"""
-    return TextToSpeechService.get_supported_languages()
+            raise Exception(f"Error communicating with TTS API: {str(e)}")
