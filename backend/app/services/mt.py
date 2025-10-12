@@ -7,6 +7,24 @@ load_dotenv()
 
 class MachineTranslationService:
     """Service for translating text from one language to another using Bashini MT API"""
+
+    @staticmethod
+    def get_supported_languages():
+        """Get list of supported languages for TTS"""
+        return {
+            "languages": [
+                {"code": "hi", "name": "Hindi"},
+                {"code": "en", "name": "English"},
+                # {"code": "te", "name": "Telugu"},
+                # {"code": "ta", "name": "Tamil"},
+                # {"code": "kn", "name": "Kannada"},
+                # {"code": "ml", "name": "Malayalam"},
+                # {"code": "bn", "name": "Bengali"},
+                {"code": "gu", "name": "Gujarati"},
+                {"code": "mr", "name": "Marathi"},
+                # {"code": "pa", "name": "Punjabi"}
+            ]
+        }
     
     @staticmethod
     def get_api_token_url_for_language(source_lang: str, target_lang: str) -> tuple[str, str]:
