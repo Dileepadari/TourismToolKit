@@ -33,3 +33,6 @@ typing-inspection==0.4.2
 typing_extensions==4.15.0
 urllib3==2.5.0
 uvicorn==0.37.0
+pyjwt==2.8.0
+bcrypt==4.0.1
+python-multipart==0.0.6

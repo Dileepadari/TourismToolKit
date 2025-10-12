@@ -1,10 +1,25 @@
 from sqlmodel import create_engine, SQLModel, Session
-import os
+from .models import User, DictionaryEntry, TravelHistory, Place, EmergencyContact, CultureTip
+from ..config import Config
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:pass@localhost:5432/tourismdb")
+# Use configuration from config module
+DATABASE_URL = Config.DATABASE_URL
 
-engine = create_engine(DATABASE_URL, echo=True)
+# Create engine with appropriate settings
+if DATABASE_URL.startswith("sqlite"):
+    engine = create_engine(DATABASE_URL, echo=True, connect_args={"check_same_thread": False})
+else:
+    engine = create_engine(DATABASE_URL, echo=True)
+
+def create_tables():
+    """Create all database tables"""
+    SQLModel.metadata.create_all(engine)
 
 def get_session():
+    """Get database session"""
     with Session(engine) as session:
         yield session
+
+def get_db_session():
+    """Get database session for direct use"""
+    return Session(engine)

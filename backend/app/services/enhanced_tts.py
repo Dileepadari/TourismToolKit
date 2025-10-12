@@ -53,10 +53,11 @@ class TextToSpeechService:
         # Get the appropriate API URL for the specified language
         tts_api_url = TextToSpeechService.get_api_url_for_language(language)
         
-        if not tts_api_url:
-            raise Exception("TTS API URL not configured. Please check environment variables.")
+        if not tts_api_url or not TOKEN:
+            return {"error": "TTS API not configured for this language"}
         
         headers = {
+            "Content-Type": "application/json",
             "access-token": TOKEN
         }
         
@@ -73,58 +74,20 @@ class TextToSpeechService:
             
             # For binary audio response
             content_type = response.headers.get("Content-Type", "")
-            if "data" in content_type:
+            if "audio" in content_type:
                 return response.content
+            
             # For JSON response with audio URL or content
             try:
                 data = response.json()
-                print(f"DEBUG: TTS API Response: {data}")  # Debug logging
-
-                if "data" in data and "s3_url" in data["data"]:
-                    audio_response = requests.get(data["data"]["s3_url"], verify=False)
-                    if audio_response.status_code == 200:
-                        return audio_response.content
-                    else:
-                        raise Exception(f"Failed to download audio from URL: {audio_response.status_code}")
-                        
-                elif "s3_url" in data:
-                    audio_response = requests.get(data["s3_url"], verify=False)
-                    if audio_response.status_code == 200:
-                        return audio_response.content
-                    else:
-                        raise Exception(f"Failed to download audio from URL: {audio_response.status_code}")
-                        
-                elif "audioContent" in data:
-                    # If the response contains base64 audio content directly
-                    import base64
-                    return base64.b64decode(data["audioContent"])
-                    
-                elif "audio" in data:
-                    # If the response contains audio data in another field
-                    if isinstance(data["audio"], str):
-                        import base64
-                        return base64.b64decode(data["audio"])
-                    else:
-                        return data["audio"]
-                        
-                elif "data" in data and isinstance(data["data"], str):
-                    # Some APIs return audio as base64 in a "data" field
-                    import base64
-                    return base64.b64decode(data["data"])
-                    
-                else:
-                    # Return the raw response for debugging
-                    raise Exception(f"Unexpected response format from TTS API. Response keys: {list(data.keys())}")
-                    
-            except ValueError as json_error:
+                return data["data"]["s3_url"]
+                
+            except ValueError:
                 # Response is not JSON, might be raw audio
                 return response.content
                 
-        except requests.exceptions.RequestException as e:
-            raise Exception(f"Request failed: {str(e)}")
         except Exception as e:
-            raise Exception(f"TTS generation failed: {str(e)}")
-
+            return {"error": f"TTS service error: {str(e)}"}
 
 class TranslationService:
     @staticmethod
@@ -251,6 +214,37 @@ class SpeechToTextService:
                 
         except Exception as e:
             return {"error": f"STT service error: {str(e)}"}
-                
-        except requests.RequestException as e:
-            raise Exception(f"Error communicating with TTS API: {str(e)}")
+
+class TourismService:
+    @staticmethod
+    def get_emergency_phrases(language: str = "en"):
+        """Get common emergency phrases in specified language"""
+        phrases = {
+            "en": [
+                {"phrase": "Help!", "category": "emergency"},
+                {"phrase": "I need a doctor", "category": "medical"},
+                {"phrase": "Where is the hospital?", "category": "medical"},
+                {"phrase": "Call the police", "category": "emergency"},
+                {"phrase": "I'm lost", "category": "navigation"},
+                {"phrase": "Can you help me?", "category": "general"},
+                {"phrase": "I don't speak the local language", "category": "communication"}
+            ]
+        }
+        return phrases.get(language, phrases["en"])
+    
+    @staticmethod
+    def get_common_phrases(language: str = "en"):
+        """Get common travel phrases in specified language"""
+        phrases = {
+            "en": [
+                {"phrase": "Hello", "category": "greeting"},
+                {"phrase": "Thank you", "category": "courtesy"},
+                {"phrase": "Please", "category": "courtesy"},
+                {"phrase": "Excuse me", "category": "courtesy"},
+                {"phrase": "How much does this cost?", "category": "shopping"},
+                {"phrase": "Where is the bathroom?", "category": "navigation"},
+                {"phrase": "I would like to order", "category": "dining"},
+                {"phrase": "Can I have the bill?", "category": "dining"}
+            ]
+        }
+        return phrases.get(language, phrases["en"])
