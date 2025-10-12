@@ -28,7 +28,7 @@ export default function Header({
   return (
     <div className={cn(
       "relative overflow-hidden",
-      gradient ? "bg-gradient-to-br from-saffron-500 via-golden-500 to-heritage-500" : "bg-white dark:bg-gray-900",
+      gradient ? "bg-gradient-to-br from-primary via-accent to-secondary" : "bg-background",
       className
     )}>
       {/* India-inspired pattern overlay */}
@@ -49,8 +49,8 @@ export default function Header({
                 className={cn(
                   "p-2 rounded-lg transition-all duration-200 group",
                   gradient 
-                    ? "bg-white/20 hover:bg-white/30 text-white" 
-                    : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+                    ? "bg-white/20 hover:bg-white/30 text-foreground" 
+                    : "bg-muted hover:bg-muted/80 text-foreground"
                 )}
               >
                 <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -62,8 +62,7 @@ export default function Header({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className={cn(
-                  "text-3xl md:text-4xl font-bold",
-                  gradient ? "text-white" : "text-gray-900 dark:text-white"
+                  "text-3xl md:text-4xl font-bold text-foreground"
                 )}
               >
                 {title}
@@ -75,8 +74,7 @@ export default function Header({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
                   className={cn(
-                    "text-lg mt-2",
-                    gradient ? "text-white/90" : "text-gray-600 dark:text-gray-400"
+                    "text-lg mt-2 text-foreground"
                   )}
                 >
                   {subtitle}
@@ -100,10 +98,10 @@ export default function Header({
         {gradient && (
           <>
             <div className="absolute top-4 right-4 opacity-20">
-              <Globe2 className="w-16 h-16 text-white" />
+              <Globe2 className="w-16 h-16 text-foreground" />
             </div>
             <div className="absolute bottom-4 left-4 opacity-10">
-              <div className="w-24 h-24 border-4 border-white rounded-full" />
+              <div className="w-24 h-24 border-4 border-foreground rounded-full" />
             </div>
           </>
         )}

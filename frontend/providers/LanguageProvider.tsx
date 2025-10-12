@@ -18,18 +18,18 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 const DEFAULT_LANGUAGES: Language[] = [
   { code: 'en', name: 'English' },
-  { code: 'hi', name: 'Hindi' },
-  { code: 'te', name: 'Telugu' },
-  { code: 'ta', name: 'Tamil' },
-  { code: 'kn', name: 'Kannada' },
-  { code: 'ml', name: 'Malayalam' },
-  { code: 'bn', name: 'Bengali' },
-  { code: 'gu', name: 'Gujarati' },
-  { code: 'mr', name: 'Marathi' },
-  { code: 'pa', name: 'Punjabi' },
-  { code: 'ur', name: 'Urdu' },
-  { code: 'as', name: 'Assamese' },
-  { code: 'or', name: 'Odia' },
+  { code: 'hi', name: 'हिन्दी' },
+  { code: 'te', name: 'తెలుగు' },
+  { code: 'ta', name: 'தமிழ்' },
+  { code: 'kn', name: 'ಕನ್ನಡ' },
+  { code: 'ml', name: 'മലയാളം' },
+  { code: 'bn', name: 'বাংলা' },
+  { code: 'gu', name: 'ગુજરાતી' },
+  { code: 'mr', name: 'मराठी' },
+  { code: 'pa', name: 'ਪੰਜਾਬੀ' },
+  { code: 'ur', name: 'اردو' },
+  { code: 'as', name: 'অসমীয়া' },
+  { code: 'or', name: 'ଓଡ଼ିଆ' },
 ];
 
 interface LanguageProviderProps {

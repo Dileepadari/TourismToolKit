@@ -24,89 +24,10 @@ import Button from '@/components/ui/Button';
 import { useAuth } from '@/providers/AuthProvider';
 import { GET_USER_DICTIONARY, GET_TRAVEL_HISTORY } from '@/graphql/queries';
 import { cn } from '@/utils/helpers';
-
-const quickActions = [
-  {
-    icon: Languages,
-    title: 'Instant Translation',
-    description: 'Translate between 10+ Indian languages',
-    href: '/translator',
-    color: 'from-royal-500 to-heritage-500',
-    bgColor: 'bg-gradient-to-br from-royal-50 to-heritage-50 dark:from-royal-900/20 dark:to-heritage-900/20'
-  },
-  {
-    icon: Camera,
-    title: 'OCR Scanner',
-    description: 'Extract text from images instantly',
-    href: '/translator?tab=ocr',
-    color: 'from-saffron-500 to-golden-500',
-    bgColor: 'bg-gradient-to-br from-saffron-50 to-golden-50 dark:from-saffron-900/20 dark:to-golden-900/20'
-  },
-  {
-    icon: Mic,
-    title: 'Voice Assistant',
-    description: 'Speech-to-text conversations',
-    href: '/translator?tab=voice',
-    color: 'from-heritage-500 to-royal-500',
-    bgColor: 'bg-gradient-to-br from-heritage-50 to-royal-50 dark:from-heritage-900/20 dark:to-royal-900/20'
-  },
-  {
-    icon: BookOpen,
-    title: 'My Dictionary',
-    description: 'Personal word collections',
-    href: '/dictionary',
-    color: 'from-golden-500 to-saffron-500',
-    bgColor: 'bg-gradient-to-br from-golden-50 to-saffron-50 dark:from-golden-900/20 dark:to-saffron-900/20'
-  },
-  {
-    icon: MapPin,
-    title: 'Explore Places',
-    description: 'Discover incredible India',
-    href: '/places',
-    color: 'from-heritage-500 to-golden-500',
-    bgColor: 'bg-gradient-to-br from-heritage-50 to-golden-50 dark:from-heritage-900/20 dark:to-golden-900/20'
-  },
-  {
-    icon: Compass,
-    title: 'Travel Guide',
-    description: 'Cultural tips & insights',
-    href: '/guide',
-    color: 'from-royal-500 to-saffron-500',
-    bgColor: 'bg-gradient-to-br from-royal-50 to-saffron-50 dark:from-royal-900/20 dark:to-saffron-900/20'
-  }
-];
-
-const featuredPlaces = [
-  {
-    name: 'Taj Mahal',
-    location: 'Agra, Uttar Pradesh',
-    rating: 4.8,
-    description: 'Symbol of eternal love',
-    category: 'Heritage',
-    visitors: '8M+',
-    color: 'from-golden-400 to-saffron-400'
-  },
-  {
-    name: 'Kerala Backwaters',
-    location: 'Alleppey, Kerala',
-    rating: 4.7,
-    description: 'Serene waterways',
-    category: 'Nature',
-    visitors: '2M+',
-    color: 'from-heritage-400 to-royal-400'
-  },
-  {
-    name: 'Golden Temple',
-    location: 'Amritsar, Punjab',
-    rating: 4.9,
-    description: 'Sacred Sikh shrine',
-    category: 'Spiritual',
-    visitors: '5M+',
-    color: 'from-royal-400 to-golden-400'
-  }
-];
+import { useTranslation } from '@/hooks/useTranslation';
 
 export default function UnifiedDashboard() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { user, isAuthenticated, isLoading } = useAuth();
   
@@ -116,6 +37,87 @@ export default function UnifiedDashboard() {
     words_learned: 0,
     days_traveled: 0
   });
+
+  const quickActions = [
+    {
+      icon: Languages,
+      title: t('dashboard.quickActions.translate'),
+      description: t('translator.subtitle'),
+      href: '/translator',
+      color: 'from-royal-500 to-heritage-500',
+      bgColor: 'bg-gradient-to-br from-royal-50 to-heritage-50 dark:from-royal-900/20 dark:to-heritage-900/20'
+    },
+    {
+      icon: Camera,
+      title: 'OCR Scanner',
+      description: 'Extract text from images instantly',
+      href: '/translator?tab=ocr',
+      color: 'from-saffron-500 to-golden-500',
+      bgColor: 'bg-gradient-to-br from-saffron-50 to-golden-50 dark:from-saffron-900/20 dark:to-golden-900/20'
+    },
+    {
+      icon: Mic,
+      title: 'Voice Assistant',
+      description: 'Speech-to-text conversations',
+      href: '/translator?tab=voice',
+      color: 'from-heritage-500 to-royal-500',
+      bgColor: 'bg-gradient-to-br from-heritage-50 to-royal-50 dark:from-heritage-900/20 dark:to-royal-900/20'
+    },
+    {
+      icon: BookOpen,
+      title: t('dashboard.quickActions.learnWords'),
+      description: t('dictionary.subtitle'),
+      href: '/dictionary',
+      color: 'from-golden-500 to-saffron-500',
+      bgColor: 'bg-gradient-to-br from-golden-50 to-saffron-50 dark:from-golden-900/20 dark:to-saffron-900/20'
+    },
+    {
+      icon: MapPin,
+      title: t('dashboard.quickActions.findPlaces'),
+      description: t('places.subtitle'),
+      href: '/places',
+      color: 'from-heritage-500 to-golden-500',
+      bgColor: 'bg-gradient-to-br from-heritage-50 to-golden-50 dark:from-heritage-900/20 dark:to-golden-900/20'
+    },
+    {
+      icon: Compass,
+      title: 'Travel Guide',
+      description: 'Cultural tips & insights',
+      href: '/guide',
+      color: 'from-royal-500 to-saffron-500',
+      bgColor: 'bg-gradient-to-br from-royal-50 to-saffron-50 dark:from-royal-900/20 dark:to-saffron-900/20'
+    }
+  ];
+
+  const featuredPlaces = [
+    {
+      name: 'Taj Mahal',
+      location: 'Agra, Uttar Pradesh',
+      rating: 4.8,
+      description: 'Symbol of eternal love',
+      category: 'Heritage',
+      visitors: '8M+',
+      color: 'from-golden-400 to-saffron-400'
+    },
+    {
+      name: 'Kerala Backwaters',
+      location: 'Alleppey, Kerala',
+      rating: 4.7,
+      description: 'Serene waterways',
+      category: 'Nature',
+      visitors: '2M+',
+      color: 'from-heritage-400 to-royal-400'
+    },
+    {
+      name: 'Golden Temple',
+      location: 'Amritsar, Punjab',
+      rating: 4.9,
+      description: 'Sacred Sikh shrine',
+      category: 'Spiritual',
+      visitors: '5M+',
+      color: 'from-royal-400 to-golden-400'
+    }
+  ];
 
   // Redirect if not authenticated (only after loading is complete)
   useEffect(() => {
@@ -149,10 +151,10 @@ export default function UnifiedDashboard() {
   // Show loading spinner while checking authentication
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-saffron-50 to-heritage-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-saffron-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading your travel dashboard...</p>
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">{t('dashboard.loading')}</p>
         </div>
       </div>
     );
@@ -166,28 +168,28 @@ export default function UnifiedDashboard() {
   const statsConfig = [
     {
       icon: Languages,
-      label: 'Translations',
+      label: t('dashboard.stats.translations'),
       value: stats.translations,
       color: 'from-royal-500 to-heritage-500',
       bgColor: 'bg-gradient-to-br from-royal-50 to-heritage-50 dark:from-royal-900/20 dark:to-heritage-900/20'
     },
     {
       icon: MapPin,
-      label: 'Places Visited',
+      label: t('dashboard.stats.placesVisited'),
       value: stats.places_visited,
       color: 'from-heritage-500 to-golden-500',
       bgColor: 'bg-gradient-to-br from-heritage-50 to-golden-50 dark:from-heritage-900/20 dark:to-golden-900/20'
     },
     {
       icon: BookOpen,
-      label: 'Words Learned',
+      label: t('dashboard.stats.wordsLearned'),
       value: stats.words_learned,
       color: 'from-golden-500 to-saffron-500',
       bgColor: 'bg-gradient-to-br from-golden-50 to-saffron-50 dark:from-golden-900/20 dark:to-saffron-900/20'
     },
     {
       icon: TrendingUp,
-      label: 'Travel Days',
+      label: t('dashboard.stats.tripsPlanned'),
       value: stats.days_traveled,
       color: 'from-saffron-500 to-royal-500',
       bgColor: 'bg-gradient-to-br from-saffron-50 to-royal-50 dark:from-saffron-900/20 dark:to-royal-900/20'
@@ -195,11 +197,11 @@ export default function UnifiedDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-saffron-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-background">
       {/* Welcome Header */}
       <Header
-        title={`Namaste, ${user?.fullName || user?.username}! 🙏`}
-        subtitle="Ready to explore the incredible diversity of India?"
+        title={`${t('dashboard.welcome')}, ${user?.fullName || user?.username}! 🙏`}
+        subtitle={t('dashboard.subtitle')}
         gradient={true}
       />
 
@@ -217,14 +219,14 @@ export default function UnifiedDashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <Card hover className={cn("border-0", stat.bgColor)}>
+              <Card hover className={cn(stat.bgColor)}>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                      <p className="text-sm font-medium text-muted-foreground">
                         {stat.label}
                       </p>
-                      <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">
+                      <p className="text-3xl font-bold text-foreground mt-1">
                         {stat.value.toLocaleString()}
                       </p>
                     </div>
@@ -245,8 +247,8 @@ export default function UnifiedDashboard() {
           transition={{ delay: 0.2 }}
         >
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Quick Actions</h2>
-            <p className="text-gray-600 dark:text-gray-400">Choose your adventure</p>
+            <h2 className="text-2xl font-bold text-foreground">Quick Actions</h2>
+            <p className="text-muted-foreground">Choose your adventure</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -259,15 +261,15 @@ export default function UnifiedDashboard() {
                 whileHover={{ y: -5 }}
               >
                 <Link href={action.href}>
-                  <Card hover className={cn("border-0 h-full cursor-pointer group", action.bgColor)}>
+                  <Card hover className={cn("h-full cursor-pointer group", action.bgColor)}>
                     <CardContent className="p-6">
                       <div className={cn("w-14 h-14 rounded-xl bg-gradient-to-r", action.color, "flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-200")}>
-                        <action.icon className="w-7 h-7 text-white" />
+                        <action.icon className="w-7 h-7 text-foreground" />
                       </div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                      <h3 className="text-lg font-semibold text-foreground mb-2">
                         {action.title}
                       </h3>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                      <p className="text-muted-foreground text-sm leading-relaxed">
                         {action.description}
                       </p>
                     </CardContent>
@@ -286,12 +288,12 @@ export default function UnifiedDashboard() {
         >
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-2xl font-bold text-foreground">
                 Incredible India Awaits
               </h2>
-              <p className="text-gray-600 dark:text-gray-400">Discover the wonders of our motherland</p>
+              <p className="text-muted-foreground">Discover the wonders of our motherland</p>
             </div>
-            <Button variant="outline" size="sm" className="border-saffron-300 text-saffron-600 hover:bg-saffron-50">
+            <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary/10">
               <Link href="/places" className="flex items-center space-x-2">
                 <span>Explore All</span>
                 <Plane className="w-4 h-4" />
@@ -308,7 +310,7 @@ export default function UnifiedDashboard() {
                 transition={{ delay: 0.5 + index * 0.1 }}
                 whileHover={{ y: -5 }}
               >
-                <Card hover className="border-0 overflow-hidden group cursor-pointer">
+                <Card hover className="overflow-hidden group cursor-pointer">
                   <div className={cn("h-48 bg-gradient-to-br", place.color, "relative flex items-center justify-center")}>
                     <MapPin className="w-20 h-20 text-white opacity-30" />
                     <div className="absolute top-4 left-4">
@@ -324,22 +326,22 @@ export default function UnifiedDashboard() {
                     </div>
                   </div>
                   <CardContent className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                    <h3 className="text-xl font-bold text-foreground mb-2">
                       {place.name}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-400 mb-3 flex items-center">
+                    <p className="text-muted-foreground mb-3 flex items-center">
                       <MapPin className="w-4 h-4 mr-1" />
                       {place.location}
                     </p>
-                    <p className="text-gray-700 dark:text-gray-300 text-sm mb-4">
+                    <p className="text-foreground text-sm mb-4">
                       {place.description}
                     </p>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-1 text-gray-500">
+                      <div className="flex items-center space-x-1 text-muted-foreground">
                         <Users className="w-4 h-4" />
                         <span className="text-sm">{place.visitors} visitors</span>
                       </div>
-                      <Button size="sm" variant="ghost" className="text-saffron-600 hover:text-saffron-700 p-0">
+                      <Button size="sm" variant="ghost" className="text-primary hover:text-primary/80 p-0">
                         Learn More →
                       </Button>
                     </div>
@@ -356,9 +358,9 @@ export default function UnifiedDashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Recent Journey</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-6">Recent Journey</h2>
           
-          <Card className="border-0 bg-gradient-to-br from-white to-saffron-50 dark:from-gray-800 dark:to-gray-900">
+          <Card gradient className="bg-gradient-to-br from-card to-primary/5 dark:from-card dark:to-background">
             <CardContent className="p-6">
               <div className="space-y-6">
                 {[
@@ -386,10 +388,10 @@ export default function UnifiedDashboard() {
                       <activity.icon className="w-6 h-6 text-white" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-gray-900 dark:text-white font-medium">
+                      <p className="text-foreground font-medium">
                         {activity.title}
                       </p>
-                      <div className="flex items-center space-x-2 text-gray-500 dark:text-gray-400 text-sm">
+                      <div className="flex items-center space-x-2 text-muted-foreground text-sm">
                         <Clock className="w-3 h-3" />
                         <span>{activity.time}</span>
                       </div>

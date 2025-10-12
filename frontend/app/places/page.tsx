@@ -97,25 +97,25 @@ export default function Places() {
     });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 dark:from-background dark:via-background/95 dark:to-background">
       {/* Header */}
-      <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+      <header className="bg-card/80 backdrop-blur-md border-b border-border sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Link 
                 href="/dashboard"
-                className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                className="text-muted-foreground hover:text-foreground"
               >
                 ← Back to Dashboard
               </Link>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
-              <MapPin className="w-8 h-8 mr-3 text-blue-600" />
+            <h1 className="text-2xl font-bold text-foreground flex items-center">
+              <MapPin className="w-8 h-8 mr-3 text-primary" />
               Explore Places
             </h1>
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-primary to-accent rounded-lg flex items-center justify-center">
                 <Globe className="w-5 h-5 text-white" />
               </div>
             </div>
@@ -128,18 +128,18 @@ export default function Places() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8"
+          className="bg-card rounded-xl shadow-lg p-6 mb-8 border border-border"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search places..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
               />
             </div>
 
@@ -147,7 +147,7 @@ export default function Places() {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
             >
               {categories.map((category) => (
                 <option key={category.value} value={category.value}>
@@ -160,7 +160,7 @@ export default function Places() {
             <select
               value={selectedCountry}
               onChange={(e) => setSelectedCountry(e.target.value)}
-              className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
             >
               {countries.map((country) => (
                 <option key={country.value} value={country.value}>
@@ -173,7 +173,7 @@ export default function Places() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'rating' | 'name' | 'recent')}
-              className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
             >
               <option value="rating">Sort by Rating</option>
               <option value="name">Sort by Name</option>
@@ -186,13 +186,13 @@ export default function Places() {
         {loading ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, index) => (
-              <div key={index} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden animate-pulse">
-                <div className="h-48 bg-gray-300 dark:bg-gray-700"></div>
+              <div key={index} className="bg-card rounded-xl shadow-lg overflow-hidden animate-pulse border border-border">
+                <div className="h-48 bg-muted"></div>
                 <div className="p-6">
-                  <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
-                  <div className="h-3 bg-gray-300 dark:bg-gray-700 rounded w-1/2 mb-4"></div>
-                  <div className="h-3 bg-gray-300 dark:bg-gray-700 rounded w-full mb-2"></div>
-                  <div className="h-3 bg-gray-300 dark:bg-gray-700 rounded w-2/3"></div>
+                  <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
+                  <div className="h-3 bg-muted rounded w-1/2 mb-4"></div>
+                  <div className="h-3 bg-muted rounded w-full mb-2"></div>
+                  <div className="h-3 bg-muted rounded w-2/3"></div>
                 </div>
               </div>
             ))}
@@ -210,10 +210,10 @@ export default function Places() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow group"
+                className="bg-card rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow group border border-border"
               >
                 {/* Image */}
-                <div className="relative h-48 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                <div className="relative h-48 bg-gradient-to-br from-primary to-accent flex items-center justify-center">
                   <div className="absolute inset-0 bg-black bg-opacity-20"></div>
                   <div className="text-white z-10">
                     <MapPin className="w-16 h-16 mx-auto mb-2" />
@@ -243,39 +243,39 @@ export default function Places() {
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
+                      <h3 className="text-xl font-semibold text-foreground mb-1">
                         {place.name}
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                      <p className="text-sm text-muted-foreground flex items-center">
                         <MapPin className="w-4 h-4 mr-1" />
                         {place.city}, {place.state || place.country}
                       </p>
                     </div>
                   </div>
 
-                  <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">
+                  <p className="text-foreground text-sm mb-4 line-clamp-3">
                     {place.description || 'A beautiful destination worth visiting.'}
                   </p>
 
                   {/* Details */}
                   <div className="space-y-2 mb-4">
                     {place.bestTimeToVisit && (
-                      <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                        <Clock className="w-4 h-4 mr-2 text-blue-500" />
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <Clock className="w-4 h-4 mr-2 text-primary" />
                         Best time: {place.bestTimeToVisit}
                       </div>
                     )}
                     
                     {place.entryFee !== null && place.entryFee !== undefined && (
-                      <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                        <DollarSign className="w-4 h-4 mr-2 text-green-500" />
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <DollarSign className="w-4 h-4 mr-2 text-secondary" />
                         Entry fee: ₹{place.entryFee}
                       </div>
                     )}
 
                     {place.languagesSpoken && place.languagesSpoken.length > 0 && (
-                      <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                        <Globe className="w-4 h-4 mr-2 text-purple-500" />
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <Globe className="w-4 h-4 mr-2 text-accent" />
                         Languages: {place.languagesSpoken.slice(0, 2).join(', ')}
                         {place.languagesSpoken.length > 2 && ` +${place.languagesSpoken.length - 2} more`}
                       </div>
@@ -286,16 +286,16 @@ export default function Places() {
                   <div className="flex space-x-2">
                     <Link
                       href={`/places/${place.id}`}
-                      className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-4 rounded-lg text-center font-medium hover:from-blue-700 hover:to-purple-700 transition-colors text-sm"
+                      className="flex-1 bg-gradient-to-r from-primary to-accent text-primary-foreground py-2 px-4 rounded-lg text-center font-medium hover:opacity-90 transition-colors text-sm"
                     >
                       View Details
                     </Link>
-                    <button className="p-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <button className="p-2 border border-border rounded-lg text-muted-foreground hover:bg-muted transition-colors">
                       <Navigation className="w-4 h-4" />
                     </button>
                     <Link
                       href={`/translator?context=visiting-${encodeURIComponent(place.name)}`}
-                      className="p-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      className="p-2 border border-border rounded-lg text-muted-foreground hover:bg-muted transition-colors"
                     >
                       <Globe className="w-4 h-4" />
                     </Link>
@@ -306,11 +306,11 @@ export default function Places() {
           </motion.div>
         ) : (
           <div className="text-center py-12">
-            <MapPin className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-2">
+            <MapPin className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-xl font-medium text-foreground mb-2">
               No places found
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
+            <p className="text-muted-foreground mb-4">
               Try adjusting your search criteria or explore different categories
             </p>
             <button
@@ -319,7 +319,7 @@ export default function Places() {
                 setSelectedCategory('all');
                 setSelectedCountry('India');
               }}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transition-shadow"
+              className="bg-gradient-to-r from-primary to-accent text-primary-foreground px-6 py-3 rounded-lg font-medium hover:shadow-lg transition-shadow"
             >
               Reset Filters
             </button>
@@ -331,9 +331,9 @@ export default function Places() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="mt-12 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6"
+          className="mt-12 bg-card rounded-xl shadow-lg p-6 border border-border"
         >
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <h3 className="text-lg font-semibold text-foreground mb-4">
             Popular Categories
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -343,19 +343,19 @@ export default function Places() {
                 onClick={() => setSelectedCategory(category.value)}
                 className={`p-4 rounded-lg text-center transition-colors ${
                   selectedCategory === category.value
-                    ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400'
-                    : 'bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
+                    ? 'bg-primary/10 text-primary'
+                    : 'bg-muted text-foreground hover:bg-muted/80'
                 }`}
               >
                 <div className="text-2xl mb-2 flex items-center justify-center">
-                  {index === 0 && <Building className="w-8 h-8 text-gray-600 dark:text-gray-400" />}
-                  {index === 1 && <Church className="w-8 h-8 text-gray-600 dark:text-gray-400" />}
-                  {index === 2 && <Castle className="w-8 h-8 text-gray-600 dark:text-gray-400" />}
-                  {index === 3 && <Home className="w-8 h-8 text-gray-600 dark:text-gray-400" />}
-                  {index === 4 && <Waves className="w-8 h-8 text-gray-600 dark:text-gray-400" />}
-                  {index === 5 && <Mountain className="w-8 h-8 text-gray-600 dark:text-gray-400" />}
-                  {index === 6 && <Trees className="w-8 h-8 text-gray-600 dark:text-gray-400" />}
-                  {index === 7 && <Landmark className="w-8 h-8 text-gray-600 dark:text-gray-400" />}
+                  {index === 0 && <Building className="w-8 h-8 text-muted-foreground" />}
+                  {index === 1 && <Church className="w-8 h-8 text-muted-foreground" />}
+                  {index === 2 && <Castle className="w-8 h-8 text-muted-foreground" />}
+                  {index === 3 && <Home className="w-8 h-8 text-muted-foreground" />}
+                  {index === 4 && <Waves className="w-8 h-8 text-muted-foreground" />}
+                  {index === 5 && <Mountain className="w-8 h-8 text-muted-foreground" />}
+                  {index === 6 && <Trees className="w-8 h-8 text-muted-foreground" />}
+                  {index === 7 && <Landmark className="w-8 h-8 text-muted-foreground" />}
                 </div>
                 <span className="text-sm font-medium">{category.label}</span>
               </button>

@@ -20,7 +20,7 @@ export default function LayoutNavigation({ children }: LayoutNavigationProps) {
   const shouldShowNavigation = !isAuthPage && !isLandingPage;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+    <div className="min-h-screen bg-background transition-colors duration-300">
       {shouldShowNavigation && <Navigation />}
       <main className={shouldShowNavigation ? 'pt-0' : ''}>
         {children}

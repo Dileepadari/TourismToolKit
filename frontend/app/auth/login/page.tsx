@@ -8,8 +8,10 @@ import { Eye, EyeOff, Globe, ArrowLeft } from 'lucide-react';
 import { LOGIN_MUTATION } from '@/graphql/queries';
 import { useAuth } from '@/providers/AuthProvider';
 import toast from 'react-hot-toast';
+import { useTranslation } from '@/hooks/useTranslation';
 
 export default function Login() {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -55,23 +57,23 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-saffron-50 via-white to-heritage-50 dark:from-gray-900 dark:via-gray-800 dark:to-saffron-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="flex items-center justify-between p-6">
         <Link 
           href="/"
-          className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
+          className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
-          <span>Back to Home</span>
+          <span>{t('nav.backToHome')}</span>
         </Link>
         
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-gradient-to-r from-saffron-500 to-heritage-500 rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-gradient-to-r from-primary to-accent rounded-lg flex items-center justify-center">
             <Globe className="w-5 h-5 text-white" />
           </div>
-          <span className="text-xl font-bold bg-gradient-to-r from-saffron-600 to-heritage-600 bg-clip-text text-transparent">
-            TourismToolKit
+          <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            {t('home.poweredBy')}
           </span>
         </div>
       </div>
@@ -85,19 +87,19 @@ export default function Login() {
           className="max-w-md w-full space-y-8"
         >
           <div>
-            <h2 className="text-center text-3xl font-bold text-gray-900 dark:text-white">
-              Welcome Back
+            <h2 className="text-center text-3xl font-bold text-foreground">
+              {t('auth.login.title')}
             </h2>
-            <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-              Sign in to continue your journey
+            <p className="mt-2 text-center text-sm text-muted-foreground">
+              {t('auth.login.subtitle')}
             </p>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 py-8 px-6 shadow-xl rounded-2xl">
+          <div className="bg-card py-8 px-6 shadow-xl rounded-2xl border border-border">
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Email Address
+                <label htmlFor="email" className="block text-sm font-medium text-foreground">
+                  {t('auth.login.email')}
                 </label>
                 <input
                   id="email"
@@ -107,14 +109,14 @@ export default function Login() {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="mt-1 appearance-none relative block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-lg bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter your email"
+                  className="mt-1 appearance-none relative block w-full px-3 py-3 border border-input placeholder-muted-foreground text-foreground rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                  placeholder={t('auth.login.email')}
                 />
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Password
+                <label htmlFor="password" className="block text-sm font-medium text-foreground">
+                  {t('auth.login.password')}
                 </label>
                 <div className="mt-1 relative">
                   <input
@@ -125,8 +127,8 @@ export default function Login() {
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className="appearance-none relative block w-full px-3 py-3 pr-12 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-lg bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter your password"
+                    className="appearance-none relative block w-full px-3 py-3 pr-12 border border-input placeholder-muted-foreground text-foreground rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                    placeholder={t('auth.login.password')}
                   />
                   <button
                     type="button"
@@ -134,9 +136,9 @@ export default function Login() {
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400" />
+                      <EyeOff className="h-5 w-5 text-muted-foreground" />
                     ) : (
-                      <Eye className="h-5 w-5 text-gray-400" />
+                      <Eye className="h-5 w-5 text-muted-foreground" />
                     )}
                   </button>
                 </div>
@@ -146,9 +148,9 @@ export default function Login() {
                 <div className="text-sm">
                   <Link 
                     href="/auth/forgot-password"
-                    className="font-medium text-saffron-600 hover:text-saffron-500 dark:text-saffron-400"
+                    className="font-medium text-primary hover:text-primary/80"
                   >
-                    Forgot your password?
+                    {t('auth.login.forgotPassword')}
                   </Link>
                 </div>
               </div>
@@ -157,20 +159,20 @@ export default function Login() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-saffron-500 to-heritage-500 hover:from-saffron-600 hover:to-heritage-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-saffron-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                  className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg bg-gradient-to-r from-primary to-accent hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-foreground"
                 >
-                  {isLoading ? 'Signing in...' : 'Sign In'}
+                  {isLoading ? t('auth.login.signingIn') : t('auth.login.signIn')}
                 </button>
               </div>
 
               <div className="text-center">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  Don&apos;t have an account?{' '}
+                <span className="text-sm text-muted-foreground">
+                  {t('auth.login.noAccount')}{' '}
                   <Link 
                     href="/auth/register"
-                    className="font-medium text-saffron-600 hover:text-saffron-500 dark:text-saffron-400"
+                    className="font-medium text-primary hover:text-primary/80"
                   >
-                    Sign up
+                    {t('auth.login.signUp')}
                   </Link>
                 </span>
               </div>
@@ -178,24 +180,24 @@ export default function Login() {
           </div>
 
           {/* Demo Account Info */}
-          <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-            <h3 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">
-              Demo Account
+          <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
+            <h3 className="text-sm font-medium text-primary mb-2">
+              {t('auth.login.demoAccount')}
             </h3>
-            <p className="text-xs text-blue-600 dark:text-blue-300 mb-2">
+            <p className="text-xs text-muted-foreground mb-2">
               Email: test@example.com<br />
-              Password: password
+              Password: password123
             </p>
             <button
               onClick={() => {
                 setFormData({
                   email: 'test@example.com',
-                  password: 'password'
+                  password: 'password123'
                 });
               }}
-              className="text-xs font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+              className="text-xs font-medium text-primary hover:text-primary/80"
             >
-              Use Demo Account
+              {t('auth.login.useDemo')}
             </button>
           </div>
         </motion.div>

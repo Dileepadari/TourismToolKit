@@ -39,18 +39,17 @@ interface PageHeaderProps {
 export function PageHeader({ title, subtitle, children, className }: PageHeaderProps) {
   return (
     <div className={cn(
-      'bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b',
-      themeClasses.navBorder,
+      'bg-card/80 backdrop-blur-md border-b border-border',
       className
     )}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className={cn('text-3xl font-bold', themeClasses.textPrimary)}>
+            <h1 className="text-3xl font-bold text-foreground">
               {title}
             </h1>
             {subtitle && (
-              <p className={cn('mt-2', themeClasses.textSecondary)}>
+              <p className="mt-2 text-muted-foreground">
                 {subtitle}
               </p>
             )}

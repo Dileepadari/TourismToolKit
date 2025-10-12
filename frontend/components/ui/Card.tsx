@@ -18,8 +18,8 @@ export function Card({ children, className, hover = false, gradient = false, onC
         whileHover={hover ? { y: -2, scale: 1.02 } : undefined}
         whileTap={onClick ? { scale: 0.98 } : undefined}
         className={cn(
-          'rounded-xl shadow-soft border border-gray-200 dark:border-gray-700',
-          gradient ? 'bg-gradient-to-br from-white to-saffron-50/50 dark:from-gray-800 dark:to-gray-900' : 'bg-white dark:bg-gray-800',
+          'rounded-xl shadow-soft border border-border',
+          gradient ? 'bg-gradient-to-br from-card to-primary/5 dark:from-card dark:to-background' : 'bg-card',
           hover && 'transition-all duration-200 hover:shadow-medium',
           onClick && 'cursor-pointer',
           className
@@ -33,8 +33,8 @@ export function Card({ children, className, hover = false, gradient = false, onC
   return (
     <div
       className={cn(
-        'rounded-xl shadow-soft border border-gray-200 dark:border-gray-700',
-        gradient ? 'bg-gradient-to-br from-white to-saffron-50/50 dark:from-gray-800 dark:to-gray-900' : 'bg-white dark:bg-gray-800',
+        'rounded-xl shadow-soft border border-border',
+        gradient ? 'bg-gradient-to-br from-card to-primary/5 dark:from-card dark:to-background' : 'bg-card',
         className
       )}
     >
@@ -45,7 +45,7 @@ export function Card({ children, className, hover = false, gradient = false, onC
 
 export function CardHeader({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={cn('px-6 py-4 border-b border-gray-200 dark:border-gray-700', className)}>
+    <div className={cn('px-6 py-4 border-b border-border', className)}>
       {children}
     </div>
   );
@@ -61,7 +61,7 @@ export function CardContent({ children, className }: { children: React.ReactNode
 
 export function CardFooter({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={cn('px-6 py-4 border-t border-gray-200 dark:border-gray-700', className)}>
+    <div className={cn('px-6 py-4 border-t border-border', className)}>
       {children}
     </div>
   );

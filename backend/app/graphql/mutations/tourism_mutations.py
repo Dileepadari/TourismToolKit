@@ -6,10 +6,6 @@ from ..types.tourism_types import (
     TranslationResponse, OCRResponse, STTResponse, DictionaryEntry, 
     DictionaryInput, TravelHistory, TravelHistoryInput
 )
-from ...services.enhanced_tts import (
-    TextToSpeechService, TranslationService, 
-    OCRService, SpeechToTextService
-)
 from ...services.auth import AuthService
 
 @strawberry.mutation
@@ -96,78 +92,6 @@ def login(self, input: LoginInput) -> AuthResponse:
     )
 
 @strawberry.mutation
-def generate_speech(self, text: str, gender: str, language: str = "en") -> TTSResponse:
-    """Generate speech from text"""
-    result = TextToSpeechService.generate_speech(text, gender, language)
-    
-    if isinstance(result, dict) and "error" in result:
-        return TTSResponse(
-            success=False,
-            audio_url=None,
-            error=result["error"]
-        )
-    
-    return TTSResponse(
-        success=True,
-        audio_url=result if isinstance(result, str) else "audio_generated",
-        error=None
-    )
-
-@strawberry.mutation
-def translate_text(self, text: str, source_lang: str, target_lang: str) -> TranslationResponse:
-    """Translate text between languages"""
-    result = TranslationService.translate_text(text, source_lang, target_lang)
-    
-    if "error" in result:
-        return TranslationResponse(
-            success=False,
-            translated_text=None,
-            error=result["error"]
-        )
-    
-    return TranslationResponse(
-        success=True,
-        translated_text=result["translated_text"],
-        error=None
-    )
-
-@strawberry.mutation
-def extract_text_from_image(self, image_data: str, language: str = "en") -> OCRResponse:
-    """Extract text from image using OCR"""
-    result = OCRService.extract_text_from_image(image_data, language)
-    
-    if "error" in result:
-        return OCRResponse(
-            success=False,
-            extracted_text=None,
-            error=result["error"]
-        )
-    
-    return OCRResponse(
-        success=True,
-        extracted_text=result["extracted_text"],
-        error=None
-    )
-
-@strawberry.mutation
-def transcribe_audio(self, audio_data: str, language: str = "en") -> STTResponse:
-    """Convert speech to text"""
-    result = SpeechToTextService.transcribe_audio(audio_data, language)
-    
-    if "error" in result:
-        return STTResponse(
-            success=False,
-            transcribed_text=None,
-            error=result["error"]
-        )
-    
-    return STTResponse(
-        success=True,
-        transcribed_text=result["transcribed_text"],
-        error=None
-    )
-
-@strawberry.mutation
 def add_dictionary_entry(self, user_id: int, input: DictionaryInput) -> DictionaryEntry:
     """Add entry to user's personal dictionary"""
     # Mock implementation
@@ -220,4 +144,4 @@ def update_user_preferences(self, user_id: int,
             user=None
         )
     
-TourismMutations = [update_user_preferences, add_travel_history, add_dictionary_entry, transcribe_audio, extract_text_from_image, translate_text, generate_speech, login, register]
+TourismMutations = [update_user_preferences, add_travel_history, add_dictionary_entry, login, register]

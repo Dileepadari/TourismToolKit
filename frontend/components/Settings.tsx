@@ -117,11 +117,11 @@ export default function Settings({ isOpen, onClose }: SettingsProps) {
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
-            className="bg-white dark:bg-gray-900 rounded-2xl shadow-hard max-w-4xl w-full max-h-[90vh] overflow-hidden"
+            className="bg-card rounded-2xl shadow-hard max-w-4xl w-full max-h-[90vh] overflow-hidden border border-border"
             onClick={e => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-saffron-500 to-golden-500 px-6 py-4">
+            <div className="bg-gradient-to-r from-primary to-accent px-6 py-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <SettingsIcon className="w-6 h-6 text-white" />
@@ -140,7 +140,7 @@ export default function Settings({ isOpen, onClose }: SettingsProps) {
 
             <div className="flex">
               {/* Sidebar */}
-              <div className="w-64 bg-gray-50 dark:bg-gray-800 p-4 border-r border-gray-200 dark:border-gray-700">
+              <div className="w-64 bg-muted p-4 border-r border-border">
                 <nav className="space-y-2">
                   {tabs.map((tab) => (
                     <button
@@ -149,8 +149,8 @@ export default function Settings({ isOpen, onClose }: SettingsProps) {
                       className={cn(
                         'w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all',
                         activeTab === tab.id
-                          ? 'bg-saffron-100 dark:bg-saffron-900/20 text-saffron-700 dark:text-saffron-300'
-                          : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                          ? 'bg-primary/10 text-primary'
+                          : 'text-muted-foreground hover:bg-muted/80'
                       )}
                     >
                       <tab.icon className="w-5 h-5" />
@@ -166,23 +166,23 @@ export default function Settings({ isOpen, onClose }: SettingsProps) {
                 {activeTab === 'general' && (
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">General Settings</h3>
+                      <h3 className="text-lg font-semibold text-foreground mb-4">General Settings</h3>
                       
                       {/* Theme */}
                       <Card>
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-3">
+                            <div className="flex items-center space-x-3 text-foreground">
                               {settings.theme === 'dark' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
                               <div>
                                 <h4 className="font-medium">Theme</h4>
-                                <p className="text-sm text-gray-500">Choose your preferred theme</p>
+                                <p className="text-sm text-muted-foreground">Choose your preferred theme</p>
                               </div>
                             </div>
                             <select
                               value={settings.theme}
                               onChange={(e) => handleSettingChange('theme', e.target.value)}
-                              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800"
+                              className="px-3 py-2 border border-input rounded-lg bg-background text-foreground"
                             >
                               <option value="light">Light</option>
                               <option value="dark">Dark</option>

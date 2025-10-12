@@ -235,20 +235,20 @@ export default function Translator() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
+      <header className="bg-card/80 backdrop-blur-md border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Link 
                 href="/dashboard"
-                className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                className="text-muted-foreground hover:text-foreground"
               >
                 ← Back to Dashboard
               </Link>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-2xl font-bold text-foreground">
               Universal Translator
             </h1>
             <div></div>
@@ -258,15 +258,15 @@ export default function Translator() {
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Tabs */}
-        <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-xl mb-8">
+        <div className="flex space-x-1 bg-muted p-1 rounded-xl mb-8">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as 'text' | 'voice' | 'image')}
               className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-lg transition-colors ${
                 activeTab === tab.id
-                  ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  ? 'bg-background text-primary shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               {tab.icon}
@@ -279,17 +279,17 @@ export default function Translator() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6"
+          className="bg-card rounded-xl shadow-lg p-6 mb-6 border border-border"
         >
           <div className="flex items-center justify-center space-x-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 From
               </label>
               <select
                 value={sourceLang}
                 onChange={(e) => setSourceLang(e.target.value)}
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
               >
                 {languages.map((lang: Language) => (
                     <option key={lang.code} value={lang.code}>
@@ -301,19 +301,19 @@ export default function Translator() {
 
             <button
               onClick={swapLanguages}
-              className="p-3 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors mt-7"
+              className="p-3 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors mt-7"
             >
               <ArrowLeftRight className="w-5 h-5" />
             </button>
 
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 To
               </label>
               <select
                 value={targetLang}
                 onChange={(e) => setTargetLang(e.target.value)}
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
               >
                 {languages.map((lang: Language) => (
                   <option key={lang.code} value={lang.code}>
@@ -330,13 +330,13 @@ export default function Translator() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6"
+          className="bg-card rounded-xl shadow-lg p-6 border border-border"
         >
           <div className="grid md:grid-cols-2 gap-6">
             {/* Input Section */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="block text-sm font-medium text-foreground">
                   Enter text to translate
                 </label>
                 <div className="flex space-x-2">
@@ -345,8 +345,8 @@ export default function Translator() {
                       onClick={isRecording ? stopRecording : startRecording}
                       className={`p-2 rounded-lg transition-colors ${
                         isRecording 
-                          ? 'bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400' 
-                          : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+                          ? 'bg-destructive/10 text-destructive' 
+                          : 'bg-muted text-muted-foreground hover:bg-muted/80'
                       }`}
                     >
                       {isRecording ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
@@ -363,7 +363,7 @@ export default function Translator() {
                       />
                       <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                        className="p-2 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition-colors"
                       >
                         <Upload className="w-4 h-4" />
                       </button>
@@ -372,7 +372,7 @@ export default function Translator() {
                   <button
                     onClick={() => handleSpeak(sourceText, sourceLang)}
                     disabled={!sourceText}
-                    className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="p-2 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Volume2 className="w-4 h-4" />
                   </button>
@@ -382,41 +382,41 @@ export default function Translator() {
                 value={sourceText}
                 onChange={(e) => setSourceText(e.target.value)}
                 placeholder="Type your text here, upload an image, or use voice input..."
-                className="w-full h-40 p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                className="w-full h-40 p-4 border border-input rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
               />
             </div>
 
             {/* Output Section */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="block text-sm font-medium text-foreground">
                   Translation
                 </label>
                 <div className="flex space-x-2">
                   <button
                     onClick={() => copyToClipboard(translatedText)}
                     disabled={!translatedText}
-                    className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="p-2 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Copy className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleSpeak(translatedText, targetLang)}
                     disabled={!translatedText}
-                    className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="p-2 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Volume2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>
-              <div className="w-full h-40 p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white overflow-y-auto">
+              <div className="w-full h-40 p-4 border border-input rounded-lg bg-muted/50 text-foreground overflow-y-auto">
                 {isLoading ? (
                   <div className="flex items-center justify-center h-full">
-                    <Loader className="w-6 h-6 animate-spin text-blue-500" />
+                    <Loader className="w-6 h-6 animate-spin text-primary" />
                   </div>
                 ) : (
                   translatedText || 
-                  <span className="text-gray-500 dark:text-gray-400">
+                  <span className="text-muted-foreground">
                     Translation will appear here...
                   </span>
                 )}
@@ -429,7 +429,7 @@ export default function Translator() {
             <button
               onClick={handleTranslate}
               disabled={!sourceText.trim() || isLoading}
-              className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-8 py-3 bg-gradient-to-r from-primary to-accent text-primary-foreground rounded-lg font-medium hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isLoading ? 'Translating...' : 'Translate'}
             </button>
@@ -441,9 +441,9 @@ export default function Translator() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6"
+          className="mt-8 bg-card rounded-xl shadow-lg p-6 border border-border"
         >
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <h3 className="text-lg font-semibold text-foreground mb-4">
             Common Travel Phrases
           </h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -461,7 +461,7 @@ export default function Translator() {
               <button
                 key={index}
                 onClick={() => setSourceText(phrase)}
-                className="p-3 text-left bg-gray-50 dark:bg-gray-700 rounded-lg text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                className="p-3 text-left bg-muted rounded-lg text-foreground hover:bg-muted/80 transition-colors"
               >
                 {phrase}
               </button>

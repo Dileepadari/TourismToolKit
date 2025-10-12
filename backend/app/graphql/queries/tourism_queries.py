@@ -5,7 +5,6 @@ import strawberry
 #     User, Language, LanguagesResponse, Place, DictionaryEntry, 
 #     TravelHistory, EmergencyContact, CultureTip, PhrasesResponse
 # )
-# from ...services.enhanced_tts import TranslationService, TourismService
 
 from typing import List, Optional
 from ..types.tourism_types import (
@@ -15,37 +14,9 @@ from ..types.tourism_types import (
     EmergencyContact, CultureTip, PhrasesResponse
 )
 from ..types.tts_types import TTSResponse, TTSInput
-from ...services.enhanced_tts import (
-    TextToSpeechService, TranslationService, 
-    OCRService, SpeechToTextService, TourismService
-)
 from ...services.auth import AuthService
 from ...database.db import get_session
 from datetime import datetime
-
-@strawberry.field
-def get_supported_languages(self) -> LanguagesResponse:
-    """Get all supported languages for translation and TTS"""
-    languages_data = TranslationService.get_supported_languages()
-    languages = [Language(code=lang["code"], name=lang["name"]) 
-                for lang in languages_data["languages"]]
-    return LanguagesResponse(languages=languages)
-
-@strawberry.field
-def get_places(self, country: Optional[str] = None, 
-                category: Optional[str] = None, 
-                limit: Optional[int] = None) -> List["GraphQLPlace"]:
-    """Get tourism places with optional filters"""
-    try:
-        places_data = TourismService.get_places(
-            country=country, 
-            category=category, 
-            limit=limit
-        )
-        return [GraphQLPlace(**place) for place in places_data]
-    except Exception as e:
-        print(f"Error fetching places: {e}")
-        return []
 
 @strawberry.field
 def get_user_dictionary(self, user_id: int, 
@@ -299,27 +270,6 @@ def login(self, input: LoginInput) -> AuthResponse:
             user=None
         )
 
-@strawberry.mutation
-def generate_speech(self, input: TTSInput) -> TTSResponse:
-    """Generate speech from text"""
-    try:
-        audio_content = TextToSpeechService.generate_speech(
-            text=input.text,
-            gender=input.gender,
-            language=input.language
-        )
-        
-        return TTSResponse(
-            success=True,
-            message="Speech generated successfully",
-            audio_url=audio_content,
-            audio_content=audio_content
-        )
-    except Exception as e:
-        return TTSResponse(
-            success=False,
-            message=f"Error generating speech: {str(e)}"
-        )
 
-TourismQueries = [generate_speech, login, register, get_common_phrases, get_emergency_phrases, get_culture_tips, get_emergency_contacts, get_travel_history, get_user_dictionary, get_places, get_supported_languages]
+TourismQueries = [login, register, get_common_phrases, get_emergency_phrases, get_culture_tips, get_emergency_contacts, get_travel_history, get_user_dictionary]
                  

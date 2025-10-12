@@ -8,8 +8,10 @@ import Link from 'next/link';
 import { Eye, EyeOff, Globe, ArrowLeft, User, Mail, Lock, MapPin } from 'lucide-react';
 import { REGISTER_MUTATION } from '@/graphql/queries';
 import toast from 'react-hot-toast';
+import { useTranslation } from '@/hooks/useTranslation';
 
 export default function Register() {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -95,23 +97,23 @@ export default function Register() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="flex items-center justify-between p-6">
         <Link 
           href="/"
-          className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
+          className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
-          <span>Back to Home</span>
+          <span>{t('nav.backToHome')}</span>
         </Link>
         
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-gradient-to-r from-primary to-accent rounded-lg flex items-center justify-center">
             <Globe className="w-5 h-5 text-white" />
           </div>
-          <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            TourismToolKit
+          <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            {t('home.poweredBy')}
           </span>
         </div>
       </div>
@@ -125,22 +127,22 @@ export default function Register() {
           className="max-w-md w-full space-y-8"
         >
           <div>
-            <h2 className="text-center text-3xl font-bold text-gray-900 dark:text-white">
-              Join TourismToolKit
+            <h2 className="text-center text-3xl font-bold text-foreground">
+              {t('auth.register.title')}
             </h2>
-            <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-              Start your journey across incredible India
+            <p className="mt-2 text-center text-sm text-muted-foreground">
+              {t('auth.register.subtitle')}
             </p>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 py-8 px-6 shadow-xl rounded-2xl">
+          <div className="bg-card py-8 px-6 shadow-xl rounded-2xl border border-border">
             <form className="space-y-6" onSubmit={handleSubmit}>
               {/* Personal Information */}
               <div className="grid grid-cols-1 gap-6">
                 <div>
-                  <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label htmlFor="fullName" className="block text-sm font-medium text-foreground">
                     <User className="inline w-4 h-4 mr-2" />
-                    Full Name
+                    {t('auth.register.fullName')}
                   </label>
                   <input
                     id="fullName"
@@ -148,14 +150,14 @@ export default function Register() {
                     type="text"
                     value={formData.fullName}
                     onChange={handleChange}
-                    className="mt-1 block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter your full name"
+                    className="mt-1 block w-full px-3 py-3 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                    placeholder={t('auth.register.fullName')}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Username
+                  <label htmlFor="username" className="block text-sm font-medium text-foreground">
+                    {t('auth.register.username')}
                   </label>
                   <input
                     id="username"
@@ -164,15 +166,15 @@ export default function Register() {
                     required
                     value={formData.username}
                     onChange={handleChange}
-                    className="mt-1 block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Choose a username"
+                    className="mt-1 block w-full px-3 py-3 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                    placeholder={t('auth.register.username')}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label htmlFor="email" className="block text-sm font-medium text-foreground">
                     <Mail className="inline w-4 h-4 mr-2" />
-                    Email Address
+                    {t('auth.register.email')}
                   </label>
                   <input
                     id="email"
@@ -181,15 +183,15 @@ export default function Register() {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="mt-1 block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter your email"
+                    className="mt-1 block w-full px-3 py-3 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                    placeholder={t('auth.register.email')}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label htmlFor="password" className="block text-sm font-medium text-foreground">
                     <Lock className="inline w-4 h-4 mr-2" />
-                    Password
+                    {t('auth.register.password')}
                   </label>
                   <div className="mt-1 relative">
                     <input
@@ -199,8 +201,8 @@ export default function Register() {
                       required
                       value={formData.password}
                       onChange={handleChange}
-                      className="block w-full px-3 py-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Create a password"
+                      className="block w-full px-3 py-3 pr-12 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                      placeholder={t('auth.register.password')}
                     />
                     <button
                       type="button"
@@ -208,17 +210,17 @@ export default function Register() {
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? (
-                        <EyeOff className="h-5 w-5 text-gray-400" />
+                        <EyeOff className="h-5 w-5 text-muted-foreground" />
                       ) : (
-                        <Eye className="h-5 w-5 text-gray-400" />
+                        <Eye className="h-5 w-5 text-muted-foreground" />
                       )}
                     </button>
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Confirm Password
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-foreground">
+                    {t('auth.register.confirmPassword')}
                   </label>
                   <input
                     id="confirmPassword"
@@ -227,22 +229,22 @@ export default function Register() {
                     required
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="mt-1 block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Confirm your password"
+                    className="mt-1 block w-full px-3 py-3 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                    placeholder={t('auth.register.confirmPassword')}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="homeCountry" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label htmlFor="homeCountry" className="block text-sm font-medium text-foreground">
                     <MapPin className="inline w-4 h-4 mr-2" />
-                    Home Country
+                    {t('auth.register.homeCountry')}
                   </label>
                   <select
                     id="homeCountry"
                     name="homeCountry"
                     value={formData.homeCountry}
                     onChange={handleChange}
-                    className="mt-1 block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="mt-1 block w-full px-3 py-3 border border-input rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                   >
                     {countries.map(country => (
                       <option key={country} value={country}>{country}</option>
@@ -251,15 +253,15 @@ export default function Register() {
                 </div>
 
                 <div>
-                  <label htmlFor="preferredLanguage" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Preferred Language
+                  <label htmlFor="preferredLanguage" className="block text-sm font-medium text-foreground">
+                    {t('auth.register.preferredLanguage')}
                   </label>
                   <select
                     id="preferredLanguage"
                     name="preferredLanguage"
                     value={formData.preferredLanguage}
                     onChange={handleChange}
-                    className="mt-1 block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="mt-1 block w-full px-3 py-3 border border-input rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                   >
                     {languages.map(lang => (
                       <option key={lang.code} value={lang.code}>{lang.name}</option>
@@ -272,20 +274,20 @@ export default function Register() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-foreground bg-gradient-to-r from-primary to-accent hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isLoading ? 'Creating Account...' : 'Create Account'}
+                  {isLoading ? t('auth.register.creatingAccount') : t('auth.register.createAccount')}
                 </button>
               </div>
 
               <div className="text-center">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  Already have an account?{' '}
+                <span className="text-sm text-muted-foreground">
+                  {t('auth.register.haveAccount')}{' '}
                   <Link 
                     href="/auth/login"
-                    className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+                    className="font-medium text-primary hover:text-primary/80"
                   >
-                    Sign in
+                    {t('auth.register.signIn')}
                   </Link>
                 </span>
               </div>

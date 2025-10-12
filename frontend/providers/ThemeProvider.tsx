@@ -50,11 +50,12 @@ export function ThemeProvider({
     if (typeof document !== 'undefined') {
       const root = document.documentElement;
       
-      // Remove existing theme classes
-      root.classList.remove('light', 'dark');
-      
-      // Add new theme class
-      root.classList.add(themeToApply);
+      // For Tailwind dark mode, we only need to add/remove 'dark' class
+      if (themeToApply === 'dark') {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
       
       // Store for debugging
       localStorage.setItem('applied-theme', themeToApply);

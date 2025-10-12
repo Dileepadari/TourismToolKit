@@ -17,24 +17,26 @@ import {
   Compass
 } from 'lucide-react';
 import { useAuth } from '@/providers/AuthProvider';
+import { useTranslation } from '@/hooks/useTranslation';
 import Button from '@/components/ui/Button';
 import ThemeToggle from '@/components/ThemeToggle';
 import LanguageSelector from '@/components/LanguageSelector';
 import toast from 'react-hot-toast';
 
-const navigationItems = [
-  { name: 'Dashboard', href: '/dashboard', icon: Home, color: 'from-saffron-500 to-golden-500' },
-  { name: 'Translator', href: '/translator', icon: Languages, color: 'from-royal-500 to-heritage-500' },
-  { name: 'Dictionary', href: '/dictionary', icon: BookOpen, color: 'from-heritage-500 to-saffron-500' },
-  { name: 'Places', href: '/places', icon: MapPin, color: 'from-golden-500 to-royal-500' },
-  { name: 'Guide', href: '/guide', icon: Compass, color: 'from-saffron-500 to-heritage-500' },
-];
-
 export default function Navigation() {
+  const { t } = useTranslation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const { user, isAuthenticated, logout } = useAuth();
+
+  const navigationItems = [
+    { name: t('nav.dashboard'), href: '/dashboard', icon: Home, color: 'from-saffron-500 to-golden-500' },
+    { name: t('nav.translator'), href: '/translator', icon: Languages, color: 'from-royal-500 to-heritage-500' },
+    { name: t('nav.dictionary'), href: '/dictionary', icon: BookOpen, color: 'from-heritage-500 to-saffron-500' },
+    { name: t('nav.places'), href: '/places', icon: MapPin, color: 'from-golden-500 to-royal-500' },
+    { name: 'Guide', href: '/guide', icon: Compass, color: 'from-saffron-500 to-heritage-500' },
+  ];
 
   const handleLogout = () => {
     logout();
@@ -44,15 +46,15 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-saffron-200 dark:border-saffron-800 shadow-sm">
+    <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href={isAuthenticated ? '/dashboard' : '/'} className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-saffron-500 to-golden-500 rounded-lg flex items-center justify-center shadow-lg">
-              <Globe2 className="w-5 h-5 text-white" />
+            <div className="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center shadow-lg">
+              <Globe2 className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold text-gray-900 dark:text-white hidden sm:block">
+            <span className="text-xl font-bold text-foreground hidden sm:block">
               TourismToolKit
             </span>
           </Link>
@@ -68,8 +70,8 @@ export default function Navigation() {
                     href={item.href}
                     className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       isActive
-                        ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-                        : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+                        ? 'bg-primary/10 text-primary'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                     }`}
                   >
                     <item.icon className="w-4 h-4" />
@@ -94,28 +96,28 @@ export default function Navigation() {
                 {/* User Menu (Desktop) */}
                 <div className="hidden md:flex items-center space-x-3">
                   <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 bg-gradient-to-r from-saffron-500 to-heritage-500 rounded-full flex items-center justify-center">
-                      <span className="text-white text-sm font-semibold">
+                    <div className="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
+                      <span className="text-primary-foreground text-sm font-semibold">
                         {user?.fullName?.charAt(0) || user?.username?.charAt(0) || 'U'}
                       </span>
                     </div>
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <span className="text-sm font-medium text-foreground">
                       {user?.fullName || user?.username}
                     </span>
                   </div>
 
                   <Link
                     href="/settings"
-                    className="p-2 rounded-lg text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-                    title="Settings"
+                    className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                    title={t('nav.settings')}
                   >
                     <Settings className="w-4 h-4" />
                   </Link>
 
                   <button
                     onClick={handleLogout}
-                    className="p-2 rounded-lg text-gray-500 hover:text-red-600 transition-colors"
-                    title="Logout"
+                    className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                    title={t('nav.logout')}
                   >
                     <LogOut className="w-4 h-4" />
                   </button>
@@ -124,7 +126,7 @@ export default function Navigation() {
                 {/* Mobile Menu Button */}
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="md:hidden p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  className="md:hidden p-2 rounded-lg text-foreground hover:bg-muted transition-colors"
                 >
                   {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                 </button>
@@ -133,7 +135,7 @@ export default function Navigation() {
               <div className="hidden md:flex items-center space-x-3">
                 <Link
                   href="/auth/login"
-                  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Login
                 </Link>
@@ -152,21 +154,21 @@ export default function Navigation() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
-          className="md:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700"
+          className="md:hidden bg-card border-t border-border"
         >
           <div className="px-4 py-2 space-y-1">
             {/* User Info */}
-            <div className="flex items-center space-x-3 px-3 py-4 border-b border-gray-200 dark:border-gray-700">
-              <div className="w-10 h-10 bg-gradient-to-r from-saffron-500 to-heritage-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-semibold">
+            <div className="flex items-center space-x-3 px-3 py-4 border-b border-border">
+              <div className="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
+                <span className="text-primary-foreground font-semibold">
                   {user?.fullName?.charAt(0) || user?.username?.charAt(0) || 'U'}
                 </span>
               </div>
               <div>
-                <p className="font-medium text-gray-900 dark:text-white">
+                <p className="font-medium text-foreground">
                   {user?.fullName || user?.username}
                 </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-sm text-muted-foreground">
                   {user?.email}
                 </p>
               </div>
@@ -182,8 +184,8 @@ export default function Navigation() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`flex items-center space-x-3 px-3 py-3 rounded-md text-base font-medium transition-colors ${
                     isActive
-                      ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                   }`}
                 >
                   <item.icon className="w-5 h-5" />
@@ -193,12 +195,12 @@ export default function Navigation() {
             })}
 
             {/* Mobile Actions */}
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-2">
+            <div className="border-t border-border pt-2">
               {/* Language Selector for Mobile */}
               <div className="px-3 py-3">
                 <div className="flex items-center space-x-3 mb-2">
-                  <Languages className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                  <span className="text-base font-medium text-gray-600 dark:text-gray-300">Language</span>
+                  <Languages className="w-5 h-5 text-muted-foreground" />
+                  <span className="text-base font-medium text-muted-foreground">Language</span>
                 </div>
                 <LanguageSelector variant="dropdown" />
               </div>
@@ -206,18 +208,18 @@ export default function Navigation() {
               <Link
                 href="/settings"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center space-x-3 px-3 py-3 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors w-full"
+                className="flex items-center space-x-3 px-3 py-3 rounded-md text-base font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors w-full"
               >
                 <Settings className="w-5 h-5" />
-                <span>Settings</span>
+                <span>{t('nav.settings')}</span>
               </Link>
               
               <button
                 onClick={handleLogout}
-                className="flex items-center space-x-3 px-3 py-3 rounded-md text-base font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors w-full"
+                className="flex items-center space-x-3 px-3 py-3 rounded-md text-base font-medium text-destructive hover:bg-destructive/10 transition-colors w-full"
               >
                 <LogOut className="w-5 h-5" />
-                <span>Logout</span>
+                <span>{t('nav.logout')}</span>
               </button>
             </div>
           </div>

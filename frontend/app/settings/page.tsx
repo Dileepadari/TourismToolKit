@@ -20,6 +20,7 @@ import toast from 'react-hot-toast';
 import Button from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import Header from '@/components/ui/Header';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface LanguageOption {
   code: string;
@@ -27,6 +28,7 @@ interface LanguageOption {
 }
 
 export default function Settings() {
+  const { t } = useTranslation();
 //   const { user, updateUser } = useAuth();
   const [mounted, setMounted] = useState(false);
   
@@ -36,13 +38,21 @@ export default function Settings() {
   }, []);
 
   if (!mounted) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">{t('common.loadingSettings')}</p>
+        </div>
+      </div>
+    );
   }
 
   return <SettingsContent />;
 }
 
 function SettingsContent() {
+  const { t } = useTranslation();
   const { user, updateUser } = useAuth();
   const { theme, setTheme } = useTheme();
   
@@ -84,9 +94,9 @@ function SettingsContent() {
   };
 
   const themeOptions = [
-    { value: 'light', label: 'Light', icon: Sun },
-    { value: 'dark', label: 'Dark', icon: Moon },
-    { value: 'system', label: 'System', icon: Monitor },
+    { value: 'light', label: t('settings.preferences.lightMode'), icon: Sun },
+    { value: 'dark', label: t('settings.preferences.darkMode'), icon: Moon },
+    { value: 'system', label: t('settings.preferences.systemMode'), icon: Monitor },
   ];
 
   const languages: LanguageOption[] = languagesData?.getSupportedLanguages?.languages || [
@@ -105,23 +115,23 @@ function SettingsContent() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-saffron-50 via-white to-heritage-50 dark:from-gray-950 dark:via-gray-900 dark:to-saffron-950/20">
+    <div className="min-h-screen bg-background">
       <Header 
-        title="Settings" 
-        subtitle="Manage your preferences and account settings"
+        title={t('settings.title')} 
+        subtitle={t('settings.subtitle')}
       />
       
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid gap-6 md:grid-cols-2">
           {/* Profile Settings */}
-          <Card className="space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-saffron-500 to-heritage-500 flex items-center justify-center">
+          <Card className="p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
                 <User className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Profile</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <h3 className="text-lg font-semibold text-foreground">{t('settings.account.title')}</h3>
+                <p className="text-sm text-muted-foreground">
                   Update your personal information
                 </p>
               </div>
@@ -129,42 +139,42 @@ function SettingsContent() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Full Name
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  {t('settings.account.fullName')}
                 </label>
                 <input
                   type="text"
                   value={formData.fullName}
                   onChange={(e) => handleInputChange('fullName', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-saffron-500 focus:border-transparent"
-                  placeholder="Enter your full name"
+                  className="w-full px-4 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
+                  placeholder={t('settings.account.fullName')}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Email
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  {t('settings.account.email')}
                 </label>
                 <input
                   type="email"
                   value={user?.email || ''}
                   disabled
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 cursor-not-allowed"
+                  className="w-full px-4 py-2 border border-input rounded-lg bg-muted text-muted-foreground cursor-not-allowed"
                 />
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Email cannot be changed
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Home Country
                 </label>
                 <input
                   type="text"
                   value={formData.homeCountry}
                   onChange={(e) => handleInputChange('homeCountry', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-saffron-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
                   placeholder="Enter your home country"
                 />
               </div>
@@ -172,33 +182,33 @@ function SettingsContent() {
           </Card>
 
           {/* Appearance Settings */}
-          <Card className="space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-royal-500 to-heritage-500 flex items-center justify-center">
+          <Card className="p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-secondary to-accent flex items-center justify-center">
                 <Palette className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Appearance</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <h3 className="text-lg font-semibold text-foreground">Appearance</h3>
+                <p className="text-sm text-muted-foreground">
                   Customize your visual experience
                 </p>
               </div>
             </div>
-+
+
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Theme
                 </label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-3">
                   {themeOptions.map(({ value, label, icon: Icon }) => (
                     <button
                       key={value}
                       onClick={() => setTheme(value as typeof theme)}
                       className={`p-3 rounded-lg border transition-all duration-200 flex flex-col items-center gap-2 ${
                         theme === value
-                          ? 'border-saffron-500 bg-saffron-50 dark:bg-saffron-950/50 text-saffron-700 dark:text-saffron-300'
-                          : 'border-gray-300 dark:border-gray-600 hover:border-saffron-300 dark:hover:border-saffron-600'
+                          ? 'border-primary bg-primary/10 text-primary'
+                          : 'border-border hover:border-primary hover:bg-muted'
                       }`}
                     >
                       <Icon className="w-5 h-5" />
@@ -211,27 +221,27 @@ function SettingsContent() {
           </Card>
 
           {/* Language Settings */}
-          <Card className="space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-heritage-500 to-royal-500 flex items-center justify-center">
+          <Card className="p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-accent to-secondary flex items-center justify-center">
                 <Globe className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Language</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <h3 className="text-lg font-semibold text-foreground">Language</h3>
+                <p className="text-sm text-muted-foreground">
                   Select your preferred language
                 </p>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Preferred Language
               </label>
               <select
                 value={formData.preferredLanguage}
                 onChange={(e) => handleInputChange('preferredLanguage', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-saffron-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
               >
                 {languages.map((lang) => (
                   <option key={lang.code} value={lang.code}>
@@ -243,28 +253,28 @@ function SettingsContent() {
           </Card>
 
           {/* Privacy & Security */}
-          <Card className="space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-golden-500 to-saffron-500 flex items-center justify-center">
+          <Card className="p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-secondary to-primary flex items-center justify-center">
                 <Shield className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Privacy & Security</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <h3 className="text-lg font-semibold text-foreground">Privacy & Security</h3>
+                <p className="text-sm text-muted-foreground">
                   Manage your account security
                 </p>
               </div>
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                 <div className="flex items-center gap-3">
-                  <Eye className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  <Eye className="w-5 h-5 text-muted-foreground" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    <p className="text-sm font-medium text-foreground">
                       Account Status
                     </p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                    <p className="text-xs text-muted-foreground">
                       {user?.isVerified ? 'Verified' : 'Not verified'}
                     </p>
                   </div>
@@ -276,13 +286,13 @@ function SettingsContent() {
         </div>
 
         {/* Save Button */}
-        <div className="mt-8 flex justify-center">
+        <div className="mt-8 flex justify-end">
           <Button
             onClick={handleSave}
             disabled={updating}
-            className="px-8 py-3 bg-gradient-to-r from-saffron-500 to-heritage-500 hover:from-saffron-600 hover:to-heritage-600 text-white font-medium rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="px-8 py-3 bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground font-medium rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center gap-2"
           >
-            <Save className="w-5 h-5 mr-2" />
+            <Save className="w-5 h-5" />
             {updating ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>

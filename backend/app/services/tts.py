@@ -38,7 +38,7 @@ class TextToSpeechService:
         api_env_var_name = f"BASHINI_TTS_API_URL_{language_code}"
         print(f"DEBUG: Looking for env var {api_env_var_name}")  # Debug logging
         api_url = os.getenv(api_env_var_name)
-        token_env_var_name = f"BASHINI_API_TOKEN_{language_code}"
+        token_env_var_name = f"BASHINI_TTS_API_TOKEN_{language_code}"
         print(f"DEBUG: Looking for env var {token_env_var_name}")  # Debug logging
         token = os.getenv(token_env_var_name)
 

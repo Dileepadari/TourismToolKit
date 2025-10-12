@@ -67,9 +67,9 @@ export const TRANSLATE_TEXT_MUTATION = gql`
 export const GENERATE_SPEECH_MUTATION = gql`
   mutation GenerateSpeech($text: String!, $gender: String!, $language: String!) {
     generateSpeech(text: $text, gender: $gender, language: $language) {
+      audioContent
+      message
       success
-      audioUrl
-      error
     }
   }
 `;

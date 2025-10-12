@@ -29,7 +29,7 @@ export default function ThemeToggle({
   if (!mounted) {
     return (
       <div className={cn(
-        'p-2 rounded-lg bg-gray-100 dark:bg-gray-800',
+        'p-2 rounded-lg bg-muted',
         className
       )}>
         <Sun className={`w-${size === 'sm' ? '4' : size === 'lg' ? '6' : '5'} h-${size === 'sm' ? '4' : size === 'lg' ? '6' : '5'}`} />
@@ -91,7 +91,7 @@ function ThemeToggleContent({
             const newTheme = e.target.value as 'light' | 'dark' | 'system';
             setTheme(newTheme);
           }}
-          className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-saffron-500"
+          className="px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
         >
           <option value="light">Light</option>
           <option value="dark">Dark</option>
@@ -108,7 +108,7 @@ function ThemeToggleContent({
         whileTap={{ scale: 0.95 }}
         onClick={cycleTheme}
         className={cn(
-          'flex items-center space-x-2 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-all',
+          'flex items-center space-x-2 px-3 py-2 rounded-lg bg-muted hover:bg-muted/80 text-foreground transition-all',
           className
         )}
       >
@@ -125,7 +125,7 @@ function ThemeToggleContent({
       whileTap={{ scale: 0.9 }}
       onClick={cycleTheme}
       className={cn(
-        'p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-all',
+        'p-2 rounded-lg bg-muted hover:bg-muted/80 text-foreground transition-all',
         className
       )}
       title={`Switch to ${theme === 'dark' ? 'system' : theme === 'light' ? 'dark' : 'light'} theme`}
