@@ -15,13 +15,13 @@ class MachineTranslationService:
             "languages": [
                 {"code": "hi", "name": "Hindi"},
                 {"code": "en", "name": "English"},
-                # {"code": "te", "name": "Telugu"},
-                # {"code": "ta", "name": "Tamil"},
-                # {"code": "kn", "name": "Kannada"},
+                {"code": "te", "name": "Telugu"},
+                {"code": "ta", "name": "Tamil"},
+                {"code": "kn", "name": "Kannada"},
                 # {"code": "ml", "name": "Malayalam"},
                 # {"code": "bn", "name": "Bengali"},
-                {"code": "gu", "name": "Gujarati"},
-                {"code": "mr", "name": "Marathi"},
+                # {"code": "gu", "name": "Gujarati"},
+                # {"code": "mr", "name": "Marathi"},
                 # {"code": "pa", "name": "Punjabi"}
             ]
         }
