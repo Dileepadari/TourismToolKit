@@ -47,12 +47,6 @@ class LanguagesResponse:
     languages: List[Language]
 
 @strawberry.type
-class TTSResponse:
-    success: bool
-    audio_url: Optional[str]
-    error: Optional[str]
-
-@strawberry.type
 class TranslationResponse:
     success: bool
     translated_text: Optional[str]

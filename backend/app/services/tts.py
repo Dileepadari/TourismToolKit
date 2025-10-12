@@ -1,9 +1,13 @@
 import os
 import requests
 from dotenv import load_dotenv
+from typing import Optional
+from langdetect import detect, LangDetectException
 
 # Load environment variables
 load_dotenv()
+
+TOKEN = os.getenv("BASHINI_API_TOKEN_DEFAULT")
 
 class TextToSpeechService:
     @staticmethod

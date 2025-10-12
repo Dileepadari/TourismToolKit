@@ -9,10 +9,10 @@ import strawberry
 
 from typing import List, Optional
 from ..types.tourism_types import (
-    User as GraphQLUser, AuthResponse, RegisterInput, LoginInput, Language, LanguagesResponse,
+    User as GraphQLUser, AuthResponse, RegisterInput, LoginInput, LanguagesResponse,
     Place as GraphQLPlace, DictionaryEntry as GraphQLDictionaryEntry, DictionaryInput, 
-    TravelHistory as GraphQLTravelHistory, TravelHistoryInput,
-    EmergencyContact as GraphQLEmergencyContact, CultureTip as GraphQLCultureTip, PhrasesResponse
+    TravelHistory,
+    EmergencyContact, CultureTip, PhrasesResponse
 )
 from ..types.tts_types import TTSResponse, TTSInput
 from ...services.enhanced_tts import (
@@ -321,3 +321,5 @@ def generate_speech(self, input: TTSInput) -> TTSResponse:
             message=f"Error generating speech: {str(e)}"
         )
 
+TourismQueries = [generate_speech, login, register, get_common_phrases, get_emergency_phrases, get_culture_tips, get_emergency_contacts, get_travel_history, get_user_dictionary, get_places, get_supported_languages]
+                 

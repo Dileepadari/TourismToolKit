@@ -2,13 +2,13 @@ import strawberry
 from typing import List, Optional
 
 @strawberry.type
-class Language:
+class Language_tts:
     code: str
     name: str
 
 @strawberry.type
 class LanguageResponse:
-    languages: List[Language]
+    languages: List[Language_tts]
 
 @strawberry.type
 class TTSResponse:

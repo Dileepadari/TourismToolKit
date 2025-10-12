@@ -1,13 +1,13 @@
 import strawberry
 from typing import List
-from app.graphql.types.tts_types import Language
+from app.graphql.types.tts_types import Language_tts
 from app.services.tts import TextToSpeechService
 
 @strawberry.field
-def supported_languages() -> List[Language]:
+def supported_languages() -> List[Language_tts]:
     """Get list of supported languages for text-to-speech"""
     languages_data = TextToSpeechService.get_supported_languages()
-    return [Language(code=lang["code"], name=lang["name"]) for lang in languages_data["languages"]]
+    return [Language_tts(code=lang["code"], name=lang["name"]) for lang in languages_data["languages"]]
 
 TTSQueries = [
     supported_languages

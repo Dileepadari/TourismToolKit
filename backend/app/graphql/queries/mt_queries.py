@@ -1,11 +1,11 @@
 import strawberry
 from typing import List
 # Assuming Language type is defined and accessible here
-from app.graphql.types.tts_types import Language 
+from app.graphql.types.tts_types import Language_tts
 from app.services.mt import MachineTranslationService # Import your MT service
 
 @strawberry.field
-def supported_mt_languages() -> List[Language]:
+def supported_mt_languages() -> List[Language_tts]:
     """
     Get list of supported languages for Machine Translation.
     
@@ -20,7 +20,7 @@ def supported_mt_languages() -> List[Language]:
     
     # Map the dictionary list from the service to the Strawberry Language type
     return [
-        Language(code=lang["code"], name=lang["name"]) 
+        Language_tts(code=lang["code"], name=lang["name"]) 
         for lang in languages_data.get("languages", [])
     ]
 
