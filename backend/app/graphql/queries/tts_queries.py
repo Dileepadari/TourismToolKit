@@ -12,3 +12,4 @@ def supported_languages() -> List[Language]:
 TTSQueries = [
     supported_languages
 ]
+
