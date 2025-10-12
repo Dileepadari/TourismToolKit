@@ -10,14 +10,7 @@ def generate_speech(input: TTSInput) -> TTSResponse:
         audio_content = TextToSpeechService.generate_speech(
             text=input.text,
             gender=input.gender,
-            language=input.language
-        )
-
-        return TTSResponse(
-            success=True,
-            message="Speech generated successfully",
-            audio_url=audio_content,
-            audio_content=audio_content
+            # language=input.language
         )
 
         # Check if audio_content is bytes or already a string/dict
@@ -28,8 +21,7 @@ def generate_speech(input: TTSInput) -> TTSResponse:
             return TTSResponse(
                 success=True,
                 message="Speech generated successfully",
-                audio_url=f"data:audio/mp3;base64,{audio_base64}",
-                audio_content=audio_base64
+                audio_content=f"data:audio/mp3;base64,{audio_base64}"
             )
         else:
             # Handle case where TTS API returns different format

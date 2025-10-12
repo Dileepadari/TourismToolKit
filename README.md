@@ -1,10 +1,10 @@
-# �🇳 TourismToolKit - India's Premier Travel Companion
+# TourismToolKit - India's Premier Travel Companion
 
 A comprehensive full-stack tourism application celebrating India's rich heritage with modern technology. Built with cutting-edge tools and inspired by India's vibrant culture, featuring a beautiful India-themed design system with Lucide React icons and responsive dark/light themes.
 
-## ✨ Features
+## Features
 
-### 🎨 India-Inspired Design System
+### India-Inspired Design System
 - **Saffron Elegance**: Courage and sacrifice represented through warm orange tones (#f97316)
 - **Heritage Green**: Growth and auspiciousness in deep emerald shades (#22c55e)
 - **Royal Blue**: Infinity of sky and ocean in majestic blues (#3b82f6)  
@@ -13,14 +13,14 @@ A comprehensive full-stack tourism application celebrating India's rich heritage
 - **Lucide React Icons**: Consistent, modern iconography across all components
 - **Responsive Design**: Beautiful on all devices from mobile to desktop
 
-### 🌐 Language & Translation
+### Language & Translation
 - **Multi-language Support**: 12+ Indian languages including Hindi, Bengali, Telugu, Tamil, Marathi, Gujarati, Kannada, Malayalam, Punjabi, Urdu, Odia
 - **Real-time Translation**: Instant text translation between supported languages
 - **Voice Translation**: Speech-to-text and text-to-speech in multiple Indian languages
 - **OCR Technology**: Extract and translate text from images
 - **Offline Dictionary**: Personal word collections with pronunciation guides
 
-### 🗺️ Places & Culture
+### Places & Culture
 - **Destination Discovery**: Explore India's incredible diversity
 - **Cultural Tips**: Local customs, etiquette, and cultural insights
 - **Heritage Information**: Rich historical context for tourist destinations
@@ -34,7 +34,7 @@ A comprehensive full-stack tourism application celebrating India's rich heritage
 - **Favorite Destinations**: Bookmark places you love
 - **Unified Dashboard**: Beautiful overview of your travel activity with India-themed stats
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Python 3.8+ 
@@ -62,7 +62,7 @@ npm run dev
 - **Backend API**: http://localhost:8000  
 - **GraphQL Playground**: http://localhost:8000/graphql
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### Frontend (Next.js)
 - **Next.js 15.5.4**: React framework with App Router
@@ -87,7 +87,7 @@ npm run dev
 - **JWT**: Authentication tokens
 - **Bhashini API**: AI-powered Indian language services
 
-## 🏗️ Architecture & Components
+## Architecture & Components
 
 ### Unified Design System
 - **UnifiedDashboard**: Main dashboard with India-themed stat cards and cultural insights
@@ -121,7 +121,7 @@ app/
 --golden: #f59e0b       /* Prosperity and brightness */
 ```
 
-## 🌐 Supported Languages
+## Supported Languages
 
 ### Indian Languages (12+)
 - **English** (en) - International communication
@@ -137,44 +137,44 @@ app/
 - **Urdu** (ur) - Widely spoken across India
 - **Odia** (or) - Odisha
 
-## 🎯 Key Features Implemented
+## Key Features Implemented
 
-### ✅ Complete Authentication System
+### Complete Authentication System
 - Secure JWT-based login/register
 - Password hashing with bcrypt
 - Protected routes with middleware
 - User profile management
 - Persistent authentication state
 
-### ✅ India-Themed UI/UX
+### India-Themed UI/UX
 - Custom TailwindCSS color palette
 - Lucide React icons throughout
 - Cultural pattern overlays
 - Responsive design for mobile/desktop
 - Dark/light theme with cultural sensitivity
 
-### ✅ GraphQL Integration  
+### GraphQL Integration  
 - Apollo Client setup with caching
 - Comprehensive queries and mutations
 - Real-time data synchronization
 - Error handling and loading states
 - Type-safe GraphQL operations
 
-### ✅ Unified Component Architecture
+### Unified Component Architecture
 - Common Header, Navigation, Button, Card components
 - Consistent India-themed styling across all pages
 - Responsive mobile navigation with cultural elements
 - Unified dashboard replacing duplicate implementations
 
-## 📱 Screenshots & Demo
+## Screenshots & Demo
 
 The application features a modern, responsive design optimized for both desktop and mobile devices, with comprehensive travel tools for exploring India.
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Please feel free to submit a Pull Request.
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 

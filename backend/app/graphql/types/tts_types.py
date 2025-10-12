@@ -14,14 +14,13 @@ class LanguageResponse:
 class TTSResponse:
     success: bool
     message: Optional[str] = None
-    audio_url: Optional[str] = None
     audio_content: Optional[str] = None  # Base64 encoded audio
 
 @strawberry.input
 class TTSInput:
     text: str
     gender: str
-    language: str = "en"
+    # language: str = "en"
 
 @strawberry.type
 class ApiUrlResponse:
