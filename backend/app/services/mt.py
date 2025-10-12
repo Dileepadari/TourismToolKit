@@ -13,9 +13,9 @@ class MachineTranslationService:
         """Get list of supported languages for TTS"""
         return {
             "languages": [
+                {"code": "te", "name": "Telugu"},
                 {"code": "hi", "name": "Hindi"},
                 {"code": "en", "name": "English"},
-                {"code": "te", "name": "Telugu"},
                 {"code": "ta", "name": "Tamil"},
                 {"code": "kn", "name": "Kannada"},
                 # {"code": "ml", "name": "Malayalam"},
