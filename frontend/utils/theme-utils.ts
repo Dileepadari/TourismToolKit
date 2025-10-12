@@ -37,7 +37,7 @@ export const themeClasses = {
   backgroundGradient: 'bg-gradient-to-br from-saffron-50 via-white to-heritage-50 dark:from-gray-900 dark:via-gray-800 dark:to-saffron-900',
   
   // Card backgrounds
-  cardBackground: 'bg-white dark:bg-gray-800',
+  cardBackground: 'bg-background',
   cardBorder: 'border-gray-200 dark:border-gray-700',
   
   // Text colors

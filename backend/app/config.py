@@ -2,7 +2,7 @@ import os
 
 class Config:
     # Database configuration - Use SQLite for development, PostgreSQL for production
-    DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./tourism_db.sqlite")
+    DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://tourism_user:tourism_password@localhost:5432/tourism_db")
     
     # JWT configuration
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key-change-in-production")

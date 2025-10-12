@@ -1,6 +1,11 @@
 #!/bin/bash
 # backend/start-backend.sh
 
+# Load environment variables from .env file
+if [ -f .env ]; then
+    export $(cat .env | grep -v '^#' | xargs)
+fi
+
 # Activate the virtual environment
 source venv/bin/activate
 

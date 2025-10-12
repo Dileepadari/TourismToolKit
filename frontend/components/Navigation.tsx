@@ -35,7 +35,7 @@ export default function Navigation() {
     { name: t('nav.translator'), href: '/translator', icon: Languages, color: 'from-royal-500 to-heritage-500' },
     { name: t('nav.dictionary'), href: '/dictionary', icon: BookOpen, color: 'from-heritage-500 to-saffron-500' },
     { name: t('nav.places'), href: '/places', icon: MapPin, color: 'from-golden-500 to-royal-500' },
-    { name: 'Guide', href: '/guide', icon: Compass, color: 'from-saffron-500 to-heritage-500' },
+    { name: t('nav.guide'), href: '/guide', icon: Compass, color: 'from-saffron-500 to-heritage-500' },
   ];
 
   const handleLogout = () => {

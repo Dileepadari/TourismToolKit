@@ -9,6 +9,7 @@ export const hi: TranslationKeys = {
     translator: 'अनुवादक',
     dictionary: 'शब्दकोश',
     places: 'स्थान',
+    guide: 'गाइड',
     settings: 'सेटिंग्स',
     login: 'लॉगिन',
     register: 'पंजीकरण',
@@ -128,8 +129,14 @@ export const hi: TranslationKeys = {
     quickActions: {
       title: 'त्वरित कार्य',
       translate: 'अभी अनुवाद करें',
+      ocrScanner: 'OCR स्कैनर',
+      ocrDescription: 'छवियों से टेक्स्ट निकालें और अनुवाद करें',
+      voiceAssistant: 'वॉयस असिस्टेंट',
+      voiceDescription: 'भाषण को वास्तविक समय में अनुवाद करें',
       findPlaces: 'स्थान खोजें',
       learnWords: 'शब्द सीखें',
+      travelGuide: 'यात्रा गाइड',
+      guideDescription: 'सांस्कृतिक अंतर्दृष्टि और यात्रा सुझाव',
     },
 
     stats: {
@@ -148,6 +155,20 @@ export const hi: TranslationKeys = {
       title: 'अनुशंसित स्थान',
       viewAll: 'सभी स्थान देखें',
     },
+
+    featuredPlaces: {
+      title: 'विशेष स्थान',
+      symbolOfLove: 'शाश्वत प्रेम का प्रतीक',
+      holisticCity: 'भारत की आध्यात्मिक राजधानी',
+      techHub: 'भारत की सिलिकॉन वैली',
+      pinkCity: 'गुलाबी शहर',
+      heritage: 'विरासत',
+      spiritual: 'आध्यात्मिक',
+      modern: 'आधुनिक',
+      historical: 'ऐतिहासिक',
+      visitors: 'आगंतुक',
+      rating: 'रेटिंग',
+    },
   },
 
   // Translator
@@ -159,6 +180,7 @@ export const hi: TranslationKeys = {
       text: 'टेक्स्ट',
       voice: 'आवाज़',
       image: 'छवि',
+      ocr: 'OCR',
     },
 
     textTranslation: {
@@ -179,6 +201,27 @@ export const hi: TranslationKeys = {
       stopRecording: 'रिकॉर्डिंग बंद करें',
       recording: 'रिकॉर्डिंग हो रही है...',
       processing: 'प्रोसेसिंग हो रही है...',
+      listening: 'सुन रहे हैं...',
+      speak: 'अभी बोलें',
+    },
+
+    imageTranslation: {
+      uploadImage: 'छवि अपलोड करें',
+      takePhoto: 'फ़ोटो लें',
+      processing: 'छवि प्रोसेस हो रही है...',
+      extracting: 'टेक्स्ट निकाला जा रहा है...',
+      noTextFound: 'छवि में कोई टेक्स्ट नहीं मिला',
+      selectImage: 'टेक्स्ट निकालने के लिए एक छवि चुनें',
+    },
+
+    ocrScanner: {
+      title: 'OCR टेक्स्ट स्कैनर',
+      subtitle: 'छवियों से टेक्स्ट निकालें और अनुवाद करें',
+      scanImage: 'छवि स्कैन करें',
+      scanning: 'स्कैन हो रहा है...',
+      extractedText: 'निकाला गया टेक्स्ट',
+      noText: 'कोई टेक्स्ट नहीं मिला',
+      uploadOrCapture: 'एक छवि अपलोड करें या कैप्चर करें',
     },
 
     quickPhrases: {
@@ -226,12 +269,16 @@ export const hi: TranslationKeys = {
   settings: {
     title: 'सेटिंग्स',
     subtitle: 'अपनी प्राथमिकताएं प्रबंधित करें',
+    updateInfo: 'अपनी व्यक्तिगत जानकारी अपडेट करें',
     
     account: {
       title: 'खाता जानकारी',
       email: 'ईमेल',
       username: 'उपयोगकर्ता नाम',
       fullName: 'पूरा नाम',
+      homeCountry: 'गृह देश',
+      emailCannotChange: 'ईमेल बदला नहीं जा सकता',
+      enterHomeCountry: 'अपना गृह देश दर्ज करें',
     },
 
     preferences: {
@@ -241,6 +288,18 @@ export const hi: TranslationKeys = {
       lightMode: 'लाइट',
       darkMode: 'डार्क',
       systemMode: 'सिस्टम',
+      appearance: 'उपस्थिति',
+      appearanceDescription: 'अपने दृश्य अनुभव को अनुकूलित करें',
+      preferredLanguage: 'पसंदीदा भाषा',
+      selectLanguage: 'भाषा चुनें',
+    },
+
+    privacy: {
+      title: 'गोपनीयता और सुरक्षा',
+      description: 'अपनी गोपनीयता सेटिंग्स प्रबंधित करें',
+      accountStatus: 'खाता स्थिति',
+      verified: 'सत्यापित',
+      notVerified: 'सत्यापित नहीं',
     },
 
     notifications: {
@@ -252,5 +311,23 @@ export const hi: TranslationKeys = {
     save: 'परिवर्तन सहेजें',
     saving: 'सहेजा जा रहा है...',
     saved: 'सेटिंग्स सफलतापूर्वक सहेजी गईं!',
+  },
+
+  // Guide
+  guide: {
+    title: 'यात्रा गाइड',
+    subtitle: 'भारत की खोज के लिए सांस्कृतिक अंतर्दृष्टि और यात्रा सुझाव',
+    culturalTips: 'सांस्कृतिक सुझाव',
+    localCustoms: 'स्थानीय रीति-रिवाज',
+    essentialPhrases: 'आवश्यक वाक्यांश',
+    safetyTips: 'सुरक्षा सुझाव',
+    transportation: 'परिवहन',
+    cuisine: 'स्थानीय व्यंजन',
+    attractions: 'अवश्य देखने योग्य आकर्षण',
+    etiquette: 'सांस्कृतिक शिष्टाचार',
+    festivals: 'त्योहार और कार्यक्रम',
+    shopping: 'खरीदारी गाइड',
+    emergency: 'आपातकालीन संपर्क',
+    weather: 'मौसम और यात्रा का सर्वोत्तम समय',
   },
 };

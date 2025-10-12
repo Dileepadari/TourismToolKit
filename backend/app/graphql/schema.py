@@ -6,8 +6,12 @@ from .mutations.mt_mutations import MTMutations
 from .queries.mt_queries import MTQueries
 from .queries.tourism_queries import TourismQueries
 from .mutations.tourism_mutations import TourismMutations
+from .queries.dictionary_queries import DictionaryQueries
+from .mutations.dictionary_mutations import DictionaryMutations
+from .queries.places_queries import PlacesQueries
+from .queries.guide_queries import GuideQueries
 
-Queries = create_type("Queries", TTSQueries+MTQueries+TourismQueries)
-Mutations = create_type("Mutations", TTSMutations+MTMutations+TourismMutations)
+Queries = create_type("Queries", TTSQueries+MTQueries+TourismQueries+DictionaryQueries+PlacesQueries+GuideQueries)
+Mutations = create_type("Mutations", TTSMutations+MTMutations+TourismMutations+DictionaryMutations)
 
 schema = strawberry.Schema(query=Queries, mutation=Mutations)

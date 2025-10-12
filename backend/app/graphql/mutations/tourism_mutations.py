@@ -55,27 +55,46 @@ def register(self, input: RegisterInput) -> AuthResponse:
 @strawberry.mutation
 def login(self, input: LoginInput) -> AuthResponse:
     """Login user"""
-    # Mock implementation
-    # In real implementation, verify credentials against database
-    
-    if input.email == "test@example.com" and input.password == "password":
-        from ..types.tourism_types import User
-        from datetime import datetime
+    try:
+        # Authenticate user against database
+        db_user = AuthService.authenticate_user(input.email, input.password)
         
+        if not db_user:
+            return AuthResponse(
+                success=False,
+                message="Invalid email or password",
+                token=None,
+                user=None
+            )
+        
+        if not db_user.is_active:
+            return AuthResponse(
+                success=False,
+                message="Account is deactivated",
+                token=None,
+                user=None
+            )
+        
+        # Create GraphQL User object
+        from ..types.tourism_types import User
         user = User(
-            id=1,
-            email=input.email,
-            username="testuser",
-            full_name="Test User",
-            profile_picture=None,
-            preferred_language="en",
-            preferred_theme="light",
-            home_country="India",
-            is_verified=True,
-            created_at=datetime.now()
+            id=db_user.id,
+            email=db_user.email,
+            username=db_user.username,
+            full_name=db_user.full_name,
+            profile_picture=db_user.profile_picture,
+            preferred_language=db_user.preferred_language,
+            preferred_theme=db_user.preferred_theme,
+            home_country=db_user.home_country,
+            is_verified=db_user.is_verified,
+            created_at=db_user.created_at
         )
         
-        token = AuthService.create_access_token({"sub": input.email, "user_id": 1})
+        # Generate JWT token
+        token = AuthService.create_access_token({
+            "sub": db_user.email, 
+            "user_id": db_user.id
+        })
         
         return AuthResponse(
             success=True,
@@ -83,13 +102,15 @@ def login(self, input: LoginInput) -> AuthResponse:
             token=token,
             user=user
         )
-    
-    return AuthResponse(
-        success=False,
-        message="Invalid credentials",
-        token=None,
-        user=None
-    )
+        
+    except Exception as e:
+        print(f"Login error: {e}")
+        return AuthResponse(
+            success=False,
+            message=f"Login failed: {str(e)}",
+            token=None,
+            user=None
+        )
 
 @strawberry.mutation
 def add_dictionary_entry(self, user_id: int, input: DictionaryInput) -> DictionaryEntry:

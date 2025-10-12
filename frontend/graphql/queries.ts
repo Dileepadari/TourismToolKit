@@ -53,23 +53,34 @@ export const GET_SUPPORTED_LANGUAGES = gql`
   }
 `;
 
+export const GET_SUPPORTED_MT_LANGUAGES = gql`
+  query GetSupportedMtLanguages {
+    supportedMtLanguages {
+      code
+      name
+    }
+  }
+`;
+
 export const TRANSLATE_TEXT_MUTATION = gql`
-  mutation TranslateText($text: String!, $sourceLang: String!, $targetLang: String!) {
-    translateText(text: $text, sourceLang: $sourceLang, targetLang: $targetLang) {
+  mutation TranslateText($input: MTInput!) {
+    translateText(input: $input) {
       success
       translatedText
-      error
+      message
+      sourceLang
+      targetLang
     }
   }
 `;
 
 // Text-to-Speech
 export const GENERATE_SPEECH_MUTATION = gql`
-  mutation GenerateSpeech($text: String!, $gender: String!, $language: String!) {
-    generateSpeech(text: $text, gender: $gender, language: $language) {
-      audioContent
-      message
+  mutation GenerateSpeech($input: TTSInput!) {
+    generateSpeech(input: $input) {
       success
+      message
+      audioContent
     }
   }
 `;
@@ -238,6 +249,147 @@ export const UPDATE_USER_PREFERENCES_MUTATION = gql`
     updateUserPreferences(userId: $userId, preferredLanguage: $preferredLanguage, preferredTheme: $preferredTheme) {
       success
       message
+    }
+  }
+`;
+
+// Dictionary Queries
+export const GET_DICTIONARY_ENTRIES = gql`
+  query GetDictionaryEntries(
+    $languageFrom: String
+    $languageTo: String
+    $searchWord: String
+    $userId: Int
+    $isFavorite: Boolean
+    $limit: Int
+  ) {
+    getDictionaryEntries(
+      languageFrom: $languageFrom
+      languageTo: $languageTo
+      searchWord: $searchWord
+      userId: $userId
+      isFavorite: $isFavorite
+      limit: $limit
+    ) {
+      id
+      word
+      translation
+      languageFrom
+      languageTo
+      pronunciation
+      usageExample
+      tags
+      isFavorite
+      createdAt
+    }
+  }
+`;
+
+export const SEARCH_DICTIONARY = gql`
+  query SearchDictionary(
+    $query: String!
+    $languageFrom: String!
+    $languageTo: String!
+    $userId: Int
+  ) {
+    searchDictionary(
+      query: $query
+      languageFrom: $languageFrom
+      languageTo: $languageTo
+      userId: $userId
+    ) {
+      id
+      word
+      translation
+      languageFrom
+      languageTo
+      pronunciation
+      usageExample
+      tags
+      isFavorite
+      createdAt
+    }
+  }
+`;
+
+export const GET_DICTIONARY_ENTRY = gql`
+  query GetDictionaryEntry($entryId: Int!) {
+    getDictionaryEntry(entryId: $entryId) {
+      id
+      word
+      translation
+      languageFrom
+      languageTo
+      pronunciation
+      usageExample
+      tags
+      isFavorite
+      createdAt
+    }
+  }
+`;
+
+// Dictionary Mutations
+export const ADD_DICTIONARY_ENTRY = gql`
+  mutation AddDictionaryEntry($userId: Int!, $input: DictionaryInput!) {
+    addDictionaryEntry(userId: $userId, input: $input) {
+      success
+      message
+      entry {
+        id
+        word
+        translation
+        languageFrom
+        languageTo
+        pronunciation
+        usageExample
+        tags
+        isFavorite
+        createdAt
+      }
+    }
+  }
+`;
+
+export const UPDATE_DICTIONARY_ENTRY = gql`
+  mutation UpdateDictionaryEntry($entryId: Int!, $userId: Int!, $input: DictionaryInput!) {
+    updateDictionaryEntry(entryId: $entryId, userId: $userId, input: $input) {
+      success
+      message
+      entry {
+        id
+        word
+        translation
+        languageFrom
+        languageTo
+        pronunciation
+        usageExample
+        tags
+        isFavorite
+        createdAt
+      }
+    }
+  }
+`;
+
+export const DELETE_DICTIONARY_ENTRY = gql`
+  mutation DeleteDictionaryEntry($entryId: Int!, $userId: Int!) {
+    deleteDictionaryEntry(entryId: $entryId, userId: $userId) {
+      success
+      message
+    }
+  }
+`;
+
+export const TOGGLE_FAVORITE_ENTRY = gql`
+  mutation ToggleFavoriteEntry($entryId: Int!, $userId: Int!) {
+    toggleFavoriteEntry(entryId: $entryId, userId: $userId) {
+      success
+      message
+      entry {
+        id
+        isFavorite
+      }
     }
   }
 `;

@@ -49,16 +49,16 @@ export default function UnifiedDashboard() {
     },
     {
       icon: Camera,
-      title: 'OCR Scanner',
-      description: 'Extract text from images instantly',
+      title: t('dashboard.quickActions.ocrScanner'),
+      description: t('dashboard.quickActions.ocrDescription'),
       href: '/translator?tab=ocr',
       color: 'from-saffron-500 to-golden-500',
       bgColor: 'bg-gradient-to-br from-saffron-50 to-golden-50 dark:from-saffron-900/20 dark:to-golden-900/20'
     },
     {
       icon: Mic,
-      title: 'Voice Assistant',
-      description: 'Speech-to-text conversations',
+      title: t('dashboard.quickActions.voiceAssistant'),
+      description: t('dashboard.quickActions.voiceDescription'),
       href: '/translator?tab=voice',
       color: 'from-heritage-500 to-royal-500',
       bgColor: 'bg-gradient-to-br from-heritage-50 to-royal-50 dark:from-heritage-900/20 dark:to-royal-900/20'
@@ -81,8 +81,8 @@ export default function UnifiedDashboard() {
     },
     {
       icon: Compass,
-      title: 'Travel Guide',
-      description: 'Cultural tips & insights',
+      title: t('dashboard.quickActions.travelGuide'),
+      description: t('dashboard.quickActions.guideDescription'),
       href: '/guide',
       color: 'from-royal-500 to-saffron-500',
       bgColor: 'bg-gradient-to-br from-royal-50 to-saffron-50 dark:from-royal-900/20 dark:to-saffron-900/20'
@@ -94,7 +94,7 @@ export default function UnifiedDashboard() {
       name: 'Taj Mahal',
       location: 'Agra, Uttar Pradesh',
       rating: 4.8,
-      description: 'Symbol of eternal love',
+      description: t('dashboard.featuredPlaces.symbolOfLove'),
       category: 'Heritage',
       visitors: '8M+',
       color: 'from-golden-400 to-saffron-400'
@@ -103,7 +103,7 @@ export default function UnifiedDashboard() {
       name: 'Kerala Backwaters',
       location: 'Alleppey, Kerala',
       rating: 4.7,
-      description: 'Serene waterways',
+      description: t('dashboard.featuredPlaces.holisticCity'),
       category: 'Nature',
       visitors: '2M+',
       color: 'from-heritage-400 to-royal-400'
@@ -112,7 +112,7 @@ export default function UnifiedDashboard() {
       name: 'Golden Temple',
       location: 'Amritsar, Punjab',
       rating: 4.9,
-      description: 'Sacred Sikh shrine',
+      description: t('dashboard.featuredPlaces.spiritual'),
       category: 'Spiritual',
       visitors: '5M+',
       color: 'from-royal-400 to-golden-400'
@@ -247,7 +247,7 @@ export default function UnifiedDashboard() {
           transition={{ delay: 0.2 }}
         >
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-foreground">Quick Actions</h2>
+            <h2 className="text-2xl font-bold text-foreground">{t('dashboard.quickActions.title')}</h2>
             <p className="text-muted-foreground">Choose your adventure</p>
           </div>
           
@@ -289,7 +289,7 @@ export default function UnifiedDashboard() {
           <div className="flex justify-between items-center mb-6">
             <div>
               <h2 className="text-2xl font-bold text-foreground">
-                Incredible India Awaits
+                {t('dashboard.featuredPlaces.title')}
               </h2>
               <p className="text-muted-foreground">Discover the wonders of our motherland</p>
             </div>
@@ -339,7 +339,7 @@ export default function UnifiedDashboard() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-1 text-muted-foreground">
                         <Users className="w-4 h-4" />
-                        <span className="text-sm">{place.visitors} visitors</span>
+                        <span className="text-sm">{place.visitors} {t('dashboard.featuredPlaces.visitors')}</span>
                       </div>
                       <Button size="sm" variant="ghost" className="text-primary hover:text-primary/80 p-0">
                         Learn More →

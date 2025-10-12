@@ -7,6 +7,7 @@ export const en = {
     translator: 'Translator',
     dictionary: 'Dictionary',
     places: 'Places',
+    guide: 'Guide',
     settings: 'Settings',
     login: 'Login',
     register: 'Register',
@@ -126,8 +127,14 @@ export const en = {
     quickActions: {
       title: 'Quick Actions',
       translate: 'Translate Now',
+      ocrScanner: 'OCR Scanner',
+      ocrDescription: 'Extract text from images instantly',
+      voiceAssistant: 'Voice Assistant',
+      voiceDescription: 'Speech-to-text conversations',
       findPlaces: 'Find Places',
       learnWords: 'Learn Words',
+      travelGuide: 'Travel Guide',
+      guideDescription: 'Cultural tips & insights',
     },
 
     stats: {
@@ -146,17 +153,32 @@ export const en = {
       title: 'Recommended Places',
       viewAll: 'View All Places',
     },
+
+    featuredPlaces: {
+      title: 'Featured Places',
+      symbolOfLove: 'Symbol of eternal love',
+      holisticCity: 'Spiritual capital of India',
+      techHub: 'India\'s Silicon Valley',
+      pinkCity: 'The Pink City',
+      heritage: 'Heritage',
+      spiritual: 'Spiritual',
+      modern: 'Modern',
+      historical: 'Historical',
+      visitors: 'Visitors',
+      rating: 'Rating',
+    },
   },
 
-  // Translator
+    // Translator
   translator: {
     title: 'AI Translator',
-    subtitle: 'Translate across multiple Indian languages instantly',
+    subtitle: 'Translate instantly across multiple Indian languages',
     
     tabs: {
       text: 'Text',
       voice: 'Voice',
       image: 'Image',
+      ocr: 'OCR',
     },
 
     textTranslation: {
@@ -177,6 +199,27 @@ export const en = {
       stopRecording: 'Stop Recording',
       recording: 'Recording...',
       processing: 'Processing...',
+      listening: 'Listening...',
+      speak: 'Speak now',
+    },
+
+    imageTranslation: {
+      uploadImage: 'Upload Image',
+      takePhoto: 'Take Photo',
+      processing: 'Processing image...',
+      extracting: 'Extracting text...',
+      noTextFound: 'No text found in image',
+      selectImage: 'Select an image to extract text',
+    },
+
+    ocrScanner: {
+      title: 'OCR Text Scanner',
+      subtitle: 'Extract and translate text from images',
+      scanImage: 'Scan Image',
+      scanning: 'Scanning...',
+      extractedText: 'Extracted Text',
+      noText: 'No text detected',
+      uploadOrCapture: 'Upload an image or capture one',
     },
 
     quickPhrases: {
@@ -230,6 +273,9 @@ export const en = {
       email: 'Email',
       username: 'Username',
       fullName: 'Full Name',
+      homeCountry: 'Home Country',
+      emailCannotChange: 'Email cannot be changed',
+      enterHomeCountry: 'Enter your home country',
     },
 
     preferences: {
@@ -239,6 +285,10 @@ export const en = {
       lightMode: 'Light',
       darkMode: 'Dark',
       systemMode: 'System',
+      appearance: 'Appearance',
+      appearanceDescription: 'Customize your visual experience',
+      preferredLanguage: 'Preferred Language',
+      selectLanguage: 'Select your preferred language',
     },
 
     notifications: {
@@ -247,9 +297,36 @@ export const en = {
       push: 'Push Notifications',
     },
 
+    privacy: {
+      title: 'Privacy & Security',
+      description: 'Manage your account security',
+      accountStatus: 'Account Status',
+      verified: 'Verified',
+      notVerified: 'Not verified',
+    },
+
     save: 'Save Changes',
     saving: 'Saving...',
     saved: 'Settings saved successfully!',
+    updateInfo: 'Update your personal information',
+  },
+
+  // Guide
+  guide: {
+    title: 'Travel Guide',
+    subtitle: 'Cultural insights and travel tips for exploring India',
+    culturalTips: 'Cultural Tips',
+    localCustoms: 'Local Customs',
+    essentialPhrases: 'Essential Phrases',
+    safetyTips: 'Safety Tips',
+    transportation: 'Transportation',
+    cuisine: 'Local Cuisine',
+    attractions: 'Must-Visit Attractions',
+    etiquette: 'Cultural Etiquette',
+    festivals: 'Festivals & Events',
+    shopping: 'Shopping Guide',
+    emergency: 'Emergency Contacts',
+    weather: 'Weather & Best Time to Visit',
   },
 };
 

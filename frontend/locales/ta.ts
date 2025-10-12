@@ -9,6 +9,7 @@ export const ta: TranslationKeys = {
     translator: 'மொழிபெயர்ப்பாளர்',
     dictionary: 'அகராதி',
     places: 'இடங்கள்',
+    guide: 'வழிகாட்டி',
     settings: 'அமைப்புகள்',
     login: 'உள்நுழை',
     register: 'பதிவு செய்',

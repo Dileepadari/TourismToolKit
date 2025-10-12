@@ -16,24 +16,47 @@ export function useTranslation() {
     const locale = selectedLanguage as SupportedLocale;
     const keys = key.split('.');
     
-    let translation: any = translations[locale] || translations.en;
+    // Try to get translation in selected language
+    let translation: any = translations[locale];
     
+    // If the selected language doesn't exist, use English
+    if (!translation) {
+      translation = translations.en;
+    }
+    
+    // Navigate through the nested keys
     for (const k of keys) {
-      if (translation && typeof translation === 'object') {
+      if (translation && typeof translation === 'object' && k in translation) {
         translation = translation[k];
       } else {
-        // Fallback to English if translation not found
+        // If key not found in selected language, fallback to English
         let fallback: any = translations.en;
         for (const fk of keys) {
-          if (fallback && typeof fallback === 'object') {
+          if (fallback && typeof fallback === 'object' && fk in fallback) {
             fallback = fallback[fk];
+          } else {
+            // If even English doesn't have it, return the key itself
+            return key;
           }
         }
         return typeof fallback === 'string' ? fallback : key;
       }
     }
     
-    return typeof translation === 'string' ? translation : key;
+    // Final check: if translation is not a string, fallback to English
+    if (typeof translation !== 'string') {
+      let fallback: any = translations.en;
+      for (const fk of keys) {
+        if (fallback && typeof fallback === 'object' && fk in fallback) {
+          fallback = fallback[fk];
+        } else {
+          return key;
+        }
+      }
+      return typeof fallback === 'string' ? fallback : key;
+    }
+    
+    return translation;
   };
   
   return { t, locale: selectedLanguage };

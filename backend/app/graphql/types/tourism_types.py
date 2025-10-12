@@ -106,6 +106,12 @@ class DictionaryInput:
     is_favorite: bool = False
 
 @strawberry.type
+class DictionaryResponse:
+    success: bool
+    message: str
+    entry: Optional["DictionaryEntry"]
+
+@strawberry.type
 class TravelHistory:
     id: int
     destination: str

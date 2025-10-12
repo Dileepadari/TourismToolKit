@@ -9,6 +9,7 @@ export const te: TranslationKeys = {
     translator: 'అనువాదకుడు',
     dictionary: 'నిఘంటువు',
     places: 'ప్రదేశాలు',
+    guide: 'గైడ్',
     settings: 'సెట్టింగ్‌లు',
     login: 'లాగిన్',
     register: 'రిజిస్టర్',
@@ -128,8 +129,14 @@ export const te: TranslationKeys = {
     quickActions: {
       title: 'త్వరిత చర్యలు',
       translate: 'ఇప్పుడే అనువదించండి',
+      ocrScanner: 'OCR స్కానర్',
+      ocrDescription: 'చిత్రాల నుండి వచనాన్ని సంగ్రహించండి మరియు అనువదించండి',
+      voiceAssistant: 'వాయిస్ అసిస్టెంట్',
+      voiceDescription: 'ప్రసంగాన్ని వాస్తవ సమయంలో అనువదించండి',
       findPlaces: 'ప్రదేశాలను కనుగొనండి',
       learnWords: 'పదాలను నేర్చుకోండి',
+      travelGuide: 'ప్రయాణ గైడ్',
+      guideDescription: 'సాంస్కృతిక అంతర్దృష్టులు మరియు ప్రయాణ చిట్కాలు',
     },
 
     stats: {
@@ -148,6 +155,20 @@ export const te: TranslationKeys = {
       title: 'సిఫార్సు చేయబడిన ప్రదేశాలు',
       viewAll: 'అన్ని ప్రదేశాలను చూడండి',
     },
+
+    featuredPlaces: {
+      title: 'ప్రత్యేక ప్రదేశాలు',
+      symbolOfLove: 'శాశ్వత ప్రేమకు చిహ్నం',
+      holisticCity: 'భారతదేశపు ఆధ్యాత్మిక రాజధాని',
+      techHub: 'భారతదేశపు సిలికాన్ వ్యాలీ',
+      pinkCity: 'పింక్ సిటీ',
+      heritage: 'వారసత్వం',
+      spiritual: 'ఆధ్యాత్మిక',
+      modern: 'ఆధునిక',
+      historical: 'చారిత్రక',
+      visitors: 'సందర్శకులు',
+      rating: 'రేటింగ్',
+    },
   },
 
   // Translator
@@ -159,6 +180,7 @@ export const te: TranslationKeys = {
       text: 'టెక్స్ట్',
       voice: 'వాయిస్',
       image: 'చిత్రం',
+      ocr: 'OCR',
     },
 
     textTranslation: {
@@ -179,6 +201,27 @@ export const te: TranslationKeys = {
       stopRecording: 'రికార్డింగ్ ఆపండి',
       recording: 'రికార్డ్ చేస్తోంది...',
       processing: 'ప్రాసెస్ చేస్తోంది...',
+      listening: 'వినుతోంది...',
+      speak: 'ఇప్పుడు మాట్లాడండి',
+    },
+
+    imageTranslation: {
+      uploadImage: 'చిత్రాన్ని అప్‌లోడ్ చేయండి',
+      takePhoto: 'ఫోటో తీయండి',
+      processing: 'చిత్రం ప్రాసెస్ చేయబడుతోంది...',
+      extracting: 'వచనం సంగ్రహించబడుతోంది...',
+      noTextFound: 'చిత్రంలో వచనం కనుగొనబడలేదు',
+      selectImage: 'వచనం సంగ్రహించడానికి చిత్రాన్ని ఎంచుకోండి',
+    },
+
+    ocrScanner: {
+      title: 'OCR టెక్స్ట్ స్కానర్',
+      subtitle: 'చిత్రాల నుండి వచనాన్ని సంగ్రహించండి మరియు అనువదించండి',
+      scanImage: 'చిత్రాన్ని స్కాన్ చేయండి',
+      scanning: 'స్కాన్ చేయబడుతోంది...',
+      extractedText: 'సంగ్రహించిన వచనం',
+      noText: 'వచనం కనుగొనబడలేదు',
+      uploadOrCapture: 'చిత్రాన్ని అప్‌లోడ్ చేయండి లేదా క్యాప్చర్ చేయండి',
     },
 
     quickPhrases: {
@@ -226,12 +269,16 @@ export const te: TranslationKeys = {
   settings: {
     title: 'సెట్టింగ్‌లు',
     subtitle: 'మీ ప్రాధాన్యతలను నిర్వహించండి',
+    updateInfo: 'మీ వ్యక్తిగత సమాచారాన్ని నవీకరించండి',
     
     account: {
       title: 'ఖాతా సమాచారం',
       email: 'ఇమెయిల్',
       username: 'వినియోగదారు పేరు',
       fullName: 'పూర్తి పేరు',
+      homeCountry: 'స్వదేశం',
+      emailCannotChange: 'ఇమెయిల్ మార్చలేరు',
+      enterHomeCountry: 'మీ స్వదేశాన్ని నమోదు చేయండి',
     },
 
     preferences: {
@@ -241,6 +288,18 @@ export const te: TranslationKeys = {
       lightMode: 'లైట్',
       darkMode: 'డార్క్',
       systemMode: 'సిస్టమ్',
+      appearance: 'రూపం',
+      appearanceDescription: 'మీ దృశ్య అనుభవాన్ని అనుకూలీకరించండి',
+      preferredLanguage: 'ప్రాధాన్య భాష',
+      selectLanguage: 'భాషను ఎంచుకోండి',
+    },
+
+    privacy: {
+      title: 'గోప్యత మరియు భద్రత',
+      description: 'మీ గోప్యత సెట్టింగ్‌లను నిర్వహించండి',
+      accountStatus: 'ఖాతా స్థితి',
+      verified: 'ధృవీకరించబడింది',
+      notVerified: 'ధృవీకరించబడలేదు',
     },
 
     notifications: {
@@ -252,5 +311,23 @@ export const te: TranslationKeys = {
     save: 'మార్పులను సేవ్ చేయండి',
     saving: 'సేవ్ చేస్తోంది...',
     saved: 'సెట్టింగ్‌లు విజయవంతంగా సేవ్ చేయబడ్డాయి!',
+  },
+
+  // Guide
+  guide: {
+    title: 'ప్రయాణ గైడ్',
+    subtitle: 'భారతదేశాన్ని అన్వేషించడానికి సాంస్కృతిక అంతర్దృష్టులు మరియు ప్రయాణ చిట్కాలు',
+    culturalTips: 'సాంస్కృతిక చిట్కాలు',
+    localCustoms: 'స్థానిక ఆచారాలు',
+    essentialPhrases: 'అవసరమైన పదబంధాలు',
+    safetyTips: 'భద్రతా చిట్కాలు',
+    transportation: 'రవాణా',
+    cuisine: 'స్థానిక వంటకాలు',
+    attractions: 'తప్పక చూడవలసిన ఆకర్షణలు',
+    etiquette: 'సాంస్కృతిక మర్యాదలు',
+    festivals: 'పండుగలు & కార్యక్రమాలు',
+    shopping: 'షాపింగ్ గైడ్',
+    emergency: 'అత్యవసర సంప్రదింపులు',
+    weather: 'వాతావరణం & సందర్శించడానికి ఉత్తమ సమయం',
   },
 };
