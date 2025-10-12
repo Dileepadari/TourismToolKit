@@ -20,7 +20,7 @@ class MachineTranslationService:
         api_url = os.getenv(api_env_var_name)
         
         # Try language pair specific token
-        token_env_var_name = f"BASHINI_API_TOKEN_{source_lang_code}_{target_lang_code}"
+        token_env_var_name = f"BASHINI_MT_API_TOKEN_{source_lang_code}_{target_lang_code}"
         token = os.getenv(token_env_var_name)
         
         # Fall back to default URL if language-specific URL not found
@@ -48,9 +48,7 @@ class MachineTranslationService:
         }
         
         payload = {
-            "text": text,
-            "sourceLanguage": source_lang,
-            "targetLanguage": target_lang
+            "input_text": text
         }
         
         try:
@@ -62,10 +60,8 @@ class MachineTranslationService:
             json_response = response.json()
             
             # Extract translated text from response - adjust based on actual API response format
-            if "data" in json_response and "translation" in json_response["data"]:
-                return json_response["data"]["translation"]
-            elif "translation" in json_response:
-                return json_response["translation"]
+            if "data" in json_response and "output_text" in json_response["data"]:
+                return json_response["data"]["output_text"]
             else:
                 raise Exception(f"Unexpected response format from MT API: {json_response}")
                 
