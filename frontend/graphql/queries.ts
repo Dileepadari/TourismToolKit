@@ -87,22 +87,48 @@ export const GENERATE_SPEECH_MUTATION = gql`
 
 // OCR
 export const EXTRACT_TEXT_FROM_IMAGE_MUTATION = gql`
-  mutation ExtractTextFromImage($imageData: String!, $language: String!) {
-    extractTextFromImage(imageData: $imageData, language: $language) {
+  mutation ExtractTextFromImage($input: OCRInput!) {
+    extractTextFromImage(input: $input) {
       success
+      message
       extractedText
+      language
       error
     }
   }
 `;
 
-// Speech-to-Text
+// Get supported OCR languages
+export const GET_SUPPORTED_OCR_LANGUAGES = gql`
+  query GetSupportedOcrLanguages {
+    supportedOcrLanguages {
+      languages {
+        code
+        name
+      }
+    }
+  }
+`;
+
+// Speech-to-Text (ASR)
 export const TRANSCRIBE_AUDIO_MUTATION = gql`
-  mutation TranscribeAudio($audioData: String!, $language: String!) {
-    transcribeAudio(audioData: $audioData, language: $language) {
+  mutation TranscribeAudio($input: ASRInput!) {
+    transcribeAudio(input: $input) {
       success
+      message
       transcribedText
+      language
       error
+    }
+  }
+`;
+
+// Get supported ASR languages
+export const GET_SUPPORTED_ASR_LANGUAGES = gql`
+  query GetSupportedAsrLanguages {
+    supportedAsrLanguages {
+      code
+      name
     }
   }
 `;

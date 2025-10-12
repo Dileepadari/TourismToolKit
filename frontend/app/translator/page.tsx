@@ -198,8 +198,10 @@ export default function Translator() {
         
         const { data } = await extractTextFromImage({
           variables: {
-            imageData: base64,
-            language: sourceLang
+            input: {
+              imageData: base64,
+              language: sourceLang
+            }
           }
         });
 
@@ -207,7 +209,7 @@ export default function Translator() {
           setExtractedText(data.extractTextFromImage.extractedText || '');
           toast.success('Text extracted from image!');
         } else {
-          toast.error(t('common.error'));
+          toast.error(data?.extractTextFromImage?.error || t('common.error'));
         }
       };
       reader.readAsDataURL(file);
@@ -274,8 +276,10 @@ export default function Translator() {
         
         const { data } = await extractTextFromImage({
           variables: {
-            imageData: base64,
-            language: sourceLang
+            input: {
+              imageData: base64,
+              language: sourceLang
+            }
           }
         });
 
@@ -283,7 +287,7 @@ export default function Translator() {
           setExtractedText(data.extractTextFromImage.extractedText || '');
           toast.success('Text extracted from image!');
         } else {
-          toast.error(t('common.error'));
+          toast.error(data?.extractTextFromImage?.error || t('common.error'));
         }
       };
       reader.readAsDataURL(imageFile);
@@ -318,8 +322,10 @@ export default function Translator() {
         
         const { data } = await extractTextFromImage({
           variables: {
-            imageData: base64,
-            language: sourceLang
+            input: {
+              imageData: base64,
+              language: sourceLang
+            }
           }
         });
 
@@ -332,7 +338,7 @@ export default function Translator() {
             await handleTranslate(extracted);
           }
         } else {
-          toast.error(t('common.error'));
+          toast.error(data?.extractTextFromImage?.error || t('common.error'));
         }
       };
       reader.readAsDataURL(imageFile);
@@ -363,8 +369,10 @@ export default function Translator() {
         
         const { data } = await transcribeAudio({
           variables: {
-            audioData: base64,
-            language: sourceLang
+            input: {
+              audioData: base64,
+              language: sourceLang
+            }
           }
         });
 
@@ -372,7 +380,8 @@ export default function Translator() {
           setSourceText(data.transcribeAudio.transcribedText || '');
           toast.success('Audio transcribed successfully!');
         } else {
-          toast.error(t('common.error'));
+          const errorMsg = data?.transcribeAudio?.error || t('common.error');
+          toast.error(errorMsg);
         }
       };
       reader.readAsDataURL(file);
@@ -406,8 +415,10 @@ export default function Translator() {
           try {
             const { data } = await transcribeAudio({
               variables: {
-                audioData: base64,
-                language: sourceLang
+                input: {
+                  audioData: base64,
+                  language: sourceLang
+                }
               }
             });
 
@@ -415,7 +426,8 @@ export default function Translator() {
               setSourceText(data.transcribeAudio.transcribedText || '');
               toast.success('Recording transcribed!');
             } else {
-              toast.error(t('common.error'));
+              const errorMsg = data?.transcribeAudio?.error || t('common.error');
+              toast.error(errorMsg);
             }
           } catch (error) {
             toast.error(t('common.error'));
