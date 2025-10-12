@@ -1,6 +1,14 @@
 import os
 import requests
 from dotenv import load_dotenv
+from typing import Optional
+
+# language detection
+from langdetect import detect, DetectorFactory
+from langdetect.lang_detect_exception import LangDetectException
+
+# To ensure consistent results for short text
+DetectorFactory.seed = 0
 
 # Load environment variables
 load_dotenv()
@@ -45,9 +53,27 @@ class TextToSpeechService:
         return api_url, token
     
     @staticmethod
-    def generate_speech(text: str, gender: str, language: str = "en"):
+    def generate_speech(text: str, gender: str, language: Optional[str] = None):
         """Generate speech audio from text using Bashini TTS API"""
-        
+        # If language not provided, try to detect from the text
+        if language is None:
+            try:
+                if not text or not text.strip():
+                    raise LangDetectException("Empty text")
+                language = detect(text)
+                print(f"DEBUG: Detected language '{language}' from text")
+            except LangDetectException:
+                # Fallback to English if detection fails
+                print("DEBUG: Language detection failed or insufficient data; falling back to 'en'")
+                language = "en"
+
+        # Normalize potential language tags (e.g., 'zh-cn' -> 'zh') and ensure supported
+        language = (language or "en").split("-")[0]
+        supported_codes = {l["code"] for l in TextToSpeechService.get_supported_languages()["languages"]}
+        if language not in supported_codes:
+            print(f"DEBUG: Detected language '{language}' not in supported list; falling back to 'en'")
+            language = "en"
+
         # Get the appropriate API URL for the specified language
         tts_api_url, token = TextToSpeechService.get_api_token_url_for_language(language)
         
@@ -81,6 +107,7 @@ class TextToSpeechService:
 
                 if "s3_url" in data:
                     audio_response = requests.get(data["s3_url"], verify=False)
+                    # print(data["s3_url"])
                     if audio_response.status_code == 200:
                         return audio_response.content
                     else:

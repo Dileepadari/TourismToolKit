@@ -20,7 +20,7 @@ class TTSResponse:
 class TTSInput:
     text: str
     gender: str
-    language: str = "en"
+    # language: str = "en"
 
 @strawberry.type
 class ApiUrlResponse:

@@ -10,7 +10,7 @@ def generate_speech(input: TTSInput) -> TTSResponse:
         audio_content = TextToSpeechService.generate_speech(
             text=input.text,
             gender=input.gender,
-            language=input.language
+            # language=input.language
         )
 
         # Check if audio_content is bytes or already a string/dict
