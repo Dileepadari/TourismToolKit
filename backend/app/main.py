@@ -16,7 +16,7 @@ app = FastAPI(title="TourismToolKit API", version="1.0.0")
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000", "http://10.2.129.197:3000"],  # Frontend URLs
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000", "http://10.2.129.197:3000", "https://tourismtoolkit.dileepadari.dev", "https://tourism-toolkit.vercel.app"],  # Frontend URLs
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
