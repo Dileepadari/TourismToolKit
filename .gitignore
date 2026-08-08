@@ -47,8 +47,11 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+# Anchored to the Python tree. Unanchored, `lib/` also matches `frontend/lib/`,
+# which silently kept a real source module out of the repository - the build
+# passed locally and failed in CI with "Cannot find module '@/lib/theme'".
+backend/lib/
+backend/lib64/
 parts/
 sdist/
 var/
