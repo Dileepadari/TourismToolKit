@@ -1,0 +1,18 @@
+# Development overrides. Compose loads this automatically alongside
+# docker-compose.yml; use `-f docker-compose.yml` alone for a production-like run.
+#
+# The base file deliberately does NOT enable --reload or bind-mount source: the
+# previous setup ran the dev server with --reload in the production image.
+services:
+  backend:
+    volumes:
+      - ./backend/app:/app/app
+      - ./backend/alembic:/app/alembic
+    environment:
+      ENVIRONMENT: development
+      LOG_LEVEL: DEBUG
+      UVICORN_EXTRA: --reload
+      # Development and the e2e suite hit the auth endpoints far harder than a
+      # real user would. Production keeps the tight defaults.
+      RATE_LIMIT_AUTH: 200/60
+      RATE_LIMIT_AI: 200/60

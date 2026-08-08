@@ -1,81 +1,46 @@
+"""Populate the database with the curated starter content.
+
+Schema creation is *not* done here any more - Alembic owns it. The previous
+version called ``create_tables()`` and wrapped every import in a bare
+``except ImportError`` that printed a warning and carried on, so a genuine error
+inside a seed module looked identical to that module being absent.
 """
-Unified seed script for initializing the Tourism Toolkit database
-This script imports and runs all available seed modules
-"""
-import sys
-import os
 
-# Add parent directory to path to import app modules
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from __future__ import annotations
+
+import logging
+
+from app.database.seed_dictionary import seed_dictionary_data
+from app.database.seed_guide import seed_guide_data
+from app.database.seed_places import seed_places_data
+from app.database.seed_users import seed_users
+
+logger = logging.getLogger(__name__)
+
+# Users first: dictionary entries are foreign-keyed to the system user.
+SEEDERS = (
+    ("users", seed_users),
+    ("dictionary", seed_dictionary_data),
+    ("places", seed_places_data),
+    ("guide", seed_guide_data),
+)
 
 
-# Import individual seed functions
-try:
-    from .seed_users import seed_users
-    print("✓ Imported seed_users")
-except ImportError:
-    print("⚠ Could not import seed_users")
-    seed_users = None
+def seed_all() -> None:
+    logger.info("seeding database")
+    for name, seeder in SEEDERS:
+        seeder()
+        logger.info("seeded %s", name)
+    logger.info("seeding complete")
 
-try:
-    from .seed_dictionary import seed_dictionary_data as seed_dict_module
-    print("✓ Imported seed_dictionary module")
-except ImportError:
-    print("⚠ Could not import seed_dictionary module")
-    seed_dict_module = None
 
-try:
-    from .seed_places import seed_places_data as seed_places_module
-    print("✓ Imported seed_places module")
-except ImportError:
-    print("⚠ Could not import seed_places module")
-    seed_places_module = None
+def main() -> None:
+    from app.core.config import get_settings
+    from app.core.logging import configure_logging
 
-try:
-    from .seed_guide import seed_guide_data as seed_guide_module
-    print("✓ Imported seed_guide module")
-except ImportError:
-    print("⚠ Could not import seed_guide module")
-    seed_guide_module = None
+    configure_logging(get_settings())
+    seed_all()
 
-def seed_all():
-    """Run all seed functions to populate the database"""
-    print("Starting database seeding...")
-
-    # Create tables
-    from app.database.db import create_tables
-    create_tables()
-    print("✓ Database tables created")
-
-    # Seed users
-    if seed_users:
-        seed_users()
-        print("✓ Users seeded")
-    else:
-        print("⚠ Skipping user seeding")
-
-    # Seed dictionary entries
-    if seed_dict_module:
-        seed_dict_module()
-        print("✓ Dictionary entries seeded")
-    else:
-        print("⚠ Skipping dictionary seeding")
-
-    # Seed places
-    if seed_places_module:
-        seed_places_module()
-        print("✓ Places seeded")
-    else:
-        print("⚠ Skipping places seeding")
-
-    # Seed guide data (emergency contacts, culture tips)
-    if seed_guide_module:
-        seed_guide_module()
-        print("✓ Guide data seeded")
-    else:
-        print("⚠ Skipping guide data seeding")
-
-    print("Database seeding completed.")
 
 if __name__ == "__main__":
-    seed_all()
+    main()

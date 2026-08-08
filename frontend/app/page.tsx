@@ -2,15 +2,15 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { 
-  Globe2, 
   ArrowRight,
   Languages,
   MapPin,
   Compass,
   BookOpen
 } from 'lucide-react';
+import { Logo } from '@/components/ui/Logo';
 import Button from '@/components/ui/Button';
 import { useTranslation } from '@/hooks/useTranslation';
 
@@ -22,25 +22,25 @@ export default function HomePage() {
       icon: Languages,
       title: t('home.features.translation.title'),
       description: t('home.features.translation.description'),
-      color: 'from-primary to-accent'
+      color: 'bg-primary'
     },
     {
       icon: MapPin,
       title: t('home.features.places.title'),
       description: t('home.features.places.description'),
-      color: 'from-secondary to-accent'
+      color: 'bg-secondary'
     },
     {
       icon: BookOpen,
       title: t('home.features.dictionary.title'),
       description: t('home.features.dictionary.description'),
-      color: 'from-primary to-secondary'
+      color: 'bg-primary'
     },
     {
       icon: Compass,
       title: t('home.features.guide.title'),
       description: t('home.features.guide.description'),
-      color: 'from-accent to-secondary'
+      color: 'bg-accent'
     }
   ];
 
@@ -55,7 +55,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10" />
+        <div className="absolute inset-0 bg-muted" />
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 lg:pt-32 lg:pb-24">
           <div className="text-center">
@@ -63,11 +63,10 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="flex justify-center mb-8"
-            >
+              className="flex justify-center mb-8">
               <div className="flex items-center space-x-2 bg-card px-6 py-3 rounded-full shadow-lg border border-border">
-                <Globe2 className="h-8 w-8 text-primary" />
-                <span className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-foreground">
+                <Logo size={32} />
+                <span className="text-2xl font-bold text-foreground">
                   {t('home.poweredBy')}
                 </span>
               </div>
@@ -77,8 +76,7 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-5xl lg:text-7xl font-bold text-foreground mb-6"
-            >
+              className="text-5xl lg:text-7xl font-bold text-foreground mb-6">
               {t('home.title')}
             </motion.h1>
             
@@ -86,8 +84,7 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-xl lg:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto"
-            >
+              className="text-xl lg:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
               {t('home.subtitle')}
             </motion.p>
             
@@ -95,10 +92,9 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
-            >
+              className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/auth/register">
-                <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground px-8 py-4 text-lg font-semibold shadow-lg">
+                <Button size="lg" className="w-full sm:w-auto bg-primary hover:opacity-90 text-primary-foreground px-8 py-4 text-lg font-semibold shadow-lg">
                   {t('home.getStarted')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
@@ -124,8 +120,7 @@ export default function HomePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="text-center"
-              >
+                className="text-center">
                 <div className="text-3xl lg:text-4xl font-bold text-foreground mb-2">
                   {stat.value}
                 </div>
@@ -158,9 +153,8 @@ export default function HomePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-card rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-border"
-              >
-                <div className={`w-12 h-12 bg-gradient-to-r ${feature.color} rounded-lg flex items-center justify-center mb-4`}>
+                className="bg-card rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-border">
+                <div className={`w-12 h-12 bg-muted ${feature.color} rounded-lg flex items-center justify-center mb-4`}>
                   <feature.icon className="h-6 w-6 text-foreground" />
                 </div>
                 <h3 className="text-xl font-semibold text-card-foreground mb-3">
@@ -176,7 +170,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-r from-primary to-accent">
+      <section className="py-24 bg-primary">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

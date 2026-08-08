@@ -2,13 +2,14 @@
 import { TranslationKeys } from './en';
 
 export const or: TranslationKeys = {
-  // Navigation
   nav: {
     home: 'ହୋମ',
     dashboard: 'ଡ୍ୟାସବୋର୍ଡ',
     translator: 'ଅନୁବାଦକ',
     dictionary: 'ଅଭିଧାନ',
     places: 'ସ୍ଥାନଗୁଡ଼ିକ',
+    trips: 'ଯାତ୍ରା',
+    guide: 'ଗାଇଡ୍',
     settings: 'ସେଟିଂସ',
     login: 'ଲଗଇନ',
     register: 'ପଞ୍ଜୀକରଣ',
@@ -16,8 +17,6 @@ export const or: TranslationKeys = {
     backToHome: 'ହୋମକୁ ଫେରନ୍ତୁ',
     backToDashboard: 'ଡ୍ୟାସବୋର୍ଡକୁ ଫେରନ୍ତୁ',
   },
-
-  // Common
   common: {
     welcome: 'ସ୍ୱାଗତ',
     search: 'ଖୋଜନ୍ତୁ',
@@ -39,16 +38,12 @@ export const or: TranslationKeys = {
     darkMode: 'ଡାର୍କ ମୋଡ',
     lightMode: 'ଲାଇଟ ମୋଡ',
   },
-
-  // Home Page
   home: {
     title: 'ଆପଣଙ୍କର ଚୂଡ଼ାନ୍ତ ଯାତ୍ରା ସାଥୀ',
     subtitle: 'AI-ଚାଳିତ ଅନୁବାଦ, ସ୍ଥାନୀୟ ଅନ୍ତର୍ଦୃଷ୍ଟି ଏବଂ ବ୍ୟକ୍ତିଗତ ସୁପାରିଶ ସହିତ ଭାଷା ବାଧାଗୁଡ଼ିକୁ ଭାଙ୍ଗନ୍ତୁ, ଲୁଚି ରହିଥିବା ରତ୍ନଗୁଡ଼ିକୁ ଆବିଷ୍କାର କରନ୍ତୁ ଏବଂ ଭାରତକୁ ଏପରି ଭାବରେ ଅନ୍ବେଷଣ କରନ୍ତୁ ଯେପରି ପୂର୍ବରୁ କେବେ ହୋଇନାହିଁ।',
     getStarted: 'ମାଗଣାରେ ଆରମ୍ଭ କରନ୍ତୁ',
     signIn: 'ସାଇନ ଇନ କରନ୍ତୁ',
     poweredBy: 'TourismToolKit ଦ୍ୱାରା ଚାଳିତ',
-    
-    // Features
     features: {
       title: 'ପ୍ରତ୍ୟେକ ଯାତ୍ରୀଙ୍କ ପାଇଁ ଶକ୍ତିଶାଳୀ ବିଶେଷତା',
       subtitle: 'ରିଏଲ-ଟାଇମ ଅନୁବାଦରୁ ସ୍ଥାନୀୟ ଆବିଷ୍କାର ପର୍ଯ୍ୟନ୍ତ, ଆମର ଟୁଲକିଟ ଆପଣଙ୍କୁ ଆତ୍ମବିଶ୍ୱାସରେ ଅନ୍ବେଷଣ କରିବାକୁ ଶକ୍ତି ଦିଏ',
@@ -69,24 +64,18 @@ export const or: TranslationKeys = {
         description: 'ଆପଣଙ୍କ ପସନ୍ଦ ଏବଂ ଅବସ୍ଥାନ ଉପରେ ଆଧାରିତ ବ୍ୟକ୍ତିଗତ ସୁପାରିଶ',
       },
     },
-
-    // Stats
     stats: {
       languages: 'ସମର୍ଥିତ ଭାଷାଗୁଡ଼ିକ',
       places: 'ଅନ୍ତର୍ଭୁକ୍ତ ସ୍ଥାନଗୁଡ଼ିକ',
       translations: 'ସମ୍ପୂର୍ଣ୍ଣ ଅନୁବାଦଗୁଡ଼ିକ',
       travelers: 'ଖୁସି ଯାତ୍ରୀମାନେ',
     },
-
-    // CTA
     cta: {
       title: 'ଭାରତ ଅନ୍ବେଷଣ କରିବାକୁ ପ୍ରସ୍ତୁତ?',
       subtitle: 'ହଜାରେ ଯାତ୍ରୀଙ୍କ ସହ ଯୋଗ ଦିଅନ୍ତୁ ଯେଉଁମାନେ ସେମାନଙ୍କ ଭାରତୀୟ ଦୁଃସାହସିକ କାର୍ଯ୍ୟ ପାଇଁ TourismToolKit ଉପରେ ବିଶ୍ୱାସ କରନ୍ତି। ଆଜିଠାରୁ ଆପଣଙ୍କ ଯାତ୍ରା ଆରମ୍ଭ କରନ୍ତୁ!',
       button: 'ଆପଣଙ୍କ ଯାତ୍ରା ଆରମ୍ଭ କରନ୍ତୁ',
     },
   },
-
-  // Auth
   auth: {
     login: {
       title: 'ପୁନର୍ବାର ସ୍ୱାଗତ',
@@ -117,50 +106,63 @@ export const or: TranslationKeys = {
       signIn: 'ସାଇନ ଇନ କରନ୍ତୁ',
     },
   },
-
-  // Dashboard
   dashboard: {
     title: 'ଯାତ୍ରା ଡ୍ୟାସବୋର୍ଡ',
     subtitle: 'ଆପଣଙ୍କର ବ୍ୟକ୍ତିଗତ ଯାତ୍ରା ସାଥୀ',
     welcome: 'ପୁନର୍ବାର ସ୍ୱାଗତ',
     loading: 'ଆପଣଙ୍କ ଯାତ୍ରା ଡ୍ୟାସବୋର୍ଡ ଲୋଡ ହେଉଛି...',
-    
     quickActions: {
       title: 'ତ୍ୱରିତ କାର୍ଯ୍ୟଗୁଡ଼ିକ',
       translate: 'ବର୍ତ୍ତମାନ ଅନୁବାଦ କରନ୍ତୁ',
+      ocrScanner: 'OCR ସ୍କାନର',
+      ocrDescription: 'ଛବିରୁ ତୁରନ୍ତ ଲେଖା ବାହାର କରନ୍ତୁ',
+      voiceAssistant: 'ଭଏସ୍ ସହାୟକ',
+      voiceDescription: 'କଥାରୁ ଲେଖା ବାର୍ତ୍ତାଳାପ',
       findPlaces: 'ସ୍ଥାନଗୁଡ଼ିକ ଖୋଜନ୍ତୁ',
       learnWords: 'ଶବ୍ଦଗୁଡ଼ିକ ଶିଖନ୍ତୁ',
+      travelGuide: 'ଭ୍ରମଣ ଗାଇଡ୍',
+      guideDescription: 'ସାଂସ୍କୃତିକ ପରାମର୍ଶ ଓ ଅନ୍ତର୍ଦୃଷ୍ଟି',
     },
-
     stats: {
       translations: 'ଅନୁବାଦଗୁଡ଼ିକ',
       placesVisited: 'ପରିଦର୍ଶିତ ସ୍ଥାନଗୁଡ଼ିକ',
       wordsLearned: 'ଶିଖାଯାଇଥିବା ଶବ୍ଦଗୁଡ଼ିକ',
       tripsPlanned: 'ଯୋଜନାବଦ୍ଧ ଯାତ୍ରାଗୁଡ଼ିକ',
+      favorites: 'ପସନ୍ଦ',
+      countries: 'ଦେଶ',
     },
-
     recentActivity: {
       title: 'ସାମ୍ପ୍ରତିକ କାର୍ଯ୍ୟକଳାପ',
       noActivity: 'କୌଣସି ସାମ୍ପ୍ରତିକ କାର୍ଯ୍ୟକଳାପ ନାହିଁ',
     },
-
     recommendedPlaces: {
       title: 'ସୁପାରିଶିତ ସ୍ଥାନଗୁଡ଼ିକ',
       viewAll: 'ସମସ୍ତ ସ୍ଥାନ ଦେଖନ୍ତୁ',
     },
+    featuredPlaces: {
+      title: 'ବିଶେଷ ସ୍ଥାନ',
+      symbolOfLove: 'ଚିରନ୍ତନ ପ୍ରେମର ପ୍ରତୀକ',
+      holisticCity: 'ଭାରତର ଆଧ୍ୟାତ୍ମିକ ରାଜଧାନୀ',
+      techHub: 'ଭାରତର ସିଲିକନ୍ ଭ୍ୟାଲି',
+      pinkCity: 'ଗୋଲାପୀ ସହର',
+      heritage: 'ଐତିହ୍ୟ',
+      spiritual: 'ଆଧ୍ୟାତ୍ମିକ',
+      modern: 'ଆଧୁନିକ',
+      historical: 'ଐତିହାସିକ',
+      visitors: 'ଦର୍ଶନାର୍ଥୀ',
+      languages: 'ଭାଷା',
+      rating: 'ରେଟିଂ',
+    },
   },
-
-  // Translator
   translator: {
     title: 'AI ଅନୁବାଦକ',
     subtitle: 'ଏକାଧିକ ଭାରତୀୟ ଭାଷାରେ ତୁରନ୍ତ ଅନୁବାଦ କରନ୍ତୁ',
-    
     tabs: {
       text: 'ପାଠ୍ୟ',
       voice: 'ସ୍ୱର',
       image: 'ଚିତ୍ର',
+      ocr: 'OCR',
     },
-
     textTranslation: {
       sourceLanguage: 'ଉତ୍ସ ଭାଷା',
       targetLanguage: 'ଲକ୍ଷ୍ୟ ଭାଷା',
@@ -173,14 +175,31 @@ export const or: TranslationKeys = {
       copy: 'କପି କରନ୍ତୁ',
       copied: 'କପି ହୋଇଛି!',
     },
-
     voiceTranslation: {
       startRecording: 'ରେକର୍ଡିଂ ଆରମ୍ଭ କରନ୍ତୁ',
       stopRecording: 'ରେକର୍ଡିଂ ବନ୍ଦ କରନ୍ତୁ',
       recording: 'ରେକର୍ଡ ହେଉଛି...',
       processing: 'ପ୍ରକ୍ରିୟାକରଣ ହେଉଛି...',
+      listening: 'ଶୁଣୁଛି...',
+      speak: 'ବର୍ତ୍ତମାନ କୁହନ୍ତୁ',
     },
-
+    imageTranslation: {
+      uploadImage: 'ଛବି ଅପଲୋଡ୍ କରନ୍ତୁ',
+      takePhoto: 'ଫଟୋ ନିଅନ୍ତୁ',
+      processing: 'ଛବି ପ୍ରକ୍ରିୟାକରଣ ହେଉଛି...',
+      extracting: 'ଲେଖା ବାହାର କରୁଛି...',
+      noTextFound: 'ଛବିରେ କୌଣସି ଲେଖା ମିଳିଲା ନାହିଁ',
+      selectImage: 'ଲେଖା ବାହାର କରିବାକୁ ଏକ ଛବି ବାଛନ୍ତୁ',
+    },
+    ocrScanner: {
+      title: 'OCR ଲେଖା ସ୍କାନର',
+      subtitle: 'ଛବିରୁ ଲେଖା ବାହାର କରି ଅନୁବାଦ କରନ୍ତୁ',
+      scanImage: 'ଛବି ସ୍କାନ୍ କରନ୍ତୁ',
+      scanning: 'ସ୍କାନ୍ ହେଉଛି...',
+      extractedText: 'ବାହାର କରାଯାଇଥିବା ଲେଖା',
+      noText: 'କୌଣସି ଲେଖା ଚିହ୍ନଟ ହେଲା ନାହିଁ',
+      uploadOrCapture: 'ଏକ ଛବି ଅପଲୋଡ୍ କରନ୍ତୁ କିମ୍ବା ନିଅନ୍ତୁ',
+    },
     quickPhrases: {
       title: 'ତ୍ୱରିତ ବାକ୍ୟାଂଶଗୁଡ଼ିକ',
       greetings: 'ନମସ୍କାର',
@@ -189,8 +208,6 @@ export const or: TranslationKeys = {
       directions: 'କେଉଁଠାରେ ଅଛି...?',
     },
   },
-
-  // Dictionary
   dictionary: {
     title: 'ଭାଷା ଅଭିଧାନ',
     subtitle: 'ଭାଷାଗୁଡ଼ିକରେ ଶବ୍ଦଗୁଡ଼ିକ ଏବଂ ସେମାନଙ୍କ ଅର୍ଥ ଅନ୍ବେଷଣ କରନ୍ତୁ',
@@ -202,8 +219,6 @@ export const or: TranslationKeys = {
     examples: 'ଉଦାହରଣଗୁଡ଼ିକ',
     relatedWords: 'ସମ୍ବନ୍ଧୀୟ ଶବ୍ଦଗୁଡ଼ିକ',
   },
-
-  // Places
   places: {
     title: 'ସ୍ଥାନଗୁଡ଼ିକ ଖୋଜନ୍ତୁ',
     subtitle: 'ସମଗ୍ର ଭାରତରେ ଆଶ୍ଚର୍ଯ୍ୟଜନକ ଗନ୍ତବ୍ୟସ୍ଥଳଗୁଡ଼ିକ ଅନ୍ବେଷଣ କରନ୍ତୁ',
@@ -221,19 +236,18 @@ export const or: TranslationKeys = {
     getDirections: 'ଦିଗଗୁଡ଼ିକ ପ୍ରାପ୍ତ କରନ୍ତୁ',
     addToTrip: 'ଯାତ୍ରାରେ ଯୋଗ କରନ୍ତୁ',
   },
-
-  // Settings
   settings: {
     title: 'ସେଟିଂସ',
     subtitle: 'ଆପଣଙ୍କ ପସନ୍ଦଗୁଡ଼ିକ ପରିଚାଳନା କରନ୍ତୁ',
-    
     account: {
       title: 'ଆକାଉଣ୍ଟ ସୂଚନା',
       email: 'ଇମେଲ',
       username: 'ଉପଯୋଗକର୍ତ୍ତା ନାମ',
       fullName: 'ସମ୍ପୂର୍ଣ୍ଣ ନାମ',
+      homeCountry: 'ନିଜ ଦେଶ',
+      emailCannotChange: 'ଇମେଲ୍ ପରିବର୍ତ୍ତନ କରାଯାଇପାରିବ ନାହିଁ',
+      enterHomeCountry: 'ଆପଣଙ୍କ ଦେଶ ଲେଖନ୍ତୁ',
     },
-
     preferences: {
       title: 'ପସନ୍ଦଗୁଡ଼ିକ',
       language: 'ଭାଷା',
@@ -241,16 +255,42 @@ export const or: TranslationKeys = {
       lightMode: 'ଆଲୋକ',
       darkMode: 'ଅନ୍ଧକାର',
       systemMode: 'ସିଷ୍ଟମ',
+      appearance: 'ରୂପ',
+      appearanceDescription: 'ଆପଣଙ୍କ ଦୃଶ୍ୟ ଅନୁଭୂତି ଅନୁକୂଳ କରନ୍ତୁ',
+      preferredLanguage: 'ପସନ୍ଦର ଭାଷା',
+      selectLanguage: 'ଆପଣଙ୍କ ପସନ୍ଦର ଭାଷା ବାଛନ୍ତୁ',
     },
-
     notifications: {
       title: 'ବିଜ୍ଞପ୍ତିଗୁଡ଼ିକ',
       email: 'ଇମେଲ ବିଜ୍ଞପ୍ତିଗୁଡ଼ିକ',
       push: 'ପୁଶ ବିଜ୍ଞପ୍ତିଗୁଡ଼ିକ',
     },
-
+    privacy: {
+      title: 'ଗୋପନୀୟତା ଓ ସୁରକ୍ଷା',
+      description: 'ଆପଣଙ୍କ ଖାତାର ସୁରକ୍ଷା ପରିଚାଳନା କରନ୍ତୁ',
+      accountStatus: 'ଖାତାର ସ୍ଥିତି',
+      verified: 'ଯାଞ୍ଚ ହୋଇଛି',
+      notVerified: 'ଯାଞ୍ଚ ହୋଇନାହିଁ',
+    },
     save: 'ପରିବର୍ତ୍ତନଗୁଡ଼ିକ ସଂରକ୍ଷଣ କରନ୍ତୁ',
     saving: 'ସଂରକ୍ଷଣ ହେଉଛି...',
     saved: 'ସେଟିଂସ ସଫଳତାର ସହ ସଂରକ୍ଷିତ ହୋଇଛି!',
+    updateInfo: 'ଆପଣଙ୍କ ବ୍ୟକ୍ତିଗତ ସୂଚନା ଅଦ୍ୟତନ କରନ୍ତୁ',
+  },
+  guide: {
+    title: 'ଭ୍ରମଣ ଗାଇଡ୍',
+    subtitle: 'ଭାରତ ଭ୍ରମଣ ପାଇଁ ସାଂସ୍କୃତିକ ଅନ୍ତର୍ଦୃଷ୍ଟି ଓ ଭ୍ରମଣ ପରାମର୍ଶ',
+    culturalTips: 'ସାଂସ୍କୃତିକ ପରାମର୍ଶ',
+    localCustoms: 'ସ୍ଥାନୀୟ ପରମ୍ପରା',
+    essentialPhrases: 'ଆବଶ୍ୟକ ବାକ୍ୟ',
+    safetyTips: 'ସୁରକ୍ଷା ପରାମର୍ଶ',
+    transportation: 'ପରିବହନ',
+    cuisine: 'ସ୍ଥାନୀୟ ଖାଦ୍ୟ',
+    attractions: 'ଅବଶ୍ୟ ଦେଖିବା ସ୍ଥାନ',
+    etiquette: 'ସାଂସ୍କୃତିକ ଶିଷ୍ଟାଚାର',
+    festivals: 'ପର୍ବ ଓ କାର୍ଯ୍ୟକ୍ରମ',
+    shopping: 'କିଣାକିଣି ଗାଇଡ୍',
+    emergency: 'ଜରୁରୀକାଳୀନ ଯୋଗାଯୋଗ',
+    weather: 'ପାଣିପାଗ ଓ ଭ୍ରମଣର ଉତ୍ତମ ସମୟ',
   },
 };

@@ -1,0 +1,180 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: tourism_user
+          POSTGRES_PASSWORD: tourism_password
+          POSTGRES_DB: tourism_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U tourism_user -d tourism_test"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+
+    defaults:
+      run:
+        working-directory: backend
+
+    env:
+      TEST_DATABASE_URL: postgresql+psycopg://tourism_user:tourism_password@localhost:5432/tourism_test
+      JWT_SECRET_KEY: ci-secret-key-long-enough-to-pass-validation-000
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+
+      - name: Install dependencies
+        run: uv sync --frozen --all-groups
+
+      - name: Lint
+        run: uv run ruff check app alembic tests
+
+      - name: Format check
+        run: uv run ruff format --check app alembic tests
+
+      - name: Type check
+        run: uv run mypy app
+
+      - name: Tests
+        run: uv run pytest
+
+      - name: Schema is up to date
+        # The committed schema.graphql is what the frontend types and the
+        # document-validation test are written against.
+        run: |
+          uv run strawberry export-schema app.graphql.schema:schema > /tmp/schema.graphql
+          diff -u schema.graphql /tmp/schema.graphql || {
+            echo "::error::schema.graphql is stale - regenerate it with:"
+            echo "  uv run strawberry export-schema app.graphql.schema:schema > schema.graphql"
+            exit 1
+          }
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+  e2e:
+    name: End-to-end
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: tourism_user
+          POSTGRES_PASSWORD: tourism_password
+          POSTGRES_DB: tourism_db
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U tourism_user -d tourism_db"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql+psycopg://tourism_user:tourism_password@localhost:5432/tourism_db
+      JWT_SECRET_KEY: ci-secret-key-long-enough-to-pass-validation-000
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Start the backend
+        working-directory: backend
+        run: |
+          uv sync --frozen --no-dev
+          uv run python -m app.database.bootstrap
+          uv run python -m app.database.seed_data
+          uv run uvicorn app.main:app --host 127.0.0.1 --port 8000 &
+          for _ in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:8000/health && break
+            sleep 2
+          done
+
+      - name: Build the frontend
+        working-directory: frontend
+        env:
+          NEXT_PUBLIC_GRAPHQL_URL: http://127.0.0.1:8000/graphql
+        run: |
+          npm ci
+          npm run build
+
+      - name: Install browsers
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+
+      - name: Run end-to-end tests
+        working-directory: frontend
+        run: npm run test:e2e
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: frontend/playwright-report/
+          retention-days: 7
+
+  docker:
+    name: Docker images
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build backend image
+        run: docker build -t tourism-backend ./backend
+      - name: Build frontend image
+        run: docker build -t tourism-frontend ./frontend

@@ -2,13 +2,14 @@
 import { TranslationKeys } from './en';
 
 export const bn: TranslationKeys = {
-  // Navigation
   nav: {
     home: 'হোম',
     dashboard: 'ড্যাশবোর্ড',
     translator: 'অনুবাদক',
     dictionary: 'অভিধান',
     places: 'স্থান',
+    trips: 'ভ্রমণ',
+    guide: 'গাইড',
     settings: 'সেটিংস',
     login: 'লগইন',
     register: 'নিবন্ধন',
@@ -16,8 +17,6 @@ export const bn: TranslationKeys = {
     backToHome: 'হোমে ফিরে যান',
     backToDashboard: 'ড্যাশবোর্ডে ফিরে যান',
   },
-
-  // Common
   common: {
     welcome: 'স্বাগতম',
     search: 'খুঁজুন',
@@ -39,16 +38,12 @@ export const bn: TranslationKeys = {
     darkMode: 'ডার্ক মোড',
     lightMode: 'লাইট মোড',
   },
-
-  // Home Page
   home: {
     title: 'আপনার চূড়ান্ত ভ্রমণ সঙ্গী',
     subtitle: 'AI-চালিত অনুবাদ, স্থানীয় অন্তর্দৃষ্টি এবং ব্যক্তিগত সুপারিশের সাথে ভাষার বাধা ভাঙুন, লুকানো রত্ন আবিষ্কার করুন এবং ভারতকে এমনভাবে অন্বেষণ করুন যা আগে কখনও হয়নি।',
     getStarted: 'বিনামূল্যে শুরু করুন',
     signIn: 'সাইন ইন করুন',
     poweredBy: 'TourismToolKit দ্বারা চালিত',
-    
-    // Features
     features: {
       title: 'প্রতিটি ভ্রমণকারীর জন্য শক্তিশালী বৈশিষ্ট্য',
       subtitle: 'রিয়েল-টাইম অনুবাদ থেকে স্থানীয় আবিষ্কার পর্যন্ত, আমাদের টুলকিট আপনাকে আত্মবিশ্বাসের সাথে অন্বেষণ করার ক্ষমতা দেয়',
@@ -69,24 +64,18 @@ export const bn: TranslationKeys = {
         description: 'আপনার পছন্দ এবং অবস্থানের উপর ভিত্তি করে ব্যক্তিগত সুপারিশ',
       },
     },
-
-    // Stats
     stats: {
       languages: 'সমর্থিত ভাষা',
       places: 'অন্তর্ভুক্ত স্থান',
       translations: 'সম্পন্ন অনুবাদ',
       travelers: 'সন্তুষ্ট ভ্রমণকারী',
     },
-
-    // CTA
     cta: {
       title: 'ভারত অন্বেষণের জন্য প্রস্তুত?',
       subtitle: 'তাদের ভারতীয় অভিযানের জন্য TourismToolKit বিশ্বাস করে এমন হাজার হাজার ভ্রমণকারীর সাথে যোগ দিন। আজই আপনার যাত্রা শুরু করুন!',
       button: 'আপনার যাত্রা শুরু করুন',
     },
   },
-
-  // Auth
   auth: {
     login: {
       title: 'আবার স্বাগতম',
@@ -117,50 +106,63 @@ export const bn: TranslationKeys = {
       signIn: 'সাইন ইন করুন',
     },
   },
-
-  // Dashboard
   dashboard: {
     title: 'ভ্রমণ ড্যাশবোর্ড',
     subtitle: 'আপনার ব্যক্তিগতকৃত ভ্রমণ সঙ্গী',
     welcome: 'আবার স্বাগতম',
     loading: 'আপনার ভ্রমণ ড্যাশবোর্ড লোড হচ্ছে...',
-    
     quickActions: {
       title: 'দ্রুত ক্রিয়া',
       translate: 'এখনই অনুবাদ করুন',
+      ocrScanner: 'OCR স্ক্যানার',
+      ocrDescription: 'ছবি থেকে তাৎক্ষণিকভাবে লেখা বের করুন',
+      voiceAssistant: 'ভয়েস সহকারী',
+      voiceDescription: 'কথা থেকে লেখায় কথোপকথন',
       findPlaces: 'স্থান খুঁজুন',
       learnWords: 'শব্দ শিখুন',
+      travelGuide: 'ভ্রমণ গাইড',
+      guideDescription: 'সাংস্কৃতিক পরামর্শ ও অন্তর্দৃষ্টি',
     },
-
     stats: {
       translations: 'অনুবাদ',
       placesVisited: 'পরিদর্শিত স্থান',
       wordsLearned: 'শেখা শব্দ',
       tripsPlanned: 'পরিকল্পিত ভ্রমণ',
+      favorites: 'প্রিয়',
+      countries: 'দেশ',
     },
-
     recentActivity: {
       title: 'সাম্প্রতিক কার্যকলাপ',
       noActivity: 'কোন সাম্প্রতিক কার্যকলাপ নেই',
     },
-
     recommendedPlaces: {
       title: 'প্রস্তাবিত স্থান',
       viewAll: 'সমস্ত স্থান দেখুন',
     },
+    featuredPlaces: {
+      title: 'নির্বাচিত স্থান',
+      symbolOfLove: 'চিরন্তন ভালোবাসার প্রতীক',
+      holisticCity: 'ভারতের আধ্যাত্মিক রাজধানী',
+      techHub: 'ভারতের সিলিকন ভ্যালি',
+      pinkCity: 'গোলাপি শহর',
+      heritage: 'ঐতিহ্য',
+      spiritual: 'আধ্যাত্মিক',
+      modern: 'আধুনিক',
+      historical: 'ঐতিহাসিক',
+      visitors: 'দর্শনার্থী',
+      languages: 'ভাষা',
+      rating: 'রেটিং',
+    },
   },
-
-  // Translator
   translator: {
     title: 'AI অনুবাদক',
     subtitle: 'একাধিক ভারতীয় ভাষায় তাৎক্ষণিক অনুবাদ করুন',
-    
     tabs: {
       text: 'পাঠ্য',
       voice: 'ভয়েস',
       image: 'ছবি',
+      ocr: 'OCR',
     },
-
     textTranslation: {
       sourceLanguage: 'উৎস ভাষা',
       targetLanguage: 'লক্ষ্য ভাষা',
@@ -173,14 +175,31 @@ export const bn: TranslationKeys = {
       copy: 'কপি করুন',
       copied: 'কপি করা হয়েছে!',
     },
-
     voiceTranslation: {
       startRecording: 'রেকর্ডিং শুরু করুন',
       stopRecording: 'রেকর্ডিং বন্ধ করুন',
       recording: 'রেকর্ড হচ্ছে...',
       processing: 'প্রক্রিয়া হচ্ছে...',
+      listening: 'শোনা হচ্ছে...',
+      speak: 'এখন বলুন',
     },
-
+    imageTranslation: {
+      uploadImage: 'ছবি আপলোড করুন',
+      takePhoto: 'ছবি তুলুন',
+      processing: 'ছবি প্রক্রিয়াকরণ হচ্ছে...',
+      extracting: 'লেখা বের করা হচ্ছে...',
+      noTextFound: 'ছবিতে কোনো লেখা পাওয়া যায়নি',
+      selectImage: 'লেখা বের করতে একটি ছবি নির্বাচন করুন',
+    },
+    ocrScanner: {
+      title: 'OCR লেখা স্ক্যানার',
+      subtitle: 'ছবি থেকে লেখা বের করুন ও অনুবাদ করুন',
+      scanImage: 'ছবি স্ক্যান করুন',
+      scanning: 'স্ক্যান হচ্ছে...',
+      extractedText: 'বের করা লেখা',
+      noText: 'কোনো লেখা শনাক্ত হয়নি',
+      uploadOrCapture: 'একটি ছবি আপলোড করুন বা তুলুন',
+    },
     quickPhrases: {
       title: 'দ্রুত বাক্যাংশ',
       greetings: 'নমস্কার',
@@ -189,8 +208,6 @@ export const bn: TranslationKeys = {
       directions: 'কোথায়...?',
     },
   },
-
-  // Dictionary
   dictionary: {
     title: 'ভাষা অভিধান',
     subtitle: 'ভাষায় শব্দ এবং তাদের অর্থ অন্বেষণ করুন',
@@ -202,8 +219,6 @@ export const bn: TranslationKeys = {
     examples: 'উদাহরণ',
     relatedWords: 'সম্পর্কিত শব্দ',
   },
-
-  // Places
   places: {
     title: 'স্থান খুঁজুন',
     subtitle: 'সমগ্র ভারত জুড়ে অসাধারণ গন্তব্য অন্বেষণ করুন',
@@ -221,19 +236,18 @@ export const bn: TranslationKeys = {
     getDirections: 'দিকনির্দেশ পান',
     addToTrip: 'ট্রিপে যোগ করুন',
   },
-
-  // Settings
   settings: {
     title: 'সেটিংস',
     subtitle: 'আপনার পছন্দগুলি পরিচালনা করুন',
-    
     account: {
       title: 'অ্যাকাউন্ট তথ্য',
       email: 'ইমেল',
       username: 'ব্যবহারকারীর নাম',
       fullName: 'পূর্ণ নাম',
+      homeCountry: 'নিজের দেশ',
+      emailCannotChange: 'ইমেল পরিবর্তন করা যাবে না',
+      enterHomeCountry: 'আপনার দেশ লিখুন',
     },
-
     preferences: {
       title: 'পছন্দসমূহ',
       language: 'ভাষা',
@@ -241,16 +255,42 @@ export const bn: TranslationKeys = {
       lightMode: 'আলো',
       darkMode: 'অন্ধকার',
       systemMode: 'সিস্টেম',
+      appearance: 'চেহারা',
+      appearanceDescription: 'আপনার দৃশ্যগত অভিজ্ঞতা কাস্টমাইজ করুন',
+      preferredLanguage: 'পছন্দের ভাষা',
+      selectLanguage: 'আপনার পছন্দের ভাষা নির্বাচন করুন',
     },
-
     notifications: {
       title: 'বিজ্ঞপ্তি',
       email: 'ইমেল বিজ্ঞপ্তি',
       push: 'পুশ বিজ্ঞপ্তি',
     },
-
+    privacy: {
+      title: 'গোপনীয়তা ও নিরাপত্তা',
+      description: 'আপনার অ্যাকাউন্টের নিরাপত্তা পরিচালনা করুন',
+      accountStatus: 'অ্যাকাউন্টের অবস্থা',
+      verified: 'যাচাইকৃত',
+      notVerified: 'যাচাই করা হয়নি',
+    },
     save: 'পরিবর্তনগুলি সংরক্ষণ করুন',
     saving: 'সংরক্ষণ হচ্ছে...',
     saved: 'সেটিংস সফলভাবে সংরক্ষিত হয়েছে!',
+    updateInfo: 'আপনার ব্যক্তিগত তথ্য হালনাগাদ করুন',
+  },
+  guide: {
+    title: 'ভ্রমণ গাইড',
+    subtitle: 'ভারত ঘুরে দেখার জন্য সাংস্কৃতিক অন্তর্দৃষ্টি ও ভ্রমণ পরামর্শ',
+    culturalTips: 'সাংস্কৃতিক পরামর্শ',
+    localCustoms: 'স্থানীয় রীতিনীতি',
+    essentialPhrases: 'প্রয়োজনীয় বাক্যাংশ',
+    safetyTips: 'নিরাপত্তা পরামর্শ',
+    transportation: 'পরিবহন',
+    cuisine: 'স্থানীয় খাবার',
+    attractions: 'অবশ্য দর্শনীয় স্থান',
+    etiquette: 'সাংস্কৃতিক শিষ্টাচার',
+    festivals: 'উৎসব ও অনুষ্ঠান',
+    shopping: 'কেনাকাটার গাইড',
+    emergency: 'জরুরি যোগাযোগ',
+    weather: 'আবহাওয়া ও ভ্রমণের সেরা সময়',
   },
 };

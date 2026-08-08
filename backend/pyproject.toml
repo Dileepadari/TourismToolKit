@@ -1,0 +1,121 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tourism-toolkit-backend"
+version = "0.2.0"
+description = "GraphQL API for TourismToolKit - multilingual tourism platform for India"
+requires-python = ">=3.13"
+license = { text = "MIT" }
+
+# Floors, not pins: sqlmodel constrains SQLAlchemy to a narrow range, so pinning
+# both by hand is how resolution becomes unsolvable. `uv lock` picks the exact
+# versions and records them in uv.lock.
+dependencies = [
+    "fastapi>=0.141",
+    "uvicorn[standard]>=0.52",
+    "strawberry-graphql[fastapi]>=0.323",
+    "sqlmodel>=0.0.39",
+    "sqlalchemy[asyncio]>=2.0.51",
+    "alembic>=1.19",
+    "psycopg[binary]>=3.3",
+    "greenlet>=3",
+    "pydantic>=2.13",
+    "pydantic-settings>=2.15",
+    "python-dotenv>=1.2",  # read directly by the Bhashini env-folding settings source
+    "pyjwt>=2.10",
+    "bcrypt>=5.0",
+    "httpx>=0.28",
+    "certifi>=2025.10.5",
+    "langdetect>=1.0.9",
+    "pillow>=12.3",
+    "python-multipart>=0.0.20",
+]
+
+[dependency-groups]
+test = [
+    "pytest>=9.1",
+    "pytest-asyncio>=1.0",
+    "pytest-cov>=6",
+    "respx>=0.22",
+    "asgi-lifespan>=2",
+    "testcontainers[postgres]>=4",
+    "time-machine>=2.16",
+]
+dev = [
+    "ruff>=0.16",
+    "mypy>=1.14",
+    "strawberry-graphql[cli]>=0.323",  # provides `strawberry export-schema`
+    { include-group = "test" },
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+# ---------------------------------------------------------------------------
+# Ruff
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "ASYNC", "S", "RUF", "T20"]
+ignore = [
+    "S101",  # assert - used in tests
+    "E501",  # line length is handled by the formatter
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Migrations are generated; seeds are bulk data with intentional progress output.
+"alembic/versions/*" = ["I001", "RUF012"]
+# Seeds print progress deliberately and contain well-known demo credentials.
+"app/database/seed_*.py" = ["T20", "RUF012", "S105", "S106"]
+"tests/*" = ["S105", "S106", "S107", "S608", "T20"]  # test credentials and controlled SQL
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+# There is an `alembic/` directory in the project root; without this, ruff
+# classifies the third-party `alembic` package as first-party.
+known-third-party = ["alembic"]
+
+# ---------------------------------------------------------------------------
+# mypy - strict where it pays, lenient over generated/bulk code
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.13"
+plugins = ["pydantic.mypy"]
+warn_unused_ignores = true
+warn_redundant_casts = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["app.core.*", "app.services.*", "app.graphql.context"]
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = [
+    "alembic.*",
+    "app.database.seed_data",
+    "app.database.seed_users",
+    "app.database.seed_places",
+    "app.database.seed_guide",
+    "app.database.seed_dictionary",
+]
+ignore_errors = true
+
+# ---------------------------------------------------------------------------
+# pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+addopts = "-q --strict-markers --strict-config --cov=app --cov-report=term-missing --cov-fail-under=80"
+filterwarnings = ["error::DeprecationWarning:app.*"]
+
+[tool.coverage.run]
+source = ["app"]
+omit = ["app/database/seed_*.py", "alembic/*"]

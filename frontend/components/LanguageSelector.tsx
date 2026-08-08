@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, Check } from 'lucide-react';
 import { useLanguage } from '@/providers/LanguageProvider';
 import { cn } from '@/utils/cn';
@@ -67,10 +67,8 @@ export default function LanguageSelector({
     return (
       <div className={cn('relative inline-block', className)}>
         <button
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
-        >
+          type="button"onClick={() => setIsOpen(!isOpen)}
+          className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors">
           {showFlag && (
             <span className="text-lg">{languageFlags[selectedLanguage] || '🌐'}</span>
           )}
@@ -84,8 +82,7 @@ export default function LanguageSelector({
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="absolute top-full left-0 mt-1 bg-muted/50 backdrop-blur-sm border border-border rounded-lg shadow-medium z-50 min-w-[120px]"
-            >
+              className="absolute top-full left-0 mt-1 bg-muted/50 backdrop-blur-sm border border-border rounded-lg shadow-medium z-50 min-w-[120px]">
               {supportedLanguages.map((language) => (
                 <button
                   key={language.code}
@@ -118,7 +115,7 @@ export default function LanguageSelector({
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           'flex items-center justify-between w-full px-4 py-2 text-left bg-background border border-input rounded-lg shadow-sm hover:border-primary focus:border-primary focus:ring-2 focus:ring-ring transition-all',
-          variant === 'button' ? 'bg-gradient-to-r from-primary to-secondary border-transparent hover:opacity-90' : ''
+          variant === 'button' ? 'bg-primary border-transparent hover:opacity-90' : ''
         )}
       >
         <div className="flex items-center space-x-3">
@@ -130,14 +127,14 @@ export default function LanguageSelector({
           <div>
             <div className={cn(
               'font-medium',
-              variant === 'button' ? 'text-white' : 'text-foreground'
+              variant === 'button' ? 'text-primary-foreground' : 'text-foreground'
             )}>
               {currentLanguage?.name || 'Select Language'}
             </div>
             {showNativeName && currentLanguage && (
               <div className={cn(
                 'text-sm',
-                variant === 'button' ? 'text-white/80' : 'text-muted-foreground'
+                variant === 'button' ? 'text-primary-foreground/80' : 'text-muted-foreground'
               )}>
                 {nativeNames[selectedLanguage]}
               </div>
@@ -147,7 +144,7 @@ export default function LanguageSelector({
         <ChevronDown className={cn(
           'w-5 h-5 transition-transform',
           isOpen && 'transform rotate-180',
-          variant === 'button' ? 'text-white' : 'text-muted-foreground'
+          variant === 'button' ? 'text-primary-foreground' : 'text-muted-foreground'
         )} />
       </button>
 
@@ -156,8 +153,7 @@ export default function LanguageSelector({
           <>
             {/* Backdrop */}
             <div 
-              className="fixed inset-0 z-40" 
-              onClick={() => setIsOpen(false)}
+              className="fixed inset-0 z-40"onClick={() => setIsOpen(false)}
             />
             
             {/* Dropdown */}
@@ -165,8 +161,7 @@ export default function LanguageSelector({
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="absolute top-full left-0 right-0 mt-2 bg-muted/50 backdrop-blur-sm border border-border rounded-lg shadow-hard z-50 max-h-80 overflow-y-auto"
-            >
+              className="absolute top-full left-0 right-0 mt-2 bg-muted/50 backdrop-blur-sm border border-border rounded-lg shadow-hard z-50 max-h-80 overflow-y-auto">
               <div className="p-2">
                 {supportedLanguages.map((language) => (
                   <button
@@ -183,8 +178,7 @@ export default function LanguageSelector({
                       </span>
                     )}
                     <div className="flex-1">
-                      <div className={cn(
-                        "font-medium",
+                      <div className={cn("font-medium",
                         language.code === selectedLanguage ? 'text-primary' : 'text-foreground'
                       )}>
                         {language.name}

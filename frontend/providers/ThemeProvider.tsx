@@ -1,9 +1,11 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { THEME_COOKIE, THEME_STORAGE_KEY } from '@/lib/theme';
+import type { ResolvedTheme, Theme } from '@/lib/theme';
 
-export type Theme = 'light' | 'dark' | 'system';
-export type ResolvedTheme = 'light' | 'dark';
+export type { ResolvedTheme, Theme } from '@/lib/theme';
+export { THEME_COOKIE, THEME_STORAGE_KEY, themeInitScript } from '@/lib/theme';
 
 interface ThemeContextType {
   theme: Theme;
@@ -22,123 +24,106 @@ export function useTheme() {
   return context;
 }
 
+function getSystemTheme(): ResolvedTheme {
+  if (typeof window !== 'undefined' && window.matchMedia) {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  return 'light';
+}
+
+function resolveTheme(theme: Theme): ResolvedTheme {
+  return theme === 'system' ? getSystemTheme() : theme;
+}
+
+function applyTheme(resolved: ResolvedTheme) {
+  if (typeof document === 'undefined') return;
+  const root = document.documentElement;
+  // Both classes are managed explicitly. Only toggling `dark` left the server's
+  // `light` class in place, so the element ended up as `class="light dark"`.
+  root.classList.toggle('dark', resolved === 'dark');
+  root.classList.toggle('light', resolved === 'light');
+  root.dataset.theme = resolved;
+  // Written for the server's benefit, not the client's: the root layout reads it
+  // so the very first HTML already carries the right class.
+  document.cookie = `${THEME_COOKIE}=${resolved}; path=/; max-age=31536000; SameSite=Lax`;
+}
+
+/** Read the theme the init script already committed to, so state starts correct. */
+function readInitialTheme(storageKey: string): Theme {
+  if (typeof window === 'undefined') return 'light';
+  const stored = window.localStorage.getItem(storageKey);
+  return stored === 'light' || stored === 'dark' || stored === 'system' ? stored : 'light';
+}
+
 interface ThemeProviderProps {
   children: React.ReactNode;
   defaultTheme?: Theme;
   storageKey?: string;
 }
 
-export function ThemeProvider({ 
-  children, 
+export function ThemeProvider({
+  children,
   defaultTheme = 'light',
-  storageKey = 'tourism-theme'
+  storageKey = THEME_STORAGE_KEY,
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(defaultTheme);
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('light');
-  const [mounted, setMounted] = useState(false);
+  // Lazy initialisers, so the first client render already matches what the
+  // blocking script put on <html>. The previous version started from the default
+  // and corrected itself in an effect, which is what caused the flash *and* the
+  // cascading-render lint errors.
+  const [theme, setThemeState] = useState<Theme>(() => {
+    if (typeof window === 'undefined') return defaultTheme;
+    return readInitialTheme(storageKey);
+  });
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() =>
+    typeof window === 'undefined' ? 'light' : resolveTheme(readInitialTheme(storageKey)),
+  );
 
-  // Get system theme preference
-  const getSystemTheme = (): ResolvedTheme => {
-    if (typeof window !== 'undefined' && window.matchMedia) {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-    return 'light';
-  };
-
-  // Apply theme to document
-  const applyTheme = (themeToApply: ResolvedTheme) => {
-    if (typeof document !== 'undefined') {
-      const root = document.documentElement;
-      
-      // For Tailwind dark mode, we only need to add/remove 'dark' class
-      if (themeToApply === 'dark') {
-        root.classList.add('dark');
-      } else {
-        root.classList.remove('dark');
+  const setTheme = useCallback(
+    (newTheme: Theme) => {
+      setThemeState(newTheme);
+      const resolved = resolveTheme(newTheme);
+      setResolvedTheme(resolved);
+      applyTheme(resolved);
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem(storageKey, newTheme);
       }
-      
-      // Store for debugging
-      localStorage.setItem('applied-theme', themeToApply);
-    }
-  };
+    },
+    [storageKey],
+  );
 
-  // Resolve theme (handle system theme)
-  const resolveTheme = (currentTheme: Theme): ResolvedTheme => {
-    if (currentTheme === 'system') {
-      return getSystemTheme();
-    }
-    return currentTheme as ResolvedTheme;
-  };
+  const toggleTheme = useCallback(() => {
+    setTheme(resolvedTheme === 'light' ? 'dark' : 'light');
+  }, [resolvedTheme, setTheme]);
 
-  // Set theme function
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(storageKey, newTheme);
-    }
-  };
-
-  // Toggle between light and dark (skip system)
-  const toggleTheme = () => {
-    const newTheme = resolvedTheme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-  };
-
-  // Initialize theme from localStorage or default
+  // Re-apply on mount. The blocking script in <head> puts the class on <html>
+  // before first paint, but hydration reconciles that element against a server
+  // render that had no class, which strips it again.
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem(storageKey) as Theme;
-      if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
-        setThemeState(savedTheme);
-      }
-      setMounted(true);
-    }
-  }, [storageKey]);
+    applyTheme(resolvedTheme);
+  }, [resolvedTheme]);
 
-  // Update resolved theme when theme or system preference changes
+  // Follow the OS preference while the user has chosen "system".
   useEffect(() => {
-    const newResolvedTheme = resolveTheme(theme);
-    setResolvedTheme(newResolvedTheme);
-    applyTheme(newResolvedTheme);
+    if (theme !== 'system' || typeof window === 'undefined' || !window.matchMedia) return;
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = () => {
+      const resolved = getSystemTheme();
+      setResolvedTheme(resolved);
+      applyTheme(resolved);
+    };
+
+    handleChange();
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, [theme]);
 
-  // Listen for system theme changes
-  useEffect(() => {
-    if (theme === 'system' && typeof window !== 'undefined' && window.matchMedia) {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      
-      const handleChange = () => {
-        const newResolvedTheme = resolveTheme(theme);
-        setResolvedTheme(newResolvedTheme);
-        applyTheme(newResolvedTheme);
-      };
-
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
-    }
-  }, [theme]);
-
-  // Prevent hydration mismatch by not rendering until mounted
-  if (!mounted) {
-    return (
-      <div className="light" suppressHydrationWarning>
-        {children}
-      </div>
-    );
-  }
-
-  const value: ThemeContextType = {
-    theme,
-    resolvedTheme,
-    setTheme,
-    toggleTheme,
-  };
-
+  // The provider is always rendered - there is no pre-mount branch returning a
+  // different tree. Previously any child calling useTheme() during that window
+  // threw, which is why several components carried their own `mounted` guards.
   return (
-    <ThemeContext.Provider value={value}>
-      <div className={resolvedTheme} suppressHydrationWarning>
-        {children}
-      </div>
+    <ThemeContext.Provider value={{ theme, resolvedTheme, setTheme, toggleTheme }}>
+      {children}
     </ThemeContext.Provider>
   );
 }

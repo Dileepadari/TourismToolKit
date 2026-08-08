@@ -1,5 +1,11 @@
 import { gql } from '@apollo/client';
 
+/** Minimum shape these helpers need from a language list. */
+interface LanguageOption {
+  code: string;
+  name: string;
+}
+
 // Translation Types
 export interface TranslationRequest {
   text: string;
@@ -148,7 +154,6 @@ export class TranslationService {
     const malayalamRegex = /[\u0D00-\u0D7F]/;
     const bengaliRegex = /[\u0980-\u09FF]/;
     const gujaratiRegex = /[\u0A80-\u0AFF]/;
-    const marathiRegex = /[\u0900-\u097F]/; // Same as Hindi (Devanagari)
     const urduRegex = /[\u0600-\u06FF]/;
     
     if (hindiRegex.test(text)) return 'hi';
@@ -167,11 +172,11 @@ export class TranslationService {
     return `${Math.round(confidence * 100)}%`;
   }
 
-  static validateLanguageCode(code: string, supportedLanguages: any[]): boolean {
+  static validateLanguageCode(code: string, supportedLanguages: LanguageOption[]): boolean {
     return supportedLanguages.some(lang => lang.code === code);
   }
 
-  static getLanguageName(code: string, supportedLanguages: any[]): string {
+  static getLanguageName(code: string, supportedLanguages: LanguageOption[]): string {
     const language = supportedLanguages.find(lang => lang.code === code);
     return language ? language.name : code.toUpperCase();
   }
@@ -230,32 +235,10 @@ export class TranslationService {
 
 // Tourism-specific translation phrases
 export const TOURISM_PHRASES = {
-  common: [
-    "Hello", "Thank you", "Please", "Excuse me", "Sorry",
-    "Yes", "No", "Help", "Where is...?", "How much?"
-  ],
-  directions: [
-    "Where is the nearest hotel?", "How do I get to the airport?",
-    "Where is the bus station?", "Is this the right way?",
-    "Can you show me on the map?", "How far is it?"
-  ],
-  accommodation: [
-    "I have a reservation", "Do you have available rooms?",
-    "What time is check-in?", "Where is the elevator?",
-    "Can I have the Wi-Fi password?", "What time is breakfast?"
-  ],
-  dining: [
-    "I would like to order", "What do you recommend?",
-    "I'm vegetarian", "No spicy food please",
-    "Can I have the bill?", "Is service charge included?"
-  ],
-  shopping: [
-    "How much does this cost?", "Do you accept credit cards?",
-    "Can I get a discount?", "Do you have this in another size?",
-    "Can I return this?", "Where can I pay?"
-  ],
-  emergency: [
-    "I need help", "Call the police", "Where is the hospital?",
-    "I lost my passport", "I need a doctor", "Call an ambulance"
-  ]
+  common: ["Hello", "Thank you", "Please", "Excuse me", "Sorry","Yes", "No", "Help", "Where is...?", "How much?"],
+  directions: ["Where is the nearest hotel?", "How do I get to the airport?","Where is the bus station?", "Is this the right way?","Can you show me on the map?", "How far is it?"],
+  accommodation: ["I have a reservation", "Do you have available rooms?","What time is check-in?", "Where is the elevator?","Can I have the Wi-Fi password?", "What time is breakfast?"],
+  dining: ["I would like to order", "What do you recommend?","I'm vegetarian", "No spicy food please","Can I have the bill?", "Is service charge included?"],
+  shopping: ["How much does this cost?", "Do you accept credit cards?","Can I get a discount?", "Do you have this in another size?","Can I return this?", "Where can I pay?"],
+  emergency: ["I need help", "Call the police", "Where is the hospital?","I lost my passport", "I need a doctor", "Call an ambulance"]
 };

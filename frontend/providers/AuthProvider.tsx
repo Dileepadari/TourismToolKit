@@ -1,18 +1,21 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
+import { useApolloClient } from '@apollo/client/react';
+import { LOGOUT_MUTATION, ME_QUERY, REFRESH_SESSION_MUTATION } from '@/graphql/queries';
+import type { LogoutData, MeData, RefreshSessionData } from '@/graphql/types';
 import { User } from '../utils/types';
-import { storage } from '../utils/helpers';
 
 interface AuthContextType {
   user: User | null;
-  token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (token: string, user: User) => void;
-  logout: () => void;
+  /** Called after a successful login/register mutation; the cookie is already set. */
+  onSignedIn: (user: User) => void;
+  logout: (everywhere?: boolean) => Promise<void>;
   updateUser: (user: Partial<User>) => void;
+  refresh: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -21,104 +24,124 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+/**
+ * Authentication state.
+ *
+ * There is no token in here. The access and refresh tokens live in HttpOnly
+ * cookies the browser attaches automatically - script cannot read them, so an
+ * XSS can no longer walk off with a session. The previous version kept the JWT
+ * in localStorage and mirrored it into a readable cookie.
+ *
+ * The session is therefore established by asking the server who we are, not by
+ * reading local state.
+ */
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const client = useApolloClient();
 
-  // Initialize auth state from localStorage on mount
-  useEffect(() => {
-    const initializeAuth = () => {
-      try {
-        const storedToken = storage.get('authToken');
-        const storedUser = storage.get('authUser');
+  const loadCurrentUser = useCallback(async (): Promise<User | null> => {
+    const { data } = await client.query<MeData>({
+      query: ME_QUERY,
+      fetchPolicy: 'network-only',
+    });
+    return data?.me ?? null;
+  }, [client]);
 
-        if (storedToken && storedUser) {
-          // Also ensure cookie is set for middleware
-          document.cookie = `authToken=${storedToken}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Strict`;
-          
-          setToken(storedToken);
-          setUser(JSON.parse(storedUser));
-          setIsAuthenticated(true);
-        }
-      } catch (error) {
-        console.error('Error initializing auth:', error);
-        // Clear corrupted data
-        storage.remove('authToken');
-        storage.remove('authUser');
-        document.cookie = 'authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
-      } finally {
-        setIsLoading(false);
+  const refresh = useCallback(async (): Promise<boolean> => {
+    try {
+      const { data } = await client.mutate<RefreshSessionData>({
+        mutation: REFRESH_SESSION_MUTATION,
+      });
+      if (data?.refreshSession?.success && data.refreshSession.user) {
+        setUser(data.refreshSession.user);
+        return true;
       }
-    };
+    } catch {
+      // Network or server error - treat as signed out.
+    }
+    setUser(null);
+    return false;
+  }, [client]);
 
-    initializeAuth();
+  // Resolve the session once on mount. The access token is short-lived, so a
+  // returning visitor usually needs the refresh cookie exchanged for a new one.
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const current = await loadCurrentUser();
+        if (cancelled) return;
+
+        if (current) {
+          setUser(current);
+        } else {
+          await refresh();
+        }
+      } catch {
+        if (!cancelled) setUser(null);
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [loadCurrentUser, refresh]);
+
+  // Keep the short-lived access token fresh while the tab is open, so a long
+  // session does not expire mid-use.
+  useEffect(() => {
+    if (!user) return;
+    const interval = setInterval(() => void refresh(), 10 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [user, refresh]);
+
+  const onSignedIn = useCallback(
+    (signedIn: User) => {
+      setUser(signedIn);
+      router.push('/dashboard');
+    },
+    [router],
+  );
+
+  const logout = useCallback(
+    async (everywhere = false) => {
+      try {
+        // Server-side revocation - this is what a stateless token could not do.
+        await client.mutate<LogoutData>({
+          mutation: LOGOUT_MUTATION,
+          variables: { everywhere },
+        });
+      } catch {
+        // Even if the call fails, drop local state and send the user to login.
+      }
+      setUser(null);
+      await client.clearStore();
+      router.push('/auth/login');
+    },
+    [client, router],
+  );
+
+  const updateUser = useCallback((updates: Partial<User>) => {
+    setUser((current) => (current ? { ...current, ...updates } : current));
   }, []);
 
-  const login = (newToken: string, newUser: User) => {
-    try {
-      // Store in localStorage
-      storage.set('authToken', newToken);
-      storage.set('authUser', JSON.stringify(newUser));
-      
-      // Also store token in cookies for middleware
-      document.cookie = `authToken=${newToken}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Strict`;
-      
-      // Update state
-      setToken(newToken);
-      setUser(newUser);
-      setIsAuthenticated(true);
-      
-      // Navigate to dashboard
-      router.push('/dashboard');
-    } catch (error) {
-      console.error('Error during login:', error);
-    }
-  };
-
-  const logout = () => {
-    try {
-      // Clear localStorage
-      storage.remove('authToken');
-      storage.remove('authUser');
-      
-      // Clear cookies
-      document.cookie = 'authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
-      
-      // Clear state
-      setToken(null);
-      setUser(null);
-      setIsAuthenticated(false);
-      
-      // Navigate to login
-      router.push('/auth/login');
-    } catch (error) {
-      console.error('Error during logout:', error);
-    }
-  };
-
-  const updateUser = (updates: Partial<User>) => {
-    if (user) {
-      const updatedUser = { ...user, ...updates };
-      setUser(updatedUser);
-      storage.set('authUser', JSON.stringify(updatedUser));
-    }
-  };
-
-  const value = {
-    user,
-    token,
-    isAuthenticated,
-    isLoading,
-    login,
-    logout,
-    updateUser,
-  };
-
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: user !== null,
+        isLoading,
+        onSignedIn,
+        logout,
+        updateUser,
+        refresh,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

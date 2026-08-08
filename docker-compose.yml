@@ -1,27 +1,32 @@
 services:
-  # PostgreSQL Database
   db:
-    image: postgres:15-alpine
+    image: postgres:18-alpine
     container_name: tourism-db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: tourism_user
-      POSTGRES_PASSWORD: tourism_password
-      POSTGRES_DB: tourism_db
+      POSTGRES_USER: ${POSTGRES_USER:-tourism_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tourism_password}
+      POSTGRES_DB: ${POSTGRES_DB:-tourism_db}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./init-db:/docker-entrypoint-initdb.d
+      # Postgres 18+ wants a single mount at /var/lib/postgresql (not .../data),
+      # so that `pg_upgrade --link` can work across a mount boundary later.
+      #
+      # UPGRADING FROM AN OLDER MAJOR: a data directory created by Postgres 15
+      # cannot be read by 18. Dump first, then recreate:
+      #   docker compose exec db pg_dump -U tourism_user tourism_db > backup.sql
+      #   docker compose down -v && docker compose up -d db
+      #   docker compose exec -T db psql -U tourism_user tourism_db < backup.sql
+      - postgres_data:/var/lib/postgresql
     ports:
       - "5432:5432"
     networks:
       - tourism-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tourism_user -d tourism_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-tourism_user} -d ${POSTGRES_DB:-tourism_db}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # Backend API
   backend:
     build:
       context: ./backend
@@ -30,46 +35,53 @@ services:
     restart: unless-stopped
     ports:
       - "8000:8000"
+    # The ~48 BASHINI_* endpoint/token variables live here. Without this the
+    # container starts with no upstream credentials at all and every translation,
+    # speech and OCR feature fails silently.
+    env_file:
+      - path: ./backend/.env
+        required: false
     environment:
-      DATABASE_URL: postgresql://tourism_user:tourism_password@db:5432/tourism_db
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-your-secret-key-change-in-production}
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-tourism_user}:${POSTGRES_PASSWORD:-tourism_password}@db:5432/${POSTGRES_DB:-tourism_db}
+      # No weak default: an unset secret must be a visible failure, not a
+      # silently shared well-known key.
+      JWT_SECRET_KEY: "${JWT_SECRET_KEY:?set JWT_SECRET_KEY in .env - see backend/.env.example}"
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+      BHASHINI_VERIFY_SSL: ${BHASHINI_VERIFY_SSL:-true}
+      SEED_DB: ${SEED_DB:-false}
       PYTHONUNBUFFERED: 1
-      RESET_DB: ${RESET_DB:-false}
-    volumes:
-      - ./backend:/app
-      - backend_logs:/app/logs
-      - ./scripts:/scripts
     depends_on:
       db:
         condition: service_healthy
     networks:
       - tourism-network
-    command: >
-      sh -c "
-        chmod +x /scripts/init_db.sh &&
-        /scripts/init_db.sh &&
-        echo 'Starting application...' &&
-        uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-      "
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 40s
+      retries: 3
 
-  # Frontend Application
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        # NEXT_PUBLIC_* is inlined at build time, so this must be a build arg.
+        # It also has to be a URL the *browser* can reach - the internal `backend`
+        # hostname only resolves inside the compose network.
+        NEXT_PUBLIC_GRAPHQL_URL: ${NEXT_PUBLIC_GRAPHQL_URL:-http://localhost:8000/graphql}
     container_name: tourism-frontend
     restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
-      NEXT_PUBLIC_API_URL: http://backend:8000
       NODE_ENV: production
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - tourism-network
 
@@ -79,4 +91,3 @@ networks:
 
 volumes:
   postgres_data:
-  backend_logs:

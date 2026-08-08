@@ -9,6 +9,7 @@ export const te: TranslationKeys = {
     translator: 'అనువాదకుడు',
     dictionary: 'నిఘంటువు',
     places: 'ప్రదేశాలు',
+    trips: 'ప్రయాణాలు',
     guide: 'గైడ్',
     settings: 'సెట్టింగ్‌లు',
     login: 'లాగిన్',
@@ -144,6 +145,8 @@ export const te: TranslationKeys = {
       placesVisited: 'సందర్శించిన ప్రదేశాలు',
       wordsLearned: 'నేర్చుకున్న పదాలు',
       tripsPlanned: 'ప్రణాళికాబద్ధమైన ప్రయాణాలు',
+      favorites: 'ఇష్టమైనవి',
+      countries: 'దేశాలు',
     },
 
     recentActivity: {
@@ -167,6 +170,7 @@ export const te: TranslationKeys = {
       modern: 'ఆధునిక',
       historical: 'చారిత్రక',
       visitors: 'సందర్శకులు',
+      languages: 'భాషలు',
       rating: 'రేటింగ్',
     },
   },

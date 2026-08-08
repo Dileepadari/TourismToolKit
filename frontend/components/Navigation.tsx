@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { usePathname } from 'next/navigation';
+import { Logo } from '@/components/ui/Logo';
+import { motion } from 'motion/react';
 import { 
-  Globe2, 
+
   Menu, 
   X, 
   LogOut, 
@@ -14,7 +15,8 @@ import {
   Languages,
   BookOpen,
   MapPin,
-  Compass
+  Compass,
+  CalendarDays
 } from 'lucide-react';
 import { useAuth } from '@/providers/AuthProvider';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -26,23 +28,24 @@ import toast from 'react-hot-toast';
 export default function Navigation() {
   const { t } = useTranslation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const router = useRouter();
   const pathname = usePathname();
   const { user, isAuthenticated, logout } = useAuth();
 
   const navigationItems = [
-    { name: t('nav.dashboard'), href: '/dashboard', icon: Home, color: 'from-saffron-500 to-golden-500' },
-    { name: t('nav.translator'), href: '/translator', icon: Languages, color: 'from-royal-500 to-heritage-500' },
-    { name: t('nav.dictionary'), href: '/dictionary', icon: BookOpen, color: 'from-heritage-500 to-saffron-500' },
-    { name: t('nav.places'), href: '/places', icon: MapPin, color: 'from-golden-500 to-royal-500' },
-    { name: t('nav.guide'), href: '/guide', icon: Compass, color: 'from-saffron-500 to-heritage-500' },
+    { name: t('nav.dashboard'), href: '/dashboard', icon: Home, color: 'bg-clay-500' },
+    { name: t('nav.translator'), href: '/translator', icon: Languages, color: 'bg-indigo-ink-500' },
+    { name: t('nav.dictionary'), href: '/dictionary', icon: BookOpen, color: 'bg-verdigris-500' },
+    { name: t('nav.places'), href: '/places', icon: MapPin, color: 'bg-ochre-500' },
+    { name: t('nav.guide'), href: '/guide', icon: Compass, color: 'bg-clay-500' },
+    { name: t('nav.trips'), href: '/trips', icon: CalendarDays, color: 'bg-verdigris-500' },
   ];
 
-  const handleLogout = () => {
-    logout();
-    toast.success('Logged out successfully');
-    router.push('/');
+  const handleLogout = async () => {
     setIsMobileMenuOpen(false);
+    // Awaited: logout revokes the session server-side and clears the Apollo
+    // cache before navigating, so no stale user data survives the transition.
+    await logout();
+    toast.success('Logged out successfully');
   };
 
   return (
@@ -51,9 +54,7 @@ export default function Navigation() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href={isAuthenticated ? '/dashboard' : '/'} className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center shadow-lg">
-              <Globe2 className="w-5 h-5 text-primary-foreground" />
-            </div>
+            <Logo size={32} />
             <span className="text-xl font-bold text-foreground hidden sm:block">
               TourismToolKit
             </span>
@@ -96,7 +97,7 @@ export default function Navigation() {
                 {/* User Menu (Desktop) */}
                 <div className="hidden md:flex items-center space-x-3">
                   <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                       <span className="text-primary-foreground text-sm font-semibold">
                         {user?.fullName?.charAt(0) || user?.username?.charAt(0) || 'U'}
                       </span>
@@ -107,17 +108,14 @@ export default function Navigation() {
                   </div>
 
                   <Link
-                    href="/settings"
-                    className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                    title={t('nav.settings')}
+                    href="/settings"className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"title={t('nav.settings')}
                   >
                     <Settings className="w-4 h-4" />
                   </Link>
 
                   <button
                     onClick={handleLogout}
-                    className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                    title={t('nav.logout')}
+                    className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"title={t('nav.logout')}
                   >
                     <LogOut className="w-4 h-4" />
                   </button>
@@ -126,17 +124,14 @@ export default function Navigation() {
                 {/* Mobile Menu Button */}
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="md:hidden p-2 rounded-lg text-foreground hover:bg-muted transition-colors"
-                >
+                  className="md:hidden p-2 rounded-lg text-foreground hover:bg-muted transition-colors">
                   {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                 </button>
               </>
             ) : (
               <div className="hidden md:flex items-center space-x-3">
                 <Link
-                  href="/auth/login"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
+                  href="/auth/login"className="text-muted-foreground hover:text-foreground transition-colors">
                   Login
                 </Link>
                 <Button variant="primary" size="sm">
@@ -154,12 +149,11 @@ export default function Navigation() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
-          className="md:hidden bg-card border-t border-border"
-        >
+          className="md:hidden bg-card border-t border-border">
           <div className="px-4 py-2 space-y-1">
             {/* User Info */}
             <div className="flex items-center space-x-3 px-3 py-4 border-b border-border">
-              <div className="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
                 <span className="text-primary-foreground font-semibold">
                   {user?.fullName?.charAt(0) || user?.username?.charAt(0) || 'U'}
                 </span>
@@ -206,18 +200,15 @@ export default function Navigation() {
               </div>
 
               <Link
-                href="/settings"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center space-x-3 px-3 py-3 rounded-md text-base font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors w-full"
-              >
+                href="/settings"onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center space-x-3 px-3 py-3 rounded-md text-base font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors w-full">
                 <Settings className="w-5 h-5" />
                 <span>{t('nav.settings')}</span>
               </Link>
               
               <button
                 onClick={handleLogout}
-                className="flex items-center space-x-3 px-3 py-3 rounded-md text-base font-medium text-destructive hover:bg-destructive/10 transition-colors w-full"
-              >
+                className="flex items-center space-x-3 px-3 py-3 rounded-md text-base font-medium text-destructive hover:bg-destructive/10 transition-colors w-full">
                 <LogOut className="w-5 h-5" />
                 <span>{t('nav.logout')}</span>
               </button>

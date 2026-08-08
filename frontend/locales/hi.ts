@@ -9,6 +9,7 @@ export const hi: TranslationKeys = {
     translator: 'अनुवादक',
     dictionary: 'शब्दकोश',
     places: 'स्थान',
+    trips: 'यात्राएं',
     guide: 'गाइड',
     settings: 'सेटिंग्स',
     login: 'लॉगिन',
@@ -144,6 +145,8 @@ export const hi: TranslationKeys = {
       placesVisited: 'देखे गए स्थान',
       wordsLearned: 'सीखे गए शब्द',
       tripsPlanned: 'नियोजित यात्राएं',
+      favorites: 'पसंदीदा',
+      countries: 'देश',
     },
 
     recentActivity: {
@@ -167,6 +170,7 @@ export const hi: TranslationKeys = {
       modern: 'आधुनिक',
       historical: 'ऐतिहासिक',
       visitors: 'आगंतुक',
+      languages: 'भाषाएँ',
       rating: 'रेटिंग',
     },
   },

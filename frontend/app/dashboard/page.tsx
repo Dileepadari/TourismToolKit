@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { useQuery } from '@apollo/client';
+import { motion } from 'motion/react';
+import type { TravelHistoryData, TravelHistoryVars, UserDictionaryData, UserDictionaryVars, PlacesData, PlacesVars } from '@/graphql/types';
+import { useQuery } from '@apollo/client/react';
 import { 
   Languages, 
   Camera,
@@ -22,21 +23,46 @@ import Header from '@/components/ui/Header';
 import { Card, CardContent } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { useAuth } from '@/providers/AuthProvider';
-import { GET_USER_DICTIONARY, GET_TRAVEL_HISTORY } from '@/graphql/queries';
+import { GET_USER_DICTIONARY, GET_TRAVEL_HISTORY , GET_PLACES_QUERY } from '@/graphql/queries';
 import { cn } from '@/utils/helpers';
 import { useTranslation } from '@/hooks/useTranslation';
+
+// Cards are tinted by position rather than by a colour stored on the row - the
+// palette is a presentation concern, not data.
+/** "3 days ago" style formatting, using the browser's own locale rules. */
+function formatRelativeTime(iso: string): string {
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return '';
+
+  const seconds = Math.round((then - Date.now()) / 1000);
+  const units: [Intl.RelativeTimeFormatUnit, number][] = [
+    ['year', 31_536_000],
+    ['month', 2_592_000],
+    ['day', 86_400],
+    ['hour', 3_600],
+    ['minute', 60],
+  ];
+  const formatter = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
+
+  for (const [unit, secondsPerUnit] of units) {
+    if (Math.abs(seconds) >= secondsPerUnit) {
+      return formatter.format(Math.round(seconds / secondsPerUnit), unit);
+    }
+  }
+  return formatter.format(Math.round(seconds), 'second');
+}
+
+const PLACE_TINTS = [
+  'bg-ochre-400/15',
+  'bg-verdigris-400/15',
+  'bg-indigo-ink-400/15',
+] as const;
 
 export default function UnifiedDashboard() {
   const { t } = useTranslation();
   const router = useRouter();
   const { user, isAuthenticated, isLoading } = useAuth();
   
-  const [stats, setStats] = useState({
-    translations: 0,
-    places_visited: 0,
-    words_learned: 0,
-    days_traveled: 0
-  });
 
   const quickActions = [
     {
@@ -44,80 +70,52 @@ export default function UnifiedDashboard() {
       title: t('dashboard.quickActions.translate'),
       description: t('translator.subtitle'),
       href: '/translator',
-      color: 'from-royal-500 to-heritage-500',
-      bgColor: 'bg-gradient-to-br from-royal-50 to-heritage-50 dark:from-royal-900/20 dark:to-heritage-900/20'
+      color: 'bg-indigo-ink-500/15 text-indigo-ink-700 dark:text-indigo-ink-300',
+      bgColor: 'bg-indigo-ink-500/8'
     },
     {
       icon: Camera,
       title: t('dashboard.quickActions.ocrScanner'),
       description: t('dashboard.quickActions.ocrDescription'),
       href: '/translator?tab=ocr',
-      color: 'from-saffron-500 to-golden-500',
-      bgColor: 'bg-gradient-to-br from-saffron-50 to-golden-50 dark:from-saffron-900/20 dark:to-golden-900/20'
+      color: 'bg-clay-500/15 text-clay-700 dark:text-clay-300',
+      bgColor: 'bg-clay-500/8'
     },
     {
       icon: Mic,
       title: t('dashboard.quickActions.voiceAssistant'),
       description: t('dashboard.quickActions.voiceDescription'),
       href: '/translator?tab=voice',
-      color: 'from-heritage-500 to-royal-500',
-      bgColor: 'bg-gradient-to-br from-heritage-50 to-royal-50 dark:from-heritage-900/20 dark:to-royal-900/20'
+      color: 'bg-verdigris-500/15 text-verdigris-700 dark:text-verdigris-300',
+      bgColor: 'bg-verdigris-500/8'
     },
     {
       icon: BookOpen,
       title: t('dashboard.quickActions.learnWords'),
       description: t('dictionary.subtitle'),
       href: '/dictionary',
-      color: 'from-golden-500 to-saffron-500',
-      bgColor: 'bg-gradient-to-br from-golden-50 to-saffron-50 dark:from-golden-900/20 dark:to-saffron-900/20'
+      color: 'bg-ochre-500/15 text-ochre-700 dark:text-ochre-300',
+      bgColor: 'bg-ochre-500/8'
     },
     {
       icon: MapPin,
       title: t('dashboard.quickActions.findPlaces'),
       description: t('places.subtitle'),
       href: '/places',
-      color: 'from-heritage-500 to-golden-500',
-      bgColor: 'bg-gradient-to-br from-heritage-50 to-golden-50 dark:from-heritage-900/20 dark:to-golden-900/20'
+      color: 'bg-verdigris-500/15 text-verdigris-700 dark:text-verdigris-300',
+      bgColor: 'bg-verdigris-500/8'
     },
     {
       icon: Compass,
       title: t('dashboard.quickActions.travelGuide'),
       description: t('dashboard.quickActions.guideDescription'),
       href: '/guide',
-      color: 'from-royal-500 to-saffron-500',
-      bgColor: 'bg-gradient-to-br from-royal-50 to-saffron-50 dark:from-royal-900/20 dark:to-saffron-900/20'
+      color: 'bg-indigo-ink-500/15 text-indigo-ink-700 dark:text-indigo-ink-300',
+      bgColor: 'bg-indigo-ink-500/8'
     }
   ];
 
-  const featuredPlaces = [
-    {
-      name: 'Taj Mahal',
-      location: 'Agra, Uttar Pradesh',
-      rating: 4.8,
-      description: t('dashboard.featuredPlaces.symbolOfLove'),
-      category: 'Heritage',
-      visitors: '8M+',
-      color: 'from-golden-400 to-saffron-400'
-    },
-    {
-      name: 'Kerala Backwaters',
-      location: 'Alleppey, Kerala',
-      rating: 4.7,
-      description: t('dashboard.featuredPlaces.holisticCity'),
-      category: 'Nature',
-      visitors: '2M+',
-      color: 'from-heritage-400 to-royal-400'
-    },
-    {
-      name: 'Golden Temple',
-      location: 'Amritsar, Punjab',
-      rating: 4.9,
-      description: t('dashboard.featuredPlaces.spiritual'),
-      category: 'Spiritual',
-      visitors: '5M+',
-      color: 'from-royal-400 to-golden-400'
-    }
-  ];
+
 
   // Redirect if not authenticated (only after loading is complete)
   useEffect(() => {
@@ -128,25 +126,74 @@ export default function UnifiedDashboard() {
 
   // GraphQL queries
 
-  const { data: dictionaryData } = useQuery(GET_USER_DICTIONARY, {
-    variables: { userId: user?.id },
+  const { data: dictionaryData } = useQuery<UserDictionaryData, UserDictionaryVars>(GET_USER_DICTIONARY, {
     skip: !user?.id
   });
 
-  const { data: travelHistoryData } = useQuery(GET_TRAVEL_HISTORY, {
-    variables: { userId: user?.id },
-    skip: !user?.id
-  });
+  const { data: travelHistoryData } = useQuery<TravelHistoryData, TravelHistoryVars>(
+    GET_TRAVEL_HISTORY,
+    { skip: !user?.id },
+  );
 
-  // Update stats based on data
-  useEffect(() => {
-    setStats({
-      translations: 45 + (dictionaryData?.userDictionary?.length || 0),
-      places_visited: 3 + (travelHistoryData?.travelHistory?.length || 0),
-      words_learned: dictionaryData?.userDictionary?.length || 127,
-      days_traveled: 12 + Math.floor(Math.random() * 20)
-    });
-  }, [dictionaryData, travelHistoryData]);
+  // Real destinations, highest rated first. This section used to be a hardcoded
+  // array of three places that existed nowhere in the database.
+  const { data: placesData } = useQuery<PlacesData, PlacesVars>(GET_PLACES_QUERY, {
+    variables: { country: 'India', limit: 3 },
+  });
+  const featuredPlaces = placesData?.getPlaces ?? [];
+
+
+  // Derived from query data during render rather than pushed into state by an
+  // effect, which cost an extra render pass on every refetch.
+  // Memoised so its identity is stable; a fresh `[]` each render would
+  // invalidate every downstream useMemo.
+  const entries = useMemo(
+    () => dictionaryData?.getUserDictionary ?? [],
+    [dictionaryData],
+  );
+  const savedWords = entries.length;
+  const favouriteCount = entries.filter((entry) => entry.isFavorite).length;
+  const travelHistory = travelHistoryData?.getTravelHistory;
+  const stats = useMemo(
+    () => {
+      const trips = travelHistory ?? [];
+      return {
+      // Real counts only. These tiles previously showed invented numbers
+      // (`45 + …`, `|| 127`, `12 + Math.random() * 20`) dressed up as metrics,
+      // so they told the user nothing and changed on every re-render.
+      words_learned: savedWords,
+      favourites: favouriteCount,
+      places_visited: trips.length,
+        countries_visited: new Set(trips.map((trip) => trip.country)).size,
+      };
+    },
+    [savedWords, favouriteCount, travelHistory],
+  );
+
+  // Derived from the user's own records. This panel used to be three invented
+  // rows with hardcoded "2 hours ago" strings that never changed.
+  const recentActivity = useMemo(() => {
+    const events = [
+      ...entries.map((entry) => ({
+        icon: BookOpen,
+        title: `Saved "${entry.word}" - ${entry.translation}`,
+        at: entry.createdAt,
+        color: 'bg-ochre-500/15 text-ochre-700 dark:text-ochre-300',
+      })),
+      ...(travelHistory ?? []).map((trip) => ({
+        icon: MapPin,
+        title: `Recorded a trip to ${trip.destination}`,
+        at: trip.createdAt,
+        color: 'bg-verdigris-500/15 text-verdigris-700 dark:text-verdigris-300',
+      })),
+    ];
+
+    return events
+      .filter((event) => Boolean(event.at))
+      .sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime())
+      .slice(0, 5)
+      .map((event) => ({ ...event, time: formatRelativeTime(event.at) }));
+  }, [entries, travelHistory]);
 
   // Show loading spinner while checking authentication
   if (isLoading) {
@@ -168,31 +215,31 @@ export default function UnifiedDashboard() {
   const statsConfig = [
     {
       icon: Languages,
-      label: t('dashboard.stats.translations'),
-      value: stats.translations,
-      color: 'from-royal-500 to-heritage-500',
-      bgColor: 'bg-gradient-to-br from-royal-50 to-heritage-50 dark:from-royal-900/20 dark:to-heritage-900/20'
+      label: t('dashboard.stats.wordsLearned'),
+      value: stats.words_learned,
+      color: 'bg-indigo-ink-500/15 text-indigo-ink-700 dark:text-indigo-ink-300',
+      bgColor: 'bg-indigo-ink-500/8'
     },
     {
       icon: MapPin,
       label: t('dashboard.stats.placesVisited'),
       value: stats.places_visited,
-      color: 'from-heritage-500 to-golden-500',
-      bgColor: 'bg-gradient-to-br from-heritage-50 to-golden-50 dark:from-heritage-900/20 dark:to-golden-900/20'
+      color: 'bg-verdigris-500/15 text-verdigris-700 dark:text-verdigris-300',
+      bgColor: 'bg-verdigris-500/8'
     },
     {
       icon: BookOpen,
-      label: t('dashboard.stats.wordsLearned'),
-      value: stats.words_learned,
-      color: 'from-golden-500 to-saffron-500',
-      bgColor: 'bg-gradient-to-br from-golden-50 to-saffron-50 dark:from-golden-900/20 dark:to-saffron-900/20'
+      label: t('dashboard.stats.favorites'),
+      value: stats.favourites,
+      color: 'bg-ochre-500/15 text-ochre-700 dark:text-ochre-300',
+      bgColor: 'bg-ochre-500/8'
     },
     {
       icon: TrendingUp,
-      label: t('dashboard.stats.tripsPlanned'),
-      value: stats.days_traveled,
-      color: 'from-saffron-500 to-royal-500',
-      bgColor: 'bg-gradient-to-br from-saffron-50 to-royal-50 dark:from-saffron-900/20 dark:to-royal-900/20'
+      label: t('dashboard.stats.countries'),
+      value: stats.countries_visited,
+      color: 'bg-clay-500/15 text-clay-700 dark:text-clay-300',
+      bgColor: 'bg-clay-500/8'
     }
   ];
 
@@ -202,7 +249,7 @@ export default function UnifiedDashboard() {
       <Header
         title={`${t('dashboard.welcome')}, ${user?.fullName || user?.username}! 🙏`}
         subtitle={t('dashboard.subtitle')}
-        gradient={true}
+        tinted={true}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -210,8 +257,7 @@ export default function UnifiedDashboard() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-6"
-        >
+          className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           {statsConfig.map((stat, index) => (
             <motion.div
               key={stat.label}
@@ -230,8 +276,8 @@ export default function UnifiedDashboard() {
                         {stat.value.toLocaleString()}
                       </p>
                     </div>
-                    <div className={cn("p-3 rounded-xl bg-gradient-to-r", stat.color)}>
-                      <stat.icon className="w-6 h-6 text-white" />
+                    <div className={cn("p-3 rounded-xl", stat.color)}>
+                      <stat.icon className="w-6 h-6" />
                     </div>
                   </div>
                 </CardContent>
@@ -263,7 +309,7 @@ export default function UnifiedDashboard() {
                 <Link href={action.href}>
                   <Card hover className={cn("h-full cursor-pointer group", action.bgColor)}>
                     <CardContent className="p-6">
-                      <div className={cn("w-14 h-14 rounded-xl bg-gradient-to-r", action.color, "flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-200")}>
+                      <div className={cn("w-14 h-14 rounded-xl", action.color, "flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-200")}>
                         <action.icon className="w-7 h-7 text-foreground" />
                       </div>
                       <h3 className="text-lg font-semibold text-foreground mb-2">
@@ -304,24 +350,29 @@ export default function UnifiedDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {featuredPlaces.map((place, index) => (
               <motion.div
-                key={place.name}
+                key={place.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 + index * 0.1 }}
                 whileHover={{ y: -5 }}
               >
                 <Card hover className="overflow-hidden group cursor-pointer">
-                  <div className={cn("h-48 bg-gradient-to-br", place.color, "relative flex items-center justify-center")}>
-                    <MapPin className="w-20 h-20 text-white opacity-30" />
+                  <div
+                    className={cn(
+                      'h-48 relative flex items-center justify-center border-b border-border',
+                      PLACE_TINTS[index % PLACE_TINTS.length],
+                    )}
+                  >
+                    <MapPin className="w-20 h-20 opacity-40" />
                     <div className="absolute top-4 left-4">
-                      <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-sm rounded-full">
+                      <span className="px-3 py-1 bg-card/90 text-foreground text-sm rounded-full border border-border">
                         {place.category}
                       </span>
                     </div>
                     <div className="absolute top-4 right-4">
-                      <div className="flex items-center space-x-1 bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full">
-                        <Star className="w-4 h-4 text-white fill-current" />
-                        <span className="text-white text-sm font-semibold">{place.rating}</span>
+                      <div className="flex items-center space-x-1 bg-card/90 border border-border px-2 py-1 rounded-full">
+                        <Star className="w-4 h-4 text-ochre-500 fill-current" />
+                        <span className="text-foreground text-sm font-semibold">{place.rating}</span>
                       </div>
                     </div>
                   </div>
@@ -331,7 +382,7 @@ export default function UnifiedDashboard() {
                     </h3>
                     <p className="text-muted-foreground mb-3 flex items-center">
                       <MapPin className="w-4 h-4 mr-1" />
-                      {place.location}
+                      {[place.city, place.state].filter(Boolean).join(', ')}
                     </p>
                     <p className="text-foreground text-sm mb-4">
                       {place.description}
@@ -339,11 +390,17 @@ export default function UnifiedDashboard() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-1 text-muted-foreground">
                         <Users className="w-4 h-4" />
-                        <span className="text-sm">{place.visitors} {t('dashboard.featuredPlaces.visitors')}</span>
+                        <span className="text-sm">
+                          {place.languagesSpoken?.length ?? 0}{' '}
+                          {t('dashboard.featuredPlaces.languages')}
+                        </span>
                       </div>
-                      <Button size="sm" variant="ghost" className="text-primary hover:text-primary/80 p-0">
+                      <Link
+                        href={`/places/${place.id}`}
+                        className="text-sm text-primary hover:text-primary/80"
+                      >
                         Learn More →
-                      </Button>
+                      </Link>
                     </div>
                   </CardContent>
                 </Card>
@@ -360,32 +417,18 @@ export default function UnifiedDashboard() {
         >
           <h2 className="text-2xl font-bold text-foreground mb-6">Recent Journey</h2>
           
-          <Card gradient className="bg-gradient-to-br from-card to-primary/5 dark:from-card dark:to-background">
+          <Card tinted className="bg-primary/5">
             <CardContent className="p-6">
               <div className="space-y-6">
-                {[
-                  {
-                    icon: Languages,
-                    title: 'Translated "स्वागत" to "Welcome"',
-                    time: '2 hours ago',
-                    color: 'from-royal-500 to-heritage-500'
-                  },
-                  {
-                    icon: BookOpen,
-                    title: 'Added 5 new words to dictionary',
-                    time: 'Yesterday',
-                    color: 'from-golden-500 to-saffron-500'
-                  },
-                  {
-                    icon: MapPin,
-                    title: 'Explored cultural tips for Rajasthan',
-                    time: '3 days ago',
-                    color: 'from-heritage-500 to-royal-500'
-                  }
-                ].map((activity, index) => (
+                {recentActivity.map((activity, index) => (
                   <div key={index} className="flex items-center space-x-4">
-                    <div className={cn("w-12 h-12 rounded-xl bg-gradient-to-r", activity.color, "flex items-center justify-center")}>
-                      <activity.icon className="w-6 h-6 text-white" />
+                    <div
+                      className={cn(
+                        'w-12 h-12 rounded-xl flex items-center justify-center',
+                        activity.color,
+                      )}
+                    >
+                      <activity.icon className="w-6 h-6" />
                     </div>
                     <div className="flex-1">
                       <p className="text-foreground font-medium">

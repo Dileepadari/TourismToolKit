@@ -1,19 +1,24 @@
 """
 Seed data for users table
 """
-from sqlmodel import Session, select
-from app.database.db import engine
-from app.database.models import User
+
 from datetime import datetime
+
 import bcrypt
+from sqlmodel import Session, select
+
+from app.database.models import User
+from app.database.session import make_sync_engine
+
 
 def hash_password(password: str) -> str:
     """Hash a password using bcrypt"""
-    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
 
 def seed_users():
     """Seed initial users into the database"""
-    
+
     users_data = [
         {
             "email": "admin@tourismtoolkit.com",
@@ -66,41 +71,42 @@ def seed_users():
             "is_verified": True,
         },
     ]
-    
+
+    engine = make_sync_engine()
     with Session(engine) as session:
         # Check if users already exist
         existing_users = session.exec(select(User)).all()
         if existing_users:
             print(f"✓ Users table already has {len(existing_users)} users. Skipping seed.")
             return
-        
+
         print("Seeding users...")
         created_count = 0
-        
+
         for user_data in users_data:
             # Hash the password
             password = user_data.pop("password")
             hashed_password = hash_password(password)
-            
+
             # Create user
             user = User(
                 **user_data,
                 password_hash=hashed_password,
                 created_at=datetime.utcnow(),
-                updated_at=datetime.utcnow()
+                updated_at=datetime.utcnow(),
             )
-            
+
             session.add(user)
             created_count += 1
             print(f"  - Created user: {user.username} ({user.email})")
-        
+
         session.commit()
         print(f"✓ Successfully seeded {created_count} users")
-        
+
         # Print credentials for reference
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("TEST USER CREDENTIALS:")
-        print("="*60)
+        print("=" * 60)
         for user_data in users_data:
             # Reconstruct the password (it was popped earlier)
             if user_data["username"] == "admin":
@@ -115,9 +121,10 @@ def seed_users():
                 password = "tourist123"
             else:
                 password = "********"
-            
+
             print(f"Email: {user_data['email']:<30} Password: {password}")
-        print("="*60 + "\n")
+        print("=" * 60 + "\n")
+
 
 if __name__ == "__main__":
     seed_users()

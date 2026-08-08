@@ -1,982 +1,447 @@
-# 🔧 TourismToolKit - Development Guide
+# Development Guide
 
-Complete development setup, API documentation, and deployment guide for contributors and developers.
+Everything documented here exists and works. Where something is not implemented,
+it says so.
+
+- [Setup](#setup)
+- [Configuration](#configuration)
+- [Project layout](#project-layout)
+- [Database](#database)
+- [Authentication](#authentication)
+- [GraphQL API](#graphql-api)
+- [Testing](#testing)
+- [Rate limits and query cost](#rate-limits-and-query-cost)
+- [Logging](#logging)
+- [Deployment](#deployment)
+- [Troubleshooting](#troubleshooting)
 
 ---
 
-## 📋 Table of Contents
-
-1. [Development Setup](#-development-setup)
-2. [Docker Development](#-docker-development)
-3. [Database Management](#-database-management)
-4. [API Documentation](#-api-documentation)
-5. [Testing Guide](#-testing-guide)
-6. [Deployment](#-deployment)
-7. [Troubleshooting](#-troubleshooting)
-
----
-
-## 🔨 Development Setup
+## Setup
 
 ### Prerequisites
 
-| Software | Version | Purpose |
-|----------|---------|---------|
-| Docker | 20.10+ | Containerization |
-| Docker Compose | 2.0+ | Multi-container orchestration |
-| Node.js | 18+ | Frontend development |
-| Python | 3.12+ | Backend development |
-| PostgreSQL | 15+ | Database (production) |
+| Tool | Version | Why |
+|---|---|---|
+| Docker + Compose v2 | any current | the only requirement for the Docker path |
+| [uv](https://docs.astral.sh/uv/) | ≥ 0.5 | manages Python 3.13 and the locked backend deps |
+| Node.js | ≥ 20.9 | Next.js 16's floor; 24 is what CI and the image use |
 
-### Environment Configuration
+`uv` installs its own Python, so no system Python 3.13 is needed:
 
-#### Backend Environment (.env)
 ```bash
-# Database
-DATABASE_URL=postgresql://tourism_user:tourism_password@localhost:5432/tourism_db
-
-# JWT Authentication
-JWT_SECRET_KEY=your-super-secret-key-change-in-production
-JWT_ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-
-# Bhashini API Configuration
-BASHINI_MT_API_URL_HI=https://dhruva-api.bhashini.gov.in/services/inference/pipeline
-BASHINI_MT_API_TOKEN_HI=your-token-here
-# ... (repeat for other languages: te, ta, kn, ml, bn, gu, mr, pa, ur, as, or)
-
-# Text-to-Speech Configuration
-BASHINI_TTS_API_URL_HI=https://dhruva-api.bhashini.gov.in/services/inference/pipeline
-BASHINI_TTS_API_TOKEN_HI=your-token-here
-# ... (repeat for other languages)
-
-# Speech-to-Text Configuration
-BASHINI_ASR_API_URL_HI=https://dhruva-api.bhashini.gov.in/services/inference/pipeline
-BASHINI_ASR_API_TOKEN_HI=your-token-here
-# ... (repeat for other languages)
-
-# OCR Configuration
-BASHINI_OCR_API_URL_HI=https://dhruva-api.bhashini.gov.in/services/inference/pipeline
-BASHINI_OCR_API_TOKEN_HI=your-token-here
-# ... (repeat for other languages)
-
-# Development Settings
-DEBUG=True
-LOG_LEVEL=INFO
-CORS_ORIGINS=http://localhost:3000,http://localhost:3001
-
-# Database Reset (for development)
-RESET_DB=false
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-#### Frontend Environment (.env.local)
+### Docker (recommended)
+
 ```bash
-# API Configuration
-NEXT_PUBLIC_API_URL=http://localhost:8000
-NEXT_PUBLIC_GRAPHQL_URL=http://localhost:8000/graphql
-
-# Application Configuration
-NEXT_PUBLIC_APP_NAME=TourismToolKit
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-
-# Development Settings
-NODE_ENV=development
+echo "JWT_SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_urlsafe(48))')" > .env
+SEED_DB=true docker compose up -d --build
 ```
 
-### Manual Development Setup
+`docker-compose.override.yml` is applied automatically and adds development
+conveniences: source bind-mounts, `--reload`, and `LOG_LEVEL=DEBUG`. For a
+production-shaped run, use the base file alone:
 
-#### Backend Setup
 ```bash
-# Navigate to backend directory
+docker compose -f docker-compose.yml up -d --build
+```
+
+### Local
+
+```bash
+make dev            # starts only PostgreSQL
+
 cd backend
+cp .env.example .env                       # set JWT_SECRET_KEY
+uv sync --all-groups
+uv run python -m app.database.bootstrap    # apply migrations
+uv run python -m app.database.seed_data    # optional
+uv run uvicorn app.main:app --reload
 
-# Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Setup database (PostgreSQL)
-createdb tourism_db -U postgres
-
-# Run migrations
-alembic upgrade head
-
-# Seed database
-python -c "from app.database.seed_data import seed_all; seed_all()"
-
-# Start development server
-uvicorn app.main:app --reload --port 8000 --host 0.0.0.0
-```
-
-#### Frontend Setup
-```bash
-# Navigate to frontend directory
 cd frontend
-
-# Install dependencies
-npm install
-
-# Start development server
+npm ci
 npm run dev
-
-# Build for production
-npm run build
-npm start
 ```
 
 ---
 
-## 🐳 Docker Development
+## Configuration
 
-### Quick Start
+`backend/.env.example` is the authoritative list. Copy it and fill in what you
+have.
+
+### Required
+
+| Variable | Notes |
+|---|---|
+| `JWT_SECRET_KEY` | Signs access tokens. `SECRET_KEY` is accepted as a legacy alias. |
+
+Generate one with:
+
 ```bash
-# Build and start all services
-docker compose up -d --build
-
-# View logs
-docker compose logs -f
-
-# Stop all services
-docker compose down
+python3 -c 'import secrets; print(secrets.token_urlsafe(48))'
 ```
 
-### Docker Services
+Outside production an unset secret produces an ephemeral key and logs a warning -
+sessions drop on restart. In production, startup fails rather than signing with a
+predictable value.
 
-#### PostgreSQL Database (`db`)
-- **Image**: postgres:15-alpine
-- **Port**: 5432
-- **Credentials**: tourism_user / tourism_password
-- **Database**: tourism_db
-- **Volume**: postgres_data (persistent)
-- **Health Check**: pg_isready command
+### Core
 
-#### Backend API (`backend`)
-- **Build**: ./backend/Dockerfile
-- **Port**: 8000
-- **Features**:
-  - Hot reload enabled
-  - Automatic database initialization
-  - Health check endpoint
-  - Volume mounted for development
+| Variable | Default | Notes |
+|---|---|---|
+| `ENVIRONMENT` | `development` | `production` forces secure cookies, JSON logs, no GraphQL IDE, no introspection |
+| `LOG_LEVEL` | `INFO` | `DEBUG` includes upstream request detail |
+| `DATABASE_URL` | local Postgres | `postgresql://` is rewritten to `postgresql+psycopg://` automatically |
+| `CORS_ORIGINS` | localhost:3000 | comma-separated |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | `15` | short by design; the refresh token carries continuity |
+| `REFRESH_TOKEN_EXPIRE_DAYS` | `30` | |
+| `SEED_DB` | `false` | seeds starter content on container start |
 
-#### Frontend (`frontend`)
-- **Build**: ./frontend/Dockerfile
-- **Port**: 3000
-- **Features**:
-  - Production build
-  - Volume mounted for development
-  - Health check endpoint
+### Bhashini endpoints
 
-### Docker Commands
+Discovered by naming convention, so adding a language is a config change only:
 
-#### Logs and Monitoring
-```bash
-# View all logs
-docker compose logs -f
-
-# View specific service logs
-docker compose logs -f backend
-docker compose logs -f frontend
-docker compose logs -f db
-
-# Check service health
-docker compose ps
+```
+BASHINI_<SERVICE>_API_URL_<LANG>      BASHINI_<SERVICE>_API_TOKEN_<LANG>
+BASHINI_MT_API_URL_<SRC>_<TGT>        BASHINI_MT_API_TOKEN_<SRC>_<TGT>
+BASHINI_<SERVICE>_API_URL_DEFAULT     per-service fallback
+BASHINI_API_TOKEN_DEFAULT             global fallback token
 ```
 
-#### Container Management
-```bash
-# Restart services
-docker compose restart
-docker compose restart backend
+`<SERVICE>` is `ASR`, `TTS`, `OCR` or `MT`. The correctly spelled `BHASHINI_`
+prefix also works.
 
-# Rebuild specific service
-docker compose up --build backend
+On boot the backend logs what it found, so a missing endpoint is visible
+immediately rather than surfacing later as a dead feature. `GET /health/detail`
+reports the same outside production - names only, never values.
 
-# Execute commands in containers
-docker compose exec backend bash
-docker compose exec frontend sh
-docker compose exec db psql -U tourism_user -d tourism_db
+### TLS to upstream
+
+`BHASHINI_VERIFY_SSL` defaults to `true` and should stay there. Both upstream
+hosts present valid publicly-trusted chains. If you hit a chain problem, add the
+missing CA through `BHASHINI_CA_BUNDLE` (loaded *in addition to* the public
+roots) rather than disabling verification - these requests carry access tokens,
+so unverified TLS leaks credentials. Disabling it is refused in production.
+
+---
+
+## Project layout
+
 ```
+backend/
+  app/
+    core/          config, logging, cookies, rate limiting, middleware
+    database/      models, session factory, migration bootstrap, seed data
+    graphql/       schema, context, types, queries/, mutations/, extensions
+    services/      auth, sessions, bhashini client, http, media, phrases
+  alembic/         migrations
+  tests/           pytest suite
+  schema.graphql   committed SDL; CI fails if it drifts from the code
 
-#### Cleanup
-```bash
-# Stop and remove containers
-docker compose down
-
-# Remove volumes (⚠️ deletes database data)
-docker compose down -v
-
-# Remove all Docker resources
-docker system prune -a
+frontend/
+  app/             App Router pages (all client components)
+  components/      shared UI
+  providers/       Apollo, theme, auth, language, preference sync
+  graphql/         documents, typed results, client
+  locales/         13 languages, loaded on demand
+  tests/           Vitest
+  e2e/             Playwright
+  proxy.ts         route guard (Next 16's renamed middleware)
 ```
 
 ---
 
-## 🗄️ Database Management
+## Database
 
-### Database Reset and Seeding
+Alembic owns the schema. There is no `create_all` path in the application.
 
-The application includes an automated database reset feature:
-
-#### Environment Variable Control
 ```bash
-# Normal startup (preserve data)
-RESET_DB=false docker compose up -d
-
-# Reset and reseed database
-RESET_DB=true docker compose up -d
+make migrate                                   # apply
+make migration                                 # create from model changes
+docker compose exec backend alembic current    # where am I
+docker compose exec backend alembic downgrade -1
 ```
 
-#### Manual Reset Script
+After changing a model, generate a migration and **read it** before committing.
+`alembic check` must report no drift; CI runs it.
+
+Two conventions worth knowing:
+
+- **`import sqlmodel` is in `script.py.mako`.** Autogenerate emits
+  `sqlmodel.sql.sqltypes.AutoString()` for every string column, and without the
+  import each migration fails with `NameError`.
+- **All timestamps are `TIMESTAMPTZ`.** The application writes timezone-aware
+  values; a naive column silently drops the offset and then raises when compared
+  against `utcnow()`.
+
+`app/database/bootstrap.py` decides between `upgrade` and `stamp` at startup, so
+a database created before Alembic existed is stamped rather than re-migrated.
+
+### Seeding and reset
+
 ```bash
-# Use the convenience script
-./scripts/reset-db.sh
+make seed                # reload starter content
+./scripts/reset-db.sh    # destroy the volume and rebuild
 ```
 
-#### Database Schema
+### Upgrading from PostgreSQL 15
 
-The application uses SQLModel for database models with the following tables:
+Version 18 cannot read a 15 data directory:
 
-##### Users Table
-```sql
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    email VARCHAR UNIQUE NOT NULL,
-    username VARCHAR UNIQUE NOT NULL,
-    password_hash VARCHAR NOT NULL,
-    full_name VARCHAR,
-    profile_picture VARCHAR,
-    preferred_language VARCHAR NOT NULL,
-    preferred_theme VARCHAR NOT NULL,
-    home_country VARCHAR,
-    is_verified BOOLEAN NOT NULL,
-    is_active BOOLEAN NOT NULL,
-    created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP
-);
-```
-
-##### Dictionary Entries Table
-```sql
-CREATE TABLE dictionary_entries (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
-    word VARCHAR NOT NULL,
-    translation VARCHAR NOT NULL,
-    language_from VARCHAR NOT NULL,
-    language_to VARCHAR NOT NULL,
-    pronunciation VARCHAR,
-    usage_example VARCHAR,
-    tags VARCHAR,
-    is_favorite BOOLEAN NOT NULL,
-    created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP
-);
-```
-
-##### Places Table
-```sql
-CREATE TABLE places (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR NOT NULL,
-    description TEXT,
-    country VARCHAR NOT NULL,
-    state VARCHAR,
-    city VARCHAR NOT NULL,
-    latitude FLOAT,
-    longitude FLOAT,
-    category VARCHAR,
-    images TEXT,
-    languages_spoken TEXT,
-    best_time_to_visit VARCHAR,
-    entry_fee FLOAT,
-    rating FLOAT,
-    cultural_info TEXT,
-    emergency_contacts TEXT,
-    local_customs TEXT,
-    created_at TIMESTAMP NOT NULL
-);
-```
-
-##### Emergency Contacts Table
-```sql
-CREATE TABLE emergency_contacts (
-    id SERIAL PRIMARY KEY,
-    country VARCHAR NOT NULL,
-    service_type VARCHAR NOT NULL,
-    number VARCHAR NOT NULL,
-    description TEXT,
-    is_active BOOLEAN NOT NULL
-);
-```
-
-##### Culture Tips Table
-```sql
-CREATE TABLE culture_tips (
-    id SERIAL PRIMARY KEY,
-    country VARCHAR NOT NULL,
-    tip_category VARCHAR NOT NULL,
-    tip_text TEXT NOT NULL,
-    language VARCHAR NOT NULL,
-    importance VARCHAR NOT NULL,
-    created_at TIMESTAMP NOT NULL
-);
-```
-
-### Database Operations
-
-#### Backup and Restore
 ```bash
-# Create backup
 docker compose exec db pg_dump -U tourism_user tourism_db > backup.sql
-
-# Restore backup
+docker compose down -v
+docker compose up -d db
 docker compose exec -T db psql -U tourism_user tourism_db < backup.sql
 ```
 
-#### Data Inspection
-```bash
-# Check record counts
-docker compose exec backend python -c "
-from sqlmodel import Session
-from app.database.db import engine
-from app.database.models import *
+---
 
-with Session(engine) as session:
-    print(f'Dictionary Entries: {session.query(DictionaryEntry).count()}')
-    print(f'Places: {session.query(Place).count()}')
-    print(f'Emergency Contacts: {session.query(EmergencyContact).count()}')
-    print(f'Culture Tips: {session.query(CultureTip).count()}')
-    print(f'Users: {session.query(User).count()}')
-"
+## Authentication
 
-# Query specific data
-docker compose exec db psql -U tourism_user -d tourism_db -c "
-SELECT word, translation, language_from, language_to 
-FROM dictionary_entries 
-LIMIT 5;
-"
+Sessions are cookie-based. The client never holds a token.
+
+| Cookie | Contents | Flags | Path |
+|---|---|---|---|
+| `tt_access` | short-lived JWT | HttpOnly, SameSite=Lax, Secure in prod | `/` |
+| `tt_refresh` | opaque refresh token | HttpOnly, SameSite=Lax, Secure in prod | `/graphql` |
+| `tt_session` | `1` - a marker, no secret | readable by script | `/` |
+
+`tt_session` exists so the Next.js route guard can tell signed-in from signed-out
+without reading a credential it cannot access. It is not an authorisation check;
+every GraphQL request is verified server-side.
+
+**Refresh tokens are stored hashed** (SHA-256) and rotated on every use. Reusing
+a rotated token is treated as theft: the whole token family is revoked. A token
+revoked by ordinary sign-out does *not* trigger that, so signing out on one
+device leaves the others alone.
+
+```graphql
+mutation { refreshSession { success user { id } } }
+mutation { logout(everywhere: true) { sessionsEnded } }
 ```
+
+API clients that cannot hold cookies may still send
+`Authorization: Bearer <access token>`; the context checks the cookie first and
+falls back to the header.
+
+### Password reset
+
+`requestPasswordReset` always reports success - telling the caller whether an
+address is registered would make it an account-enumeration oracle.
+
+**There is no mail transport configured.** The reset link is written to the
+server log instead. Wiring an email provider is the one remaining step for a
+public deployment; everything else in the flow (single-use tokens, expiry,
+session revocation on password change) is implemented.
 
 ---
 
-## 📡 API Documentation
+## GraphQL API
 
-### GraphQL API
+Playground at `http://localhost:8000/graphql` (disabled in production, along with
+introspection). The committed `backend/schema.graphql` is the source of truth for
+the frontend's types.
 
-The API is built using Strawberry GraphQL and is accessible at:
-- **Endpoint**: http://localhost:8000/graphql
-- **Playground**: http://localhost:8000/graphql (interactive)
-- **REST Docs**: http://localhost:8000/docs (Swagger)
-
-### Authentication
-
-All authenticated requests require a JWT token:
-```http
-Authorization: Bearer <your-jwt-token>
-```
-
-### Core Queries
-
-#### User Management
 ```graphql
-# User registration
-mutation Register($input: RegisterInput!) {
-  register(input: $input) {
-    success
-    message
-    token
-    user {
-      id
-      email
-      username
-      fullName
-      preferredLanguage
-      preferredTheme
-      homeCountry
-      isVerified
-    }
-  }
+# Read
+query {
+  getPlaces(country: "India", limit: 10) { id name city rating images }
+  getEmergencyContacts(country: "India") { serviceType number description }
+  getCultureTips(country: "India") { tipCategory tipText }
+  getSupportedLanguages { languages { code name } }
+  me { id email username }
 }
 
-# User login
-mutation Login($input: LoginInput!) {
-  login(input: $input) {
-    success
-    message
-    token
-    user {
-      id
-      email
-      username
-      fullName
-    }
+# Dictionary - scope comes from the session, not from arguments
+query { getUserDictionary { id word translation tags isFavorite } }
+
+mutation {
+  addDictionaryEntry(input: {
+    word: "water", translation: "पानी",
+    languageFrom: "en", languageTo: "hi", tags: ["basics"]
+  }) { success message entry { id } }
+}
+
+# AI services
+mutation {
+  translateText(input: { text: "Hello", sourceLang: "en", targetLang: "hi" }) {
+    success translatedText message
   }
 }
 ```
 
-#### Translation Services
-```graphql
-# Get supported languages
-query GetSupportedLanguages {
-  supportedMtLanguages {
-    code
-    name
-    nativeName
-  }
-}
+### The `userId` argument is deprecated
 
-# Translate text
-mutation TranslateText($input: MTInput!) {
-  translateText(input: $input) {
-    success
-    translatedText
-    message
-    sourceLang
-    targetLang
-  }
-}
+Dictionary and travel operations still accept `userId` so existing clients keep
+validating, but **it is ignored** - the authenticated user comes from the
+session. It was previously trusted, which let any caller read and modify any
+other user's entries. It will be removed in a future release.
 
-# Text-to-Speech
-mutation GenerateSpeech($input: TTSInput!) {
-  generateSpeech(input: $input) {
-    success
-    message
-    audioContent
-  }
-}
+### Errors
 
-# Speech-to-Text
-mutation TranscribeAudio($audioData: String!, $language: String!) {
-  transcribeAudio(audioData: $audioData, language: $language) {
-    success
-    transcribedText
-    error
-  }
-}
-
-# OCR Text Extraction
-mutation ExtractTextFromImage($imageData: String!, $language: String!) {
-  extractTextFromImage(imageData: $imageData, language: $language) {
-    success
-    extractedText
-    error
-  }
-}
-```
-
-#### Dictionary Management
-```graphql
-# Search dictionary
-query SearchDictionary(
-  $query: String!
-  $languageFrom: String!
-  $languageTo: String!
-) {
-  searchDictionary(
-    query: $query
-    languageFrom: $languageFrom
-    languageTo: $languageTo
-  ) {
-    id
-    word
-    translation
-    pronunciation
-    usageExample
-    languageFrom
-    languageTo
-    isFavorite
-  }
-}
-
-# Add dictionary entry
-mutation AddDictionaryEntry($userId: Int!, $input: DictionaryInput!) {
-  addDictionaryEntry(userId: $userId, input: $input) {
-    success
-    message
-    entry {
-      id
-      word
-      translation
-      pronunciation
-      usageExample
-    }
-  }
-}
-```
-
-#### Places and Tourism
-```graphql
-# Get places
-query GetPlaces($country: String, $category: String, $limit: Int) {
-  getPlaces(country: $country, category: $category, limit: $limit) {
-    id
-    name
-    description
-    country
-    state
-    city
-    latitude
-    longitude
-    category
-    images
-    languagesSpoken
-    bestTimeToVisit
-    entryFee
-    rating
-  }
-}
-```
-
-#### Emergency and Cultural Information
-```graphql
-# Get emergency contacts
-query GetEmergencyContacts($country: String!) {
-  getEmergencyContacts(country: $country) {
-    id
-    country
-    serviceType
-    number
-    description
-  }
-}
-
-# Get culture tips
-query GetCultureTips(
-  $country: String!
-  $category: String
-  $importance: String
-  $limit: Int
-) {
-  getCultureTips(
-    country: $country
-    category: $category
-    importance: $importance
-    limit: $limit
-  ) {
-    id
-    country
-    tipCategory
-    tipText
-    language
-    importance
-  }
-}
-```
-
-### API Error Handling
-
-#### Standard Error Response
-```json
-{
-  "errors": [
-    {
-      "message": "Error description",
-      "locations": [{"line": 2, "column": 3}],
-      "path": ["fieldName"],
-      "extensions": {
-        "code": "ERROR_CODE"
-      }
-    }
-  ],
-  "data": null
-}
-```
-
-#### Common Error Codes
-| HTTP Code | GraphQL Error | Description |
-|-----------|---------------|-------------|
-| 400 | BAD_REQUEST | Invalid input data |
-| 401 | UNAUTHENTICATED | Missing or invalid token |
-| 403 | FORBIDDEN | Insufficient permissions |
-| 404 | NOT_FOUND | Resource not found |
-| 500 | INTERNAL_SERVER_ERROR | Server error |
-
-### Rate Limiting
-
-| Endpoint Type | Requests | Time Window |
-|---------------|----------|-------------|
-| Authentication | 5 | 1 minute |
-| Translation | 60 | 1 minute |
-| General Queries | 100 | 1 minute |
+Unexpected errors are masked to `"Unexpected error."` with the detail in the
+server log, so database errors and upstream URLs never reach a client.
+Deliberate, actionable errors - rate limits, query-cost rejections - pass
+through with their message intact.
 
 ---
 
-## 🧪 Testing Guide
+## Testing
 
-### Backend Testing
+### Backend
 
-#### Unit Tests
+Tests run against real PostgreSQL: `ilike`, the culture-tip ordering and the
+migrations are all Postgres-specific. Set `TEST_DATABASE_URL` to reuse a
+database, or leave it unset and `testcontainers` starts a throwaway one.
+
 ```bash
 cd backend
-source venv/bin/activate
-
-# Run all tests
-pytest
-
-# Run with coverage
-pytest --cov=app tests/
-
-# Run specific test file
-pytest tests/test_translation.py
-
-# Run with verbose output
-pytest -v
+uv run pytest                       # everything, coverage gated at 80%
+uv run pytest tests/test_auth_flow.py
+uv run pytest -k idor
+uv run pytest --no-cov -x -vv       # fast feedback while debugging
 ```
 
-#### Integration Tests
-```bash
-# Test GraphQL endpoints
-pytest tests/test_graphql.py
+| Module | Covers |
+|---|---|
+| `test_auth_flow.py` | registration **persists a row**, login round-trips, duplicates, inactive accounts |
+| `test_sessions.py` | rotation, replay detection, revocation, reset tokens, cookie flags |
+| `test_auth_service.py` | bcrypt limits, token expiry, `alg:none`, tampering, legacy token shapes |
+| `test_dictionary_mutations.py` | CRUD and the IDOR regressions |
+| `test_queries.py` | dictionary scoping, JSON columns, culture-tip ordering, phrases |
+| `test_upstream.py` | retries, timeouts, TLS policy, payload caps, error masking |
+| `test_limits.py` | rate limiting and query depth/alias caps |
+| `test_config.py` | env folding, the `SECRET_KEY` alias, weak-secret rejection |
+| `test_schema_shape.py` | duplicate-field guard, root field inventory, deprecations |
+| `test_frontend_documents.py` | every frontend document validates against the schema |
+| `test_migrations.py` | drift, downgrade/upgrade round-trip, stamp-vs-upgrade |
+| `test_app.py` | ASGI: health, CORS, cookie auth, concurrent root fields |
 
-# Test database operations
-pytest tests/test_database.py
+### Frontend
 
-# Test authentication
-pytest tests/test_auth.py
-```
-
-### Frontend Testing
-
-#### Unit Tests
 ```bash
 cd frontend
-
-# Run Jest tests
-npm test
-
-# Run with coverage
-npm run test:coverage
-
-# Run in watch mode
+npm test                  # Vitest
 npm run test:watch
-```
+npm run test:coverage
+npm run typecheck
+npm run lint
 
-#### End-to-End Tests
-```bash
-# Run Playwright tests
-npm run test:e2e
-
-# Run specific test
+npm run test:e2e          # Playwright; needs the stack running
 npm run test:e2e -- auth.spec.ts
-
-# Run in headed mode
 npm run test:e2e -- --headed
 ```
 
-### Translation Testing
-
-#### Language Switching Test
-1. Open application in browser
-2. Navigate to language selector
-3. Verify all 13 languages display in native scripts
-4. Switch between languages and verify:
-   - Instant switching without page reload
-   - All UI text translates
-   - Language persists across page navigation
-   - LocalStorage saves selection
-
-#### API Testing
-```bash
-# Test GraphQL queries with curl
-curl -X POST http://localhost:8000/graphql \
-  -H "Content-Type: application/json" \
-  -d '{"query": "{ getPlaces(country: \"India\", limit: 3) { id name description } }"}'
-
-# Test authentication
-curl -X POST http://localhost:8000/graphql \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -d '{"query": "{ getUserDictionary { id word translation } }"}'
-```
+Unit tests cover locale parity across all 13 languages, the translation lookup,
+the endpoint resolver and the theme provider including its pre-paint script. The
+Playwright specs cover register → sign-in, the route guard, and that the Tailwind
+palette and class-based dark mode resolve in a real browser.
 
 ---
 
-## 🚀 Deployment
+## Rate limits and query cost
 
-### Production Docker Setup
+Applied per authenticated user, or per IP when anonymous.
 
-#### Environment Configuration
-```bash
-# Create production environment file
-cp .env.example .env.prod
+| Bucket | Default | Operations |
+|---|---|---|
+| `auth` | 10 / 60s | `login`, `register`, `refreshSession` |
+| `ai` | 30 / 60s | `translateText`, `generateSpeech`, `extractTextFromImage`, `transcribeAudio` |
+| `default` | 300 / 60s | everything else |
 
-# Update with production values:
-DEBUG=False
-DATABASE_URL=postgresql://user:password@production-db:5432/tourism_db
-JWT_SECRET_KEY=your-secure-production-key
-CORS_ORIGINS=https://yourdomain.com
-```
+Tunable with `RATE_LIMIT_AUTH`, `RATE_LIMIT_AI`, `RATE_LIMIT_DEFAULT` (format
+`<count>/<window-seconds>`), and disabled entirely with
+`RATE_LIMIT_ENABLED=false`.
 
-#### Docker Compose Production
-```yaml
-# docker-compose.prod.yml
-version: '3.8'
+Counters are in-process. That is fine for a single service and wrong the moment
+you run more than one replica - move them to Redis at that point.
 
-services:
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile.prod
-    environment:
-      - DEBUG=False
-      - DATABASE_URL=${DATABASE_URL}
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.prod
-    environment:
-      - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=https://api.yourdomain.com
-    ports:
-      - "3000:3000"
-
-  db:
-    image: postgres:15
-    environment:
-      - POSTGRES_DB=tourism_db
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./ssl:/etc/nginx/ssl
-    depends_on:
-      - frontend
-      - backend
-
-volumes:
-  postgres_data:
-```
-
-### Cloud Deployment
-
-#### Deploy to Railway
-1. Connect GitHub repository
-2. Configure environment variables
-3. Deploy backend and frontend services
-4. Configure custom domains
-
-#### Deploy to Vercel (Frontend)
-```bash
-cd frontend
-npm install -g vercel
-vercel --prod
-```
-
-#### Deploy to Heroku (Backend)
-```bash
-# Create Heroku app
-heroku create tourism-toolkit-api
-
-# Add PostgreSQL addon
-heroku addons:create heroku-postgresql:hobby-dev
-
-# Configure environment variables
-heroku config:set JWT_SECRET_KEY=your-secret-key
-
-# Deploy
-git push heroku main
-```
-
-### Production Checklist
-
-- [ ] Update all environment variables for production
-- [ ] Use strong JWT secret key
-- [ ] Configure proper CORS origins
-- [ ] Enable HTTPS/SSL certificates
-- [ ] Set up database backups
-- [ ] Configure monitoring and logging
-- [ ] Set up error tracking (Sentry)
-- [ ] Configure CDN for static assets
-- [ ] Set up health check endpoints
-- [ ] Configure auto-scaling
-- [ ] Set up CI/CD pipeline
+Documents are also capped by depth (`GRAPHQL_MAX_DEPTH`, default 12), alias count
+(`GRAPHQL_MAX_ALIASES`, default 30) and token count.
 
 ---
 
-## 🔧 Troubleshooting
+## Logging
 
-### Common Development Issues
+Readable lines in development, JSON in production (forced by `ENVIRONMENT`).
+Every record carries a request id, and every response carries it back as
+`x-request-id`. An id supplied by an upstream proxy is honoured, so a trace spans
+the whole hop chain.
 
-#### Docker Issues
-```bash
-# Port conflicts
-lsof -i :3000 :8000 :5432
-kill -9 <PID>
-
-# Container won't start
-docker compose logs <service-name>
-docker compose restart <service-name>
-
-# Database connection issues
-docker compose exec db pg_isready -U tourism_user
+```
+2026-08-08T12:52:24 INFO     [a3f9c1e2] app.main: bhashini: asr=[en,hi] tts=[default]
 ```
 
-#### Backend Issues
-```bash
-# Python import errors
-cd backend
-source venv/bin/activate
-pip install -r requirements.txt
-
-# Database migration issues
-alembic current
-alembic upgrade head
-
-# GraphQL schema errors
-python -c "from app.graphql.schema import schema; print(schema)"
-```
-
-#### Frontend Issues
-```bash
-# Node modules issues
-cd frontend
-rm -rf node_modules package-lock.json
-npm install
-
-# Next.js build issues
-npm run build
-rm -rf .next
-npm run build
-
-# TypeScript errors
-npm run type-check
-```
-
-### Database Troubleshooting
-
-#### Connection Issues
-```bash
-# Test database connection
-docker compose exec backend python -c "
-from app.database.db import engine
-try:
-    with engine.connect() as conn:
-        print('✅ Database connection successful')
-except Exception as e:
-    print(f'❌ Database connection failed: {e}')
-"
-```
-
-#### Data Issues
-```bash
-# Reset database completely
-docker compose down -v
-RESET_DB=true docker compose up -d
-
-# Check database logs
-docker compose logs db
-
-# Manual database reset
-docker compose exec db psql -U tourism_user -d tourism_db -c "
-DROP SCHEMA public CASCADE;
-CREATE SCHEMA public;
-"
-```
-
-### Performance Issues
-
-#### Backend Optimization
-```bash
-# Enable production mode
-export DEBUG=False
-
-# Use multiple workers
-uvicorn app.main:app --workers 4
-
-# Add caching
-pip install redis
-# Configure Redis in settings
-```
-
-#### Frontend Optimization
-```bash
-# Analyze bundle size
-npm run analyze
-
-# Enable compression
-# Configure in next.config.js
-module.exports = {
-  compress: true,
-  images: {
-    domains: ['images.unsplash.com']
-  }
-}
-```
-
-### Logging and Debugging
-
-#### Backend Logs
-```bash
-# View application logs
-docker compose logs -f backend
-
-# Python debugging
-import logging
-logging.basicConfig(level=logging.DEBUG)
-```
-
-#### Frontend Logs
-```bash
-# Browser console logs
-# Check browser developer tools
-
-# Next.js logs
-npm run dev
-# Check terminal output
-```
-
-#### Database Logs
-```bash
-# PostgreSQL logs
-docker compose logs -f db
-
-# Query logs
-docker compose exec db psql -U tourism_user -d tourism_db -c "
-SET log_statement = 'all';
-"
-```
+Health-check requests are not logged - they run every 30 seconds and would drown
+everything else.
 
 ---
 
-## 📚 Additional Resources
+## Deployment
 
-### Documentation Links
-- **FastAPI**: https://fastapi.tiangolo.com/
-- **Strawberry GraphQL**: https://strawberry.rocks/
-- **Next.js**: https://nextjs.org/docs
-- **SQLModel**: https://sqlmodel.tiangolo.com/
-- **Docker Compose**: https://docs.docker.com/compose/
-- **PostgreSQL**: https://www.postgresql.org/docs/
+### Pick a target first
 
-### Development Tools
-- **GraphQL Playground**: http://localhost:8000/graphql
-- **Swagger Docs**: http://localhost:8000/docs
-- **Database Admin**: Use pgAdmin or similar tools
-- **API Testing**: Use Postman or Insomnia
+**Vercel cannot host this backend**: no PostgreSQL, a read-only stateless
+filesystem, and a lambda that would have to carry psycopg, Pillow and bcrypt.
+Both `vercel.json` files were removed because they were copy-pasted SPA rewrites
+that could never have worked.
 
-### Community Resources
-- **Bhashini API**: https://bhashini.gov.in/
-- **Canvas IIIT OCR**: https://canvas.iiit.ac.in/
-- **GitHub Repository**: Create issues for bugs and feature requests
+Two options that do:
+
+**Split** - frontend on Vercel, backend on Fly/Railway/a VPS with managed
+Postgres. Set `NEXT_PUBLIC_GRAPHQL_URL` at *build* time to the public backend URL
+(it is inlined into the bundle, so a runtime environment variable has no effect),
+and add the frontend origin to `CORS_ORIGINS`. Cookie auth across two origins
+also needs `COOKIE_DOMAIN` set to a shared parent domain.
+
+**Together** - the whole compose stack behind a reverse proxy terminating TLS.
+Simpler, one machine, and cookies stay same-origin.
+
+### Production checklist
+
+- [ ] `ENVIRONMENT=production` (forces secure cookies, JSON logs, IDE and introspection off)
+- [ ] `JWT_SECRET_KEY` set to a strong random value - startup fails otherwise
+- [ ] `CORS_ORIGINS` set to the real frontend origin only
+- [ ] `NEXT_PUBLIC_GRAPHQL_URL` passed as a build arg
+- [ ] TLS terminated in front of both services
+- [ ] `SEED_DB` unset - the demo accounts have well-known passwords
+- [ ] Database backups scheduled (`make backup`)
+- [ ] An email provider wired up if you want password reset to deliver
 
 ---
 
-**Happy Developing! 🚀**
+## Troubleshooting
 
-For additional help, check the main README.md or create an issue in the repository.
+**`JWT_SECRET_KEY must be set…` at startup** - production refuses to sign with a
+weak or missing secret. Generate one as shown above.
+
+**Everything works except translation, speech and OCR** - no Bhashini
+credentials. Check the `bhashini:` line in the startup log, or
+`GET /health/detail`.
+
+**`relation "users" does not exist`** - migrations have not run.
+`docker compose exec backend python -m app.database.bootstrap`.
+
+**Database container restarts on boot after upgrading** - PostgreSQL 18 cannot
+read a 15 data directory. See [Upgrading](#upgrading-from-postgresql-15).
+
+**Frontend calls `localhost:8000` in a deployed environment** -
+`NEXT_PUBLIC_GRAPHQL_URL` is inlined at build time. Pass it as a Docker build
+arg, not a runtime environment variable, and rebuild.
+
+**Signed out immediately after signing in** - the browser is not storing the
+cookies. Over plaintext with `ENVIRONMENT=production`, `Secure` cookies are
+dropped; either terminate TLS or use `development` locally. Cross-origin also
+requires the frontend origin in `CORS_ORIGINS`.
+
+**`alembic check` fails in CI** - a model changed without a migration. Run
+`make migration`, review the result, commit it.
+
+**`schema.graphql` is stale in CI** - run `make schema` and commit.
+
+**Stale frontend after `docker compose up --build`** - Compose reuses anonymous
+volumes across recreates. `make up-build` passes `--renew-anon-volumes`; use it.

@@ -1,74 +1,59 @@
-"""
-GraphQL queries for guide feature - emergency contacts and culture tips
-"""
-import strawberry
-from typing import List, Optional
-from sqlmodel import Session, select
-from ..types.tourism_types import EmergencyContact as GraphQLEmergencyContact, CultureTip as GraphQLCultureTip
-from ...database.db import engine
-from ...database.models import EmergencyContact, CultureTip
+"""Emergency contacts and culture tips."""
 
-@strawberry.field
-def get_emergency_contacts(country: str = "India") -> List[GraphQLEmergencyContact]:
-    """Get emergency contacts for a specific country"""
-    with Session(engine) as session:
+from __future__ import annotations
+
+import strawberry
+from sqlalchemy import case
+from sqlmodel import select
+
+from app.database.models import CultureTip, EmergencyContact
+from app.graphql.context import Info
+from app.graphql.types.tourism_types import CultureTip as CultureTipType
+from app.graphql.types.tourism_types import EmergencyContact as EmergencyContactType
+
+# `importance` is a free-text column, so ordering by it descending sorted
+# alphabetically - medium, low, high - the exact opposite of "high first".
+IMPORTANCE_RANK = case(
+    {"high": 0, "medium": 1, "low": 2},
+    value=CultureTip.importance,
+    else_=3,
+)
+
+
+@strawberry.type
+class GuideQuery:
+    @strawberry.field
+    async def get_emergency_contacts(
+        self, info: Info, country: str = "India"
+    ) -> list[EmergencyContactType]:
         statement = select(EmergencyContact).where(
             EmergencyContact.country == country,
-            EmergencyContact.is_active == True
+            EmergencyContact.is_active,
         )
-        contacts = session.exec(statement).all()
-        
-        return [
-            GraphQLEmergencyContact(
-                id=contact.id,
-                country=contact.country,
-                service_type=contact.service_type,
-                number=contact.number,
-                description=contact.description
-            )
-            for contact in contacts
-        ]
+        async with info.context.db() as session:
+            contacts = (await session.exec(statement)).all()
+        return [EmergencyContactType.from_model(contact) for contact in contacts]
 
-@strawberry.field
-def get_culture_tips(
-    country: str = "India",
-    language: str = "en",
-    category: Optional[str] = None,
-    importance: Optional[str] = None,
-    limit: int = 50
-) -> List[GraphQLCultureTip]:
-    """Get culture tips for a specific country"""
-    with Session(engine) as session:
+    @strawberry.field
+    async def get_culture_tips(
+        self,
+        info: Info,
+        country: str = "India",
+        language: str = "en",
+        category: str | None = None,
+        importance: str | None = None,
+        limit: int = 50,
+    ) -> list[CultureTipType]:
         statement = select(CultureTip).where(
             CultureTip.country == country,
-            CultureTip.language == language
+            CultureTip.language == language,
         )
-        
-        # Apply optional filters
         if category:
             statement = statement.where(CultureTip.tip_category == category)
-        
         if importance:
             statement = statement.where(CultureTip.importance == importance)
-        
-        # Order by importance (high first) and limit
-        statement = statement.order_by(
-            CultureTip.importance.desc(),
-            CultureTip.created_at.desc()
-        ).limit(limit)
-        
-        tips = session.exec(statement).all()
-        
-        return [
-            GraphQLCultureTip(
-                id=tip.id,
-                country=tip.country,
-                tip_category=tip.tip_category,
-                tip_text=tip.tip_text,
-                language=tip.language
-            )
-            for tip in tips
-        ]
 
-# Export queries
-GuideQueries = [get_emergency_contacts, get_culture_tips]
+        statement = statement.order_by(IMPORTANCE_RANK, CultureTip.created_at.desc()).limit(limit)  # type: ignore
+        async with info.context.db() as session:
+            tips = (await session.exec(statement)).all()
+        return [CultureTipType.from_model(tip) for tip in tips]

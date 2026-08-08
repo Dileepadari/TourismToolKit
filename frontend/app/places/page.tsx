@@ -1,8 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { useQuery } from '@apollo/client';
+import { motion } from 'motion/react';
+import type {
+  FavoritePlaceData,
+  FavoritePlaceIdsData,
+  Place,
+  PlacesData,
+  PlacesVars,
+} from '@/graphql/types';
+import { useMutation, useQuery } from '@apollo/client/react';
+import toast from 'react-hot-toast';
+import { useAuth } from '@/providers/AuthProvider';
 import { 
   MapPin, 
   Star, 
@@ -23,28 +32,13 @@ import {
   Landmark
 } from 'lucide-react';
 import Link from 'next/link';
-import { GET_PLACES_QUERY } from '@/graphql/queries';
-
-interface Place {
-  id: string;
-  name: string;
-  city: string;
-  state: string;
-  country: string;
-  description?: string;
-  rating?: number;
-  category: string;
-  priceRange?: string;
-  openingHours?: string;
-  phoneNumber?: string;
-  website?: string;
-  imageUrl?: string;
-  latitude?: number;
-  longitude?: number;
-  bestTimeToVisit?: string;
-  entryFee?: number;
-  languagesSpoken?: string[];
-}
+import { cn } from '@/utils/cn';
+import { placeMapUrl, placeUrl } from '@/utils/place';
+import {
+  GET_FAVORITE_PLACE_IDS,
+  GET_PLACES_QUERY,
+  TOGGLE_FAVORITE_PLACE_MUTATION,
+} from '@/graphql/queries';
 
 export default function Places() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -52,15 +46,75 @@ export default function Places() {
   const [selectedCountry, setSelectedCountry] = useState('India');
   const [sortBy, setSortBy] = useState<'name' | 'rating' | 'recent'>('rating');
 
-  const { data: placesData, loading } = useQuery(GET_PLACES_QUERY, {
+  const { isAuthenticated } = useAuth();
+
+  const { data: placesData, loading } = useQuery<PlacesData, PlacesVars>(GET_PLACES_QUERY, {
     variables: { 
-      country: selectedCountry === 'all' ? null : selectedCountry,
-      category: selectedCategory === 'all' ? null : selectedCategory,
+      country: selectedCountry === 'all' ? undefined : selectedCountry,
+      category: selectedCategory === 'all' ? undefined : selectedCategory,
       limit: 50 
     }
   });
 
   const places = placesData?.getPlaces || [];
+
+  // Saved places. Fetched as a list of ids so a grid of cards can render its
+  // state from one request rather than one per card.
+  const { data: favoriteData, refetch: refetchFavorites } =
+    useQuery<FavoritePlaceIdsData>(GET_FAVORITE_PLACE_IDS, {
+      skip: !isAuthenticated,
+      fetchPolicy: 'cache-and-network',
+    });
+  const favoriteIds = new Set(favoriteData?.getFavoritePlaceIds ?? []);
+
+  const [toggleFavoritePlace] = useMutation<FavoritePlaceData>(TOGGLE_FAVORITE_PLACE_MUTATION);
+
+  const handleToggleFavorite = async (place: Place) => {
+    if (!isAuthenticated) {
+      toast.error('Sign in to save places');
+      return;
+    }
+    try {
+      const { data } = await toggleFavoritePlace({ variables: { placeId: place.id } });
+      const result = data?.toggleFavoritePlace;
+      if (result?.success) {
+        toast.success(result.message);
+        await refetchFavorites();
+      } else {
+        toast.error(result?.message ?? 'Could not save that place');
+      }
+    } catch {
+      toast.error('Could not save that place');
+    }
+  };
+
+  const handleShare = async (place: Place) => {
+    const url = `${window.location.origin}${placeUrl(place.id)}`;
+    const payload = {
+      title: place.name,
+      text: `${place.name} - ${place.city}${place.state ? `, ${place.state}` : ''}`,
+      url,
+    };
+
+    // The Web Share API only exists on secure origins and mostly on mobile, so
+    // the clipboard is the fallback rather than an afterthought.
+    if (navigator.share) {
+      try {
+        await navigator.share(payload);
+        return;
+      } catch (error) {
+        // A user dismissing the sheet throws AbortError; that is not a failure.
+        if ((error as Error)?.name === 'AbortError') return;
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success('Link copied to clipboard');
+    } catch {
+      toast.error('Could not share that place');
+    }
+  };
 
   const categories = [
     { value: 'all', label: 'All Categories' },
@@ -97,16 +151,14 @@ export default function Places() {
     });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 dark:from-background dark:via-background/95 dark:to-background">
+    <div className="min-h-screen bg-muted">
       {/* Header */}
       <header className="bg-card/80 backdrop-blur-md border-b border-border sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Link 
-                href="/dashboard"
-                className="text-muted-foreground hover:text-foreground"
-              >
+                href="/dashboard"className="text-muted-foreground hover:text-foreground">
                 ← Back to Dashboard
               </Link>
             </div>
@@ -115,8 +167,8 @@ export default function Places() {
               Explore Places
             </h1>
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-primary to-accent rounded-lg flex items-center justify-center">
-                <Globe className="w-5 h-5 text-white" />
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <Globe className="w-5 h-5 text-primary-foreground" />
               </div>
             </div>
           </div>
@@ -128,27 +180,22 @@ export default function Places() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-card rounded-xl shadow-lg p-6 mb-8 border border-border"
-        >
+          className="bg-card rounded-xl shadow-lg p-6 mb-8 border border-border">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
               <input
-                type="text"
-                placeholder="Search places..."
-                value={searchTerm}
+                type="text"placeholder="Search places..."value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
-              />
+                className="w-full pl-10 pr-4 py-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent"/>
             </div>
 
             {/* Category Filter */}
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
-            >
+              className="px-4 py-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring">
               {categories.map((category) => (
                 <option key={category.value} value={category.value}>
                   {category.label}
@@ -160,8 +207,7 @@ export default function Places() {
             <select
               value={selectedCountry}
               onChange={(e) => setSelectedCountry(e.target.value)}
-              className="px-4 py-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
-            >
+              className="px-4 py-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring">
               {countries.map((country) => (
                 <option key={country.value} value={country.value}>
                   {country.label}
@@ -173,8 +219,7 @@ export default function Places() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'rating' | 'name' | 'recent')}
-              className="px-4 py-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
-            >
+              className="px-4 py-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring">
               <option value="rating">Sort by Rating</option>
               <option value="name">Sort by Name</option>
               <option value="recent">Recently Added</option>
@@ -202,30 +247,46 @@ export default function Places() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.1 }}
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredPlaces.map((place: Place, index: number) => (
               <motion.div
                 key={place.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-card rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow group border border-border"
-              >
+                className="bg-card rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow group border border-border">
                 {/* Image */}
-                <div className="relative h-48 bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                <div className="relative h-48 bg-primary flex items-center justify-center">
                   <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-                  <div className="text-white z-10">
+                  <div className="text-primary-foreground z-10">
                     <MapPin className="w-16 h-16 mx-auto mb-2" />
                     <p className="text-sm text-center font-medium">{place.category || 'Place'}</p>
                   </div>
                   
                   {/* Action buttons */}
                   <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="p-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-colors">
-                      <Heart className="w-4 h-4" />
+                    <button
+                      type="button"
+                      onClick={() => handleToggleFavorite(place)}
+                      aria-pressed={favoriteIds.has(place.id)}
+                      aria-label={favoriteIds.has(place.id) ? 'Remove from saved' : 'Save place'}
+                      title={favoriteIds.has(place.id) ? 'Remove from saved' : 'Save place'}
+                      className="p-2 bg-card/90 border border-border rounded-full text-foreground hover:bg-card transition-colors"
+                    >
+                      <Heart
+                        className={cn(
+                          'w-4 h-4',
+                          favoriteIds.has(place.id) && 'fill-destructive text-destructive',
+                        )}
+                      />
                     </button>
-                    <button className="p-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-colors">
+                    <button
+                      type="button"
+                      onClick={() => handleShare(place)}
+                      aria-label="Share place"
+                      title="Share place"
+                      className="p-2 bg-card/90 border border-border rounded-full text-foreground hover:bg-card transition-colors"
+                    >
                       <Share2 className="w-4 h-4" />
                     </button>
                   </div>
@@ -286,17 +347,21 @@ export default function Places() {
                   <div className="flex space-x-2">
                     <Link
                       href={`/places/${place.id}`}
-                      className="flex-1 bg-gradient-to-r from-primary to-accent text-primary-foreground py-2 px-4 rounded-lg text-center font-medium hover:opacity-90 transition-colors text-sm"
-                    >
+                      className="flex-1 bg-primary text-primary-foreground py-2 px-4 rounded-lg text-center font-medium hover:opacity-90 transition-colors text-sm">
                       View Details
                     </Link>
-                    <button className="p-2 border border-border rounded-lg text-muted-foreground hover:bg-muted transition-colors">
+                    <a
+                      href={placeMapUrl(place)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Directions to ${place.name}`}
+                      title={`Directions to ${place.name}`}
+                      className="p-2 border border-border rounded-lg text-muted-foreground hover:bg-muted transition-colors">
                       <Navigation className="w-4 h-4" />
-                    </button>
+                    </a>
                     <Link
-                      href={`/translator?context=visiting-${encodeURIComponent(place.name)}`}
-                      className="p-2 border border-border rounded-lg text-muted-foreground hover:bg-muted transition-colors"
-                    >
+                      href="/translator"
+                      className="p-2 border border-border rounded-lg text-muted-foreground hover:bg-muted transition-colors">
                       <Globe className="w-4 h-4" />
                     </Link>
                   </div>
@@ -319,8 +384,7 @@ export default function Places() {
                 setSelectedCategory('all');
                 setSelectedCountry('India');
               }}
-              className="bg-gradient-to-r from-primary to-accent text-primary-foreground px-6 py-3 rounded-lg font-medium hover:shadow-lg transition-shadow"
-            >
+              className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium hover:shadow-lg transition-shadow">
               Reset Filters
             </button>
           </div>
@@ -331,8 +395,7 @@ export default function Places() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="mt-12 bg-card rounded-xl shadow-lg p-6 border border-border"
-        >
+          className="mt-12 bg-card rounded-xl shadow-lg p-6 border border-border">
           <h3 className="text-lg font-semibold text-foreground mb-4">
             Popular Categories
           </h3>

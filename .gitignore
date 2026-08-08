@@ -68,3 +68,29 @@ ENV/
 # PM2 logs
 logs/
 *.log
+
+# Databases - the app uses Postgres; a committed sqlite file only causes confusion
+*.sqlite
+*.sqlite3
+*.db
+
+# Large media. `262.mp4` (17MB) was tracked and accounted for essentially the
+# entire weight of this repo's history. Use `git filter-repo` to reclaim it.
+*.mp4
+*.mov
+*.avi
+
+# uv
+.python-version.local
+
+# Test and tooling artifacts
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+playwright-report/
+test-results/
+blob-report/
+.playwright/

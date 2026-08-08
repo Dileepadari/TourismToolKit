@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { useQuery, useMutation } from '@apollo/client';
+import { motion } from 'motion/react';
+import type { DictionaryEntry, AddDictionaryEntryData, DeleteDictionaryEntryData, DictionaryEntriesData, DictionaryEntriesVars, GenerateSpeechData, GenerateSpeechVars, SupportedLanguagesData, ToggleFavoriteData, TranslateTextData, TranslateTextVars, UpdateDictionaryEntryData } from '@/graphql/types';
+import { useQuery, useMutation } from '@apollo/client/react';
 import { 
   BookOpen, 
   Plus, 
@@ -29,23 +30,11 @@ import {
 import toast from 'react-hot-toast';
 import { useAuth } from '@/providers/AuthProvider';
 
-interface DictionaryEntry {
-  id: string;
-  word: string;
-  translation: string;
-  languageFrom: string;
-  languageTo: string;
-  pronunciation?: string;
-  usageExample?: string;
-  tags: string[];
-  isFavorite: boolean;
-  createdAt: string;
-}
-
 interface Language {
   code: string;
   name: string;
-  nativeName: string;
+  // Only present on the local fallback list - the API returns code + name.
+  nativeName?: string;
 }
 
 export default function Dictionary() {
@@ -71,15 +60,14 @@ export default function Dictionary() {
     isFavorite: false
   });
 
-  const { data: languagesData } = useQuery(GET_SUPPORTED_LANGUAGES);
+  const { data: languagesData } = useQuery<SupportedLanguagesData>(GET_SUPPORTED_LANGUAGES);
   
   // Fetch public/common dictionary (system entries)
-  const { data: publicDictionaryData, refetch: refetchPublic } = useQuery(GET_DICTIONARY_ENTRIES, {
+  const { data: publicDictionaryData, refetch: refetchPublic } = useQuery<DictionaryEntriesData, DictionaryEntriesVars>(GET_DICTIONARY_ENTRIES, {
     variables: { 
       languageFrom: languageFrom || undefined,
       languageTo: languageTo || undefined,
       searchWord: searchTerm || undefined,
-      userId: undefined, // No userId means public entries
       isFavorite: filter === 'favorites' ? true : undefined,
       limit: 100
     },
@@ -87,12 +75,11 @@ export default function Dictionary() {
   });
 
   // Fetch personal dictionary (user's entries)
-  const { data: personalDictionaryData, refetch: refetchPersonal } = useQuery(GET_DICTIONARY_ENTRIES, {
+  const { data: personalDictionaryData, refetch: refetchPersonal } = useQuery<DictionaryEntriesData, DictionaryEntriesVars>(GET_DICTIONARY_ENTRIES, {
     variables: { 
       languageFrom: languageFrom || undefined,
       languageTo: languageTo || undefined,
       searchWord: searchTerm || undefined,
-      userId: user?.id,
       isFavorite: filter === 'favorites' ? true : undefined,
       limit: 100
     },
@@ -100,12 +87,12 @@ export default function Dictionary() {
     fetchPolicy: 'network-only'
   });
 
-  const [addDictionaryEntry] = useMutation(ADD_DICTIONARY_ENTRY);
-  const [updateDictionaryEntry] = useMutation(UPDATE_DICTIONARY_ENTRY);
-  const [deleteDictionaryEntry] = useMutation(DELETE_DICTIONARY_ENTRY);
-  const [toggleFavorite] = useMutation(TOGGLE_FAVORITE_ENTRY);
-  const [translateText] = useMutation(TRANSLATE_TEXT_MUTATION);
-  const [generateSpeech] = useMutation(GENERATE_SPEECH_MUTATION);
+  const [addDictionaryEntry] = useMutation<AddDictionaryEntryData>(ADD_DICTIONARY_ENTRY);
+  const [updateDictionaryEntry] = useMutation<UpdateDictionaryEntryData>(UPDATE_DICTIONARY_ENTRY);
+  const [deleteDictionaryEntry] = useMutation<DeleteDictionaryEntryData>(DELETE_DICTIONARY_ENTRY);
+  const [toggleFavorite] = useMutation<ToggleFavoriteData>(TOGGLE_FAVORITE_ENTRY);
+  const [translateText] = useMutation<TranslateTextData, TranslateTextVars>(TRANSLATE_TEXT_MUTATION);
+  const [generateSpeech] = useMutation<GenerateSpeechData, GenerateSpeechVars>(GENERATE_SPEECH_MUTATION);
 
   const refetch = () => {
     refetchPublic();
@@ -159,7 +146,7 @@ export default function Dictionary() {
       if (data?.translateText?.success) {
         setNewEntry({
           ...newEntry,
-          translation: data.translateText.translatedText
+          translation: data.translateText.translatedText ?? '',
         });
         toast.success('Translation generated!');
       } else {
@@ -213,7 +200,6 @@ export default function Dictionary() {
     try {
       const { data } = await addDictionaryEntry({
         variables: {
-          userId: user.id,
           input: {
             word: newEntry.word,
             translation: newEntry.translation,
@@ -259,8 +245,7 @@ export default function Dictionary() {
     try {
       const { data } = await updateDictionaryEntry({
         variables: {
-          entryId: parseInt(editingEntry.id),
-          userId: user.id,
+          entryId: editingEntry.id,
           input: {
             word: editingEntry.word,
             translation: editingEntry.translation,
@@ -268,7 +253,7 @@ export default function Dictionary() {
             languageTo: editingEntry.languageTo,
             pronunciation: editingEntry.pronunciation || null,
             usageExample: editingEntry.usageExample || null,
-            tags: editingEntry.tags?.length > 0 ? editingEntry.tags : null,
+            tags: editingEntry.tags?.length ? editingEntry.tags : null,
             isFavorite: editingEntry.isFavorite
           }
         }
@@ -288,7 +273,7 @@ export default function Dictionary() {
     }
   };
 
-  const handleDeleteEntry = async (entryId: string) => {
+  const handleDeleteEntry = async (entryId: number) => {
     if (!user) return;
     
     if (!confirm('Are you sure you want to delete this entry?')) return;
@@ -296,8 +281,7 @@ export default function Dictionary() {
     try {
       const { data } = await deleteDictionaryEntry({
         variables: {
-          entryId: parseInt(entryId),
-          userId: user.id
+          entryId,
         }
       });
 
@@ -313,7 +297,7 @@ export default function Dictionary() {
     }
   };
 
-  const handleToggleFavorite = async (entryId: string) => {
+  const handleToggleFavorite = async (entryId: number) => {
     if (!user) {
       toast.error('Please login to add favorites');
       return;
@@ -335,8 +319,7 @@ export default function Dictionary() {
         // Toggle favorite for user's own entry
         const { data } = await toggleFavorite({
           variables: {
-            entryId: parseInt(entryId),
-            userId: user.id
+            entryId,
           }
         });
 
@@ -359,8 +342,7 @@ export default function Dictionary() {
           // If already exists in personal dictionary, toggle its favorite status
           const { data } = await toggleFavorite({
             variables: {
-              entryId: parseInt(existingPersonalEntry.id),
-              userId: user.id
+              entryId: existingPersonalEntry.id,
             }
           });
 
@@ -374,7 +356,6 @@ export default function Dictionary() {
           // Add new entry to personal dictionary with favorite=true
           const { data } = await addDictionaryEntry({
             variables: {
-              userId: user.id,
               input: {
                 word: entry.word,
                 translation: entry.translation,
@@ -449,9 +430,7 @@ export default function Dictionary() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Link 
-                href="/dashboard"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
+                href="/dashboard"className="text-muted-foreground hover:text-foreground transition-colors">
                 ← Back to Dashboard
               </Link>
             </div>
@@ -461,8 +440,7 @@ export default function Dictionary() {
             </h1>
             <button
               onClick={() => setShowAddModal(true)}
-              className="bg-gradient-to-r from-primary to-secondary text-primary-foreground px-4 py-2 rounded-lg font-medium hover:shadow-lg transition-shadow flex items-center"
-            >
+              className="bg-primary text-primary-foreground px-4 py-2 rounded-lg font-medium hover:shadow-lg transition-shadow flex items-center">
               <Plus className="w-5 h-5 mr-2" />
               Add Word
             </button>
@@ -475,19 +453,15 @@ export default function Dictionary() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-card rounded-xl shadow-lg p-6 mb-8 border border-border"
-        >
+          className="bg-card rounded-xl shadow-lg p-6 mb-8 border border-border">
           <div className="flex flex-col gap-4">
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
               <input
-                type="text"
-                placeholder="Search words or translations..."
-                value={searchTerm}
+                type="text"placeholder="Search words or translations..."value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent placeholder:text-muted-foreground"
-              />
+                className="w-full pl-10 pr-4 py-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent placeholder:text-muted-foreground"/>
             </div>
 
             <div className="flex flex-col md:flex-row gap-4">
@@ -495,8 +469,7 @@ export default function Dictionary() {
               <select
                 value={languageFrom}
                 onChange={(e) => setLanguageFrom(e.target.value)}
-                className="flex-1 px-4 py-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
-              >
+                className="flex-1 px-4 py-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring">
                 <option value="">All Source Languages</option>
                 {languages.map((lang: Language) => (
                   <option key={lang.code} value={lang.code}>
@@ -509,8 +482,7 @@ export default function Dictionary() {
               <select
                 value={languageTo}
                 onChange={(e) => setLanguageTo(e.target.value)}
-                className="flex-1 px-4 py-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
-              >
+                className="flex-1 px-4 py-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring">
                 <option value="">All Target Languages</option>
                 {languages.map((lang: Language) => (
                   <option key={lang.code} value={lang.code}>
@@ -523,8 +495,7 @@ export default function Dictionary() {
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value as 'all' | 'favorites' | 'personal')}
-                className="flex-1 px-4 py-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
-              >
+                className="flex-1 px-4 py-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring">
                 <option value="all">All Entries</option>
                 <option value="favorites">Favorites</option>
                 <option value="personal">My Dictionary</option>
@@ -538,9 +509,8 @@ export default function Dictionary() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
-        >
-          <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl p-4 border border-primary/20">
+          className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="bg-muted rounded-xl p-4 border border-primary/20">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Total Words</p>
@@ -550,7 +520,7 @@ export default function Dictionary() {
             </div>
           </div>
           
-          <div className="bg-gradient-to-br from-destructive/10 to-destructive/5 rounded-xl p-4 border border-destructive/20">
+          <div className="bg-destructive/10 rounded-xl p-4 border border-destructive/20">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Favorites</p>
@@ -562,7 +532,7 @@ export default function Dictionary() {
             </div>
           </div>
           
-          <div className="bg-gradient-to-br from-secondary/10 to-secondary/5 rounded-xl p-4 border border-secondary/20">
+          <div className="bg-muted rounded-xl p-4 border border-secondary/20">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Languages</p>
@@ -578,8 +548,7 @@ export default function Dictionary() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="space-y-8"
-        >
+          className="space-y-8">
           {/* Public/Common Dictionary Section */}
           {displayPublicEntries.length > 0 && (
             <div>
@@ -597,8 +566,7 @@ export default function Dictionary() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="bg-card rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow border border-border"
-                  >
+                    className="bg-card rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow border border-border">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center space-x-4 mb-3">
@@ -640,8 +608,7 @@ export default function Dictionary() {
                             {entry.tags.map((tag: string, tagIndex: number) => (
                               <span
                                 key={tagIndex}
-                                className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium"
-                              >
+                                className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">
                                 {tag}
                               </span>
                             ))}
@@ -666,8 +633,7 @@ export default function Dictionary() {
                         </button>
                         <button 
                           onClick={() => handleSpeak(entry.word)}
-                          className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-                        >
+                          className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors">
                           <Volume2 className="w-5 h-5" />
                         </button>
                       </div>
@@ -695,8 +661,7 @@ export default function Dictionary() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="bg-card rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow border-2 border-secondary/20"
-                  >
+                    className="bg-card rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow border-2 border-secondary/20">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center space-x-4 mb-3">
@@ -738,8 +703,7 @@ export default function Dictionary() {
                             {entry.tags.map((tag: string, tagIndex: number) => (
                               <span
                                 key={tagIndex}
-                                className="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-xs font-medium"
-                              >
+                                className="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-xs font-medium">
                                 {tag}
                               </span>
                             ))}
@@ -764,8 +728,7 @@ export default function Dictionary() {
                         </button>
                         <button 
                           onClick={() => handleSpeak(entry.word)}
-                          className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-                        >
+                          className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors">
                           <Volume2 className="w-5 h-5" />
                         </button>
                         <button 
@@ -773,14 +736,12 @@ export default function Dictionary() {
                             setEditingEntry(entry);
                             setShowEditModal(true);
                           }}
-                          className="p-2 rounded-lg text-muted-foreground hover:text-secondary hover:bg-secondary/10 transition-colors"
-                        >
+                          className="p-2 rounded-lg text-muted-foreground hover:text-secondary hover:bg-secondary/10 transition-colors">
                           <Edit className="w-5 h-5" />
                         </button>
                         <button 
                           onClick={() => handleDeleteEntry(entry.id)}
-                          className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                        >
+                          className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors">
                           <Trash2 className="w-5 h-5" />
                         </button>
                       </div>
@@ -803,8 +764,7 @@ export default function Dictionary() {
               </p>
               <button
                 onClick={() => setShowAddModal(true)}
-                className="bg-gradient-to-r from-primary to-secondary text-primary-foreground px-6 py-3 rounded-lg font-medium hover:shadow-lg transition-shadow"
-              >
+                className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium hover:shadow-lg transition-shadow">
                 Add Your First Word
               </button>
             </div>
@@ -818,8 +778,7 @@ export default function Dictionary() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-card backdrop-blur-sm rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border-2 border-border"
-          >
+            className="bg-card backdrop-blur-sm rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border-2 border-border">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-foreground">
@@ -840,8 +799,7 @@ export default function Dictionary() {
                       isFavorite: false
                     });
                   }}
-                  className="text-muted-foreground hover:text-foreground"
-                >
+                  className="text-muted-foreground hover:text-foreground">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -851,8 +809,7 @@ export default function Dictionary() {
                 <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border border-border">
                   <span className="text-sm font-medium text-foreground">Use Auto-Translate</span>
                   <button
-                    type="button"
-                    onClick={() => setUseTranslate(!useTranslate)}
+                    type="button"onClick={() => setUseTranslate(!useTranslate)}
                     className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${
                       useTranslate 
                         ? 'bg-primary' 
@@ -875,13 +832,10 @@ export default function Dictionary() {
                       Word
                     </label>
                     <input
-                      type="text"
-                      required
+                      type="text"required
                       value={newEntry.word}
                       onChange={(e) => setNewEntry({ ...newEntry, word: e.target.value })}
-                      className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
-                      placeholder="Enter word"
-                    />
+                      className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"placeholder="Enter word"/>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">
@@ -889,21 +843,17 @@ export default function Dictionary() {
                     </label>
                     <div className="relative">
                       <input
-                        type="text"
-                        required
+                        type="text"required
                         value={newEntry.translation}
                         onChange={(e) => setNewEntry({ ...newEntry, translation: e.target.value })}
-                        className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
-                        placeholder={useTranslate ? "Auto-filled" : "Enter translation"}
+                        className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"placeholder={useTranslate ? "Auto-filled" : "Enter translation"}
                         disabled={useTranslate && !newEntry.translation}
                       />
                       {useTranslate && (
                         <button
-                          type="button"
-                          onClick={handleTranslateWord}
+                          type="button"onClick={handleTranslateWord}
                           disabled={isTranslating || !newEntry.word}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-primary text-primary-foreground rounded-md hover:opacity-90 disabled:opacity-50"
-                        >
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-primary text-primary-foreground rounded-md hover:opacity-90 disabled:opacity-50">
                           <Sparkles className={`w-4 h-4 ${isTranslating ? 'animate-spin' : ''}`} />
                         </button>
                       )}
@@ -919,8 +869,7 @@ export default function Dictionary() {
                     <select
                       value={newEntry.languageFrom}
                       onChange={(e) => setNewEntry({ ...newEntry, languageFrom: e.target.value })}
-                      className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
-                    >
+                      className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring">
                       {languages.map((lang: Language) => (
                         <option key={lang.code} value={lang.code}>
                           {lang.name}
@@ -935,8 +884,7 @@ export default function Dictionary() {
                     <select
                       value={newEntry.languageTo}
                       onChange={(e) => setNewEntry({ ...newEntry, languageTo: e.target.value })}
-                      className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
-                    >
+                      className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring">
                       {languages.map((lang: Language) => (
                         <option key={lang.code} value={lang.code}>
                           {lang.name}
@@ -951,12 +899,9 @@ export default function Dictionary() {
                     Pronunciation (Optional)
                   </label>
                   <input
-                    type="text"
-                    value={newEntry.pronunciation}
+                    type="text"value={newEntry.pronunciation}
                     onChange={(e) => setNewEntry({ ...newEntry, pronunciation: e.target.value })}
-                    className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
-                    placeholder="e.g., nah-mas-tay"
-                  />
+                    className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"placeholder="e.g., nah-mas-tay"/>
                 </div>
 
                 <div>
@@ -966,10 +911,8 @@ export default function Dictionary() {
                   <textarea
                     value={newEntry.usageExample}
                     onChange={(e) => setNewEntry({ ...newEntry, usageExample: e.target.value })}
-                    className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring resize-none placeholder:text-muted-foreground"
-                    rows={2}
-                    placeholder="Example sentence using this word..."
-                  />
+                    className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring resize-none placeholder:text-muted-foreground"rows={2}
+                    placeholder="Example sentence using this word..."/>
                 </div>
 
                 <div>
@@ -977,24 +920,18 @@ export default function Dictionary() {
                     Tags (Optional)
                   </label>
                   <input
-                    type="text"
-                    onKeyDown={handleTagInput}
-                    className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
-                    placeholder="Press Enter to add tags..."
-                  />
+                    type="text"onKeyDown={handleTagInput}
+                    className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"placeholder="Press Enter to add tags..."/>
                   {newEntry.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-2">
                       {newEntry.tags.map((tag, index) => (
                         <span
                           key={index}
-                          className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm flex items-center"
-                        >
+                          className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm flex items-center">
                           {tag}
                           <button
-                            type="button"
-                            onClick={() => removeTag(tag)}
-                            className="ml-2 text-primary hover:text-primary/80"
-                          >
+                            type="button"onClick={() => removeTag(tag)}
+                            className="ml-2 text-primary hover:text-primary/80">
                             ×
                           </button>
                         </span>
@@ -1005,12 +942,9 @@ export default function Dictionary() {
 
                 <div className="flex items-center">
                   <input
-                    type="checkbox"
-                    id="favorite"
-                    checked={newEntry.isFavorite}
+                    type="checkbox"id="favorite"checked={newEntry.isFavorite}
                     onChange={(e) => setNewEntry({ ...newEntry, isFavorite: e.target.checked })}
-                    className="rounded border-input text-primary focus:ring-ring"
-                  />
+                    className="rounded border-input text-primary focus:ring-ring"/>
                   <label htmlFor="favorite" className="ml-2 text-sm text-foreground">
                     Mark as favorite
                   </label>
@@ -1018,8 +952,7 @@ export default function Dictionary() {
 
                 <div className="flex space-x-3 pt-4">
                   <button
-                    type="button"
-                    onClick={() => {
+                    type="button"onClick={() => {
                       setShowAddModal(false);
                       setUseTranslate(false);
                       setNewEntry({
@@ -1033,14 +966,11 @@ export default function Dictionary() {
                         isFavorite: false
                       });
                     }}
-                    className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors"
-                  >
+                    className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors">
                     Cancel
                   </button>
                   <button
-                    type="submit"
-                    className="flex-1 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
-                  >
+                    type="submit"className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
                     Add Word
                   </button>
                 </div>
@@ -1056,8 +986,7 @@ export default function Dictionary() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-card backdrop-blur-sm rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border-2 border-border"
-          >
+            className="bg-card backdrop-blur-sm rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border-2 border-border">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-foreground">
@@ -1068,8 +997,7 @@ export default function Dictionary() {
                     setShowEditModal(false);
                     setEditingEntry(null);
                   }}
-                  className="text-muted-foreground hover:text-foreground"
-                >
+                  className="text-muted-foreground hover:text-foreground">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -1081,24 +1009,20 @@ export default function Dictionary() {
                       Word
                     </label>
                     <input
-                      type="text"
-                      required
+                      type="text"required
                       value={editingEntry.word}
                       onChange={(e) => setEditingEntry({ ...editingEntry, word: e.target.value })}
-                      className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
-                    />
+                      className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"/>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">
                       Translation
                     </label>
                     <input
-                      type="text"
-                      required
+                      type="text"required
                       value={editingEntry.translation}
                       onChange={(e) => setEditingEntry({ ...editingEntry, translation: e.target.value })}
-                      className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
-                    />
+                      className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"/>
                   </div>
                 </div>
 
@@ -1110,8 +1034,7 @@ export default function Dictionary() {
                     <select
                       value={editingEntry.languageFrom}
                       onChange={(e) => setEditingEntry({ ...editingEntry, languageFrom: e.target.value })}
-                      className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
-                    >
+                      className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring">
                       {languages.map((lang: Language) => (
                         <option key={lang.code} value={lang.code}>
                           {lang.name}
@@ -1126,8 +1049,7 @@ export default function Dictionary() {
                     <select
                       value={editingEntry.languageTo}
                       onChange={(e) => setEditingEntry({ ...editingEntry, languageTo: e.target.value })}
-                      className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
-                    >
+                      className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring">
                       {languages.map((lang: Language) => (
                         <option key={lang.code} value={lang.code}>
                           {lang.name}
@@ -1142,11 +1064,9 @@ export default function Dictionary() {
                     Pronunciation (Optional)
                   </label>
                   <input
-                    type="text"
-                    value={editingEntry.pronunciation || ''}
+                    type="text"value={editingEntry.pronunciation || ''}
                     onChange={(e) => setEditingEntry({ ...editingEntry, pronunciation: e.target.value })}
-                    className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
-                  />
+                    className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"/>
                 </div>
 
                 <div>
@@ -1156,8 +1076,7 @@ export default function Dictionary() {
                   <textarea
                     value={editingEntry.usageExample || ''}
                     onChange={(e) => setEditingEntry({ ...editingEntry, usageExample: e.target.value })}
-                    className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring resize-none"
-                    rows={2}
+                    className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring resize-none"rows={2}
                   />
                 </div>
 
@@ -1166,24 +1085,18 @@ export default function Dictionary() {
                     Tags (Optional)
                   </label>
                   <input
-                    type="text"
-                    onKeyDown={(e) => handleTagInput(e, true)}
-                    className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
-                    placeholder="Press Enter to add tags..."
-                  />
+                    type="text"onKeyDown={(e) => handleTagInput(e, true)}
+                    className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"placeholder="Press Enter to add tags..."/>
                   {editingEntry.tags && editingEntry.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-2">
                       {editingEntry.tags.map((tag, index) => (
                         <span
                           key={index}
-                          className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm flex items-center"
-                        >
+                          className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm flex items-center">
                           {tag}
                           <button
-                            type="button"
-                            onClick={() => removeTag(tag, true)}
-                            className="ml-2 text-primary hover:text-primary/80"
-                          >
+                            type="button"onClick={() => removeTag(tag, true)}
+                            className="ml-2 text-primary hover:text-primary/80">
                             ×
                           </button>
                         </span>
@@ -1194,12 +1107,9 @@ export default function Dictionary() {
 
                 <div className="flex items-center">
                   <input
-                    type="checkbox"
-                    id="edit-favorite"
-                    checked={editingEntry.isFavorite}
+                    type="checkbox"id="edit-favorite"checked={editingEntry.isFavorite}
                     onChange={(e) => setEditingEntry({ ...editingEntry, isFavorite: e.target.checked })}
-                    className="rounded border-input text-primary focus:ring-ring"
-                  />
+                    className="rounded border-input text-primary focus:ring-ring"/>
                   <label htmlFor="edit-favorite" className="ml-2 text-sm text-foreground">
                     Mark as favorite
                   </label>
@@ -1207,19 +1117,15 @@ export default function Dictionary() {
 
                 <div className="flex space-x-3 pt-4">
                   <button
-                    type="button"
-                    onClick={() => {
+                    type="button"onClick={() => {
                       setShowEditModal(false);
                       setEditingEntry(null);
                     }}
-                    className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors"
-                  >
+                    className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors">
                     Cancel
                   </button>
                   <button
-                    type="submit"
-                    className="flex-1 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
-                  >
+                    type="submit"className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
                     Update Word
                   </button>
                 </div>
