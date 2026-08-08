@@ -68,6 +68,18 @@ jobs:
             exit 1
           }
 
+      - name: requirements.txt is up to date
+        # uv.lock is the source of truth; requirements.txt exists only for deploy
+        # targets that cannot consume a lock file. Regenerating it here stops the
+        # two from drifting apart unnoticed.
+        run: |
+          uv export --no-dev --no-hashes --no-emit-project -o /tmp/requirements.txt
+          diff -u requirements.txt /tmp/requirements.txt || {
+            echo "::error::requirements.txt is stale - regenerate it with:"
+            echo "  uv export --no-dev --no-hashes --no-emit-project -o requirements.txt"
+            exit 1
+          }
+
   frontend:
     name: Frontend
     runs-on: ubuntu-latest
