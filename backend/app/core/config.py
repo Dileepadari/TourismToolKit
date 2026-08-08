@@ -35,6 +35,34 @@ from pydantic_settings import (
 
 logger = logging.getLogger(__name__)
 
+# scheme://host[:port], and then anything else - which is the part to drop.
+_ORIGIN_RE = re.compile(r"^(?P<origin>[a-z][a-z0-9+.-]*://[^/]+)(?P<path>/.*)?$", re.I)
+
+
+def _normalise_origin(value: str) -> str:
+    """Reduce a configured value to something an ``Origin`` header can equal.
+
+    A browser sends scheme://host[:port] and never a path, and Starlette compares
+    the header against these strings *exactly*. So `https://example.com/graphql`
+    - the endpoint URL, which is the natural thing to paste - matches no request
+    at all, and CORS fails with nothing in the logs to say why. Accept it and
+    say so, rather than being silently inert.
+    """
+    stripped = value.strip().rstrip("/")
+    match = _ORIGIN_RE.match(stripped)
+    if match is None:
+        # `*`, or something malformed: leave it for CORSMiddleware to interpret.
+        return stripped
+    if match.group("path"):
+        logger.warning(
+            "CORS origin %r includes a path; using %r. An Origin header is "
+            "scheme://host[:port] only.",
+            stripped,
+            match.group("origin"),
+        )
+    return match.group("origin")
+
+
 ENV_FILE = os.getenv("ENV_FILE", ".env")
 
 # The literals the project has shipped as fallbacks. Refused in production.
@@ -259,6 +287,7 @@ class Settings(BaseSettings):
         "http://10.2.129.197:3000",
         "https://tourismtoolkit.dileepadari.dev",
         "https://tourism-toolkit.vercel.app",
+        "https://tourism-toolkit-backend.vercel.app",
     ]
     cors_origin_regex: str | None = None
     graphql_ide: bool = True
@@ -283,7 +312,9 @@ class Settings(BaseSettings):
         # NoDecode + this validator are both required: pydantic-settings JSON-decodes
         # complex types by default, which would reject `CORS_ORIGINS=http://a,http://b`.
         if isinstance(value, str):
-            return [origin.strip() for origin in value.split(",") if origin.strip()]
+            value = [origin for origin in value.split(",") if origin.strip()]
+        if isinstance(value, list):
+            return [_normalise_origin(str(origin)) for origin in value]
         return value
 
     @field_validator("database_url", mode="after")

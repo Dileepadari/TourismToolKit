@@ -7,6 +7,7 @@ against those fails on "relation already exists"; they have to be stamped.
 
 from __future__ import annotations
 
+import logging
 import uuid
 
 import pytest
@@ -132,6 +133,27 @@ def test_bootstrap_upgrades_an_empty_database(scratch_db: str, monkeypatch):
 
     assert table_names(scratch_db) >= EXPECTED_TABLES
     get_settings.cache_clear()
+
+
+def test_bootstrap_leaves_application_logging_alive(scratch_db: str, monkeypatch):
+    """Migrating must not silence the app.
+
+    `alembic/env.py` calls `fileConfig`, whose `disable_existing_loggers` default
+    is True - which disabled every logger not named in alembic.ini, all of `app.*`
+    included. `bootstrap()` runs Alembic in-process, so migrating at startup left
+    the application unable to log anything for the rest of the process.
+    """
+    monkeypatch.setenv("DATABASE_URL", scratch_db)
+    from app.core.config import get_settings
+    from app.database import bootstrap as bootstrap_module
+
+    emitter = logging.getLogger("app.core.config")
+    get_settings.cache_clear()
+    bootstrap_module.bootstrap()
+    get_settings.cache_clear()
+
+    assert emitter.disabled is False
+    assert logging.getLogger("app").disabled is False
 
 
 def test_bootstrap_stamps_a_pre_alembic_schema(scratch_db: str, monkeypatch):
