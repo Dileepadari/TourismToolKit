@@ -72,9 +72,12 @@ jobs:
         # uv.lock is the source of truth; requirements.txt exists only for deploy
         # targets that cannot consume a lock file. Regenerating it here stops the
         # two from drifting apart unnoticed.
+        # Regenerated in place and judged by git, rather than exported to a temp
+        # path and diffed: uv records the `-o` argument in the file's header, so
+        # exporting anywhere else always differs on that line.
         run: |
-          uv export --no-dev --no-hashes --no-emit-project -o /tmp/requirements.txt
-          diff -u requirements.txt /tmp/requirements.txt || {
+          uv export --no-dev --no-hashes --no-emit-project -o requirements.txt
+          git diff --exit-code -- requirements.txt || {
             echo "::error::requirements.txt is stale - regenerate it with:"
             echo "  uv export --no-dev --no-hashes --no-emit-project -o requirements.txt"
             exit 1
