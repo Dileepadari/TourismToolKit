@@ -7,20 +7,20 @@ import { themeClasses } from '@/utils/theme-utils';
 interface PageWrapperProps {
   children: React.ReactNode;
   className?: string;
-  gradient?: boolean;
+  tinted?: boolean;
   fullHeight?: boolean;
 }
 
 export default function PageWrapper({ 
   children, 
   className, 
-  gradient = true,
+  tinted = true,
   fullHeight = true 
 }: PageWrapperProps) {
   return (
     <div className={cn(
       fullHeight && 'min-h-screen',
-      gradient ? themeClasses.backgroundGradient : themeClasses.cardBackground,
+      tinted ? themeClasses.backgroundGradient : themeClasses.cardBackground,
       'transition-colors duration-300',
       className
     )}>

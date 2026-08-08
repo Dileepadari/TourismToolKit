@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { useMutation } from '@apollo/client';
+import { motion } from 'motion/react';
+import type { LoginData, LoginVars } from '@/graphql/types';
+import { useMutation } from '@apollo/client/react';
 import Link from 'next/link';
-import { Eye, EyeOff, Globe, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Logo } from '@/components/ui/Logo';
 import { LOGIN_MUTATION } from '@/graphql/queries';
 import { useAuth } from '@/providers/AuthProvider';
 import toast from 'react-hot-toast';
@@ -19,8 +21,8 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  const { login } = useAuth();
-  const [loginMutation] = useMutation(LOGIN_MUTATION);
+  const { onSignedIn } = useAuth();
+  const [loginMutation] = useMutation<LoginData, LoginVars>(LOGIN_MUTATION);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,13 +35,16 @@ export default function Login() {
         }
       });
 
-      if (data.login.success) {
-        // Update auth provider with user data - this will automatically redirect to dashboard
-        login(data.login.token, data.login.user);
-        
+      // `data` is undefined when the mutation errors.
+      const result = data?.login;
+
+      if (result?.success && result.user) {
+        // The session cookies are already set by the response; there is no
+        // token for the client to store.
+        onSignedIn(result.user);
         toast.success('Login successful!');
       } else {
-        toast.error(data.login.message || 'Login failed');
+        toast.error(result?.message || 'Login failed');
       }
     } catch (error) {
       toast.error('An error occurred during login');
@@ -61,18 +66,14 @@ export default function Login() {
       {/* Header */}
       <div className="flex items-center justify-between p-6">
         <Link 
-          href="/"
-          className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
-        >
+          href="/"className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="w-5 h-5" />
           <span>{t('nav.backToHome')}</span>
         </Link>
         
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-gradient-to-r from-primary to-accent rounded-lg flex items-center justify-center">
-            <Globe className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <Logo size={32} />
+          <span className="text-xl font-bold text-foreground">
             {t('home.poweredBy')}
           </span>
         </div>
@@ -84,8 +85,7 @@ export default function Login() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="max-w-md w-full space-y-8"
-        >
+          className="max-w-md w-full space-y-8">
           <div>
             <h2 className="text-center text-3xl font-bold text-foreground">
               {t('auth.login.title')}
@@ -102,15 +102,10 @@ export default function Login() {
                   {t('auth.login.email')}
                 </label>
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
+                  id="email"name="email"type="email"autoComplete="email"required
                   value={formData.email}
                   onChange={handleChange}
-                  className="mt-1 appearance-none relative block w-full px-3 py-3 border border-input placeholder-muted-foreground text-foreground rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
-                  placeholder={t('auth.login.email')}
+                  className="mt-1 appearance-none relative block w-full px-3 py-3 border border-input placeholder-muted-foreground text-foreground rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"placeholder={t('auth.login.email')}
                 />
               </div>
 
@@ -120,20 +115,14 @@ export default function Login() {
                 </label>
                 <div className="mt-1 relative">
                   <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    autoComplete="current-password"
-                    required
+                    id="password"name="password"type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"required
                     value={formData.password}
                     onChange={handleChange}
-                    className="appearance-none relative block w-full px-3 py-3 pr-12 border border-input placeholder-muted-foreground text-foreground rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
-                    placeholder={t('auth.login.password')}
+                    className="appearance-none relative block w-full px-3 py-3 pr-12 border border-input placeholder-muted-foreground text-foreground rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"placeholder={t('auth.login.password')}
                   />
                   <button
-                    type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    onClick={() => setShowPassword(!showPassword)}
+                    type="button"className="absolute inset-y-0 right-0 pr-3 flex items-center"onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
                       <EyeOff className="h-5 w-5 text-muted-foreground" />
@@ -147,9 +136,7 @@ export default function Login() {
               <div className="flex items-center justify-between">
                 <div className="text-sm">
                   <Link 
-                    href="/auth/forgot-password"
-                    className="font-medium text-primary hover:text-primary/80"
-                  >
+                    href="/auth/forgot-password"className="font-medium text-primary hover:text-primary/80">
                     {t('auth.login.forgotPassword')}
                   </Link>
                 </div>
@@ -157,10 +144,8 @@ export default function Login() {
 
               <div>
                 <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg bg-gradient-to-r from-primary to-accent hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-foreground"
-                >
+                  type="submit"disabled={isLoading}
+                  className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg bg-primary hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-primary-foreground">
                   {isLoading ? t('auth.login.signingIn') : t('auth.login.signIn')}
                 </button>
               </div>
@@ -169,9 +154,7 @@ export default function Login() {
                 <span className="text-sm text-muted-foreground">
                   {t('auth.login.noAccount')}{' '}
                   <Link 
-                    href="/auth/register"
-                    className="font-medium text-primary hover:text-primary/80"
-                  >
+                    href="/auth/register"className="font-medium text-primary hover:text-primary/80">
                     {t('auth.login.signUp')}
                   </Link>
                 </span>
@@ -195,8 +178,7 @@ export default function Login() {
                   password: 'password123'
                 });
               }}
-              className="text-xs font-medium text-primary hover:text-primary/80"
-            >
+              className="text-xs font-medium text-primary hover:text-primary/80">
               {t('auth.login.useDemo')}
             </button>
           </div>

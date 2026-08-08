@@ -1,33 +1,39 @@
 #!/bin/bash
+# Destroy and rebuild the database from migrations + seed data.
+set -euo pipefail
 
-echo "=============================================="
-echo "  Database Reset Script"
-echo "=============================================="
-echo ""
-echo "This script will:"
-echo "1. Stop all containers"
-echo "2. Start containers with RESET_DB=true"
-echo "3. Clear all database tables"
-echo "4. Reseed all data fresh"
-echo ""
-read -p "Are you sure you want to reset the database? (y/N): " -n 1 -r
+cd "$(dirname "$0")/.."
+
+cat <<'MSG'
+==============================================
+  Database reset
+==============================================
+
+This will DESTROY all data in the tourism_db volume, then:
+  1. recreate the schema from Alembic migrations
+  2. reseed the starter content
+
+MSG
+
+read -p "Reset the database? (y/N): " -n 1 -r
 echo
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo "Reset cancelled."
-    exit 1
-fi
+[[ $REPLY =~ ^[Yy]$ ]] || { echo "Cancelled."; exit 1; }
 
-echo ""
-echo "🛑 Stopping containers..."
-docker compose down
+echo "==> Stopping containers and removing the database volume"
+# `down -v` is what actually drops the data. The previous version ran a bare
+# `down`, so the volume survived and the "reset" relied on an init script that
+# silently failed.
+docker compose down -v
 
-echo ""
-echo "🔄 Starting with database reset flag..."
-RESET_DB=true docker compose up -d
+echo "==> Starting with seeding enabled"
+SEED_DB=true docker compose up -d --build --renew-anon-volumes
 
-echo ""
-echo "📊 Checking logs..."
-echo "Use 'docker compose logs backend' to monitor the reset process"
-echo "Use 'docker compose logs -f backend' to follow the logs in real-time"
-echo ""
-echo "✅ Reset initiated! Backend will reset and reseed the database."
+echo "==> Waiting for the backend to become healthy"
+for _ in $(seq 1 60); do
+    status=$(docker inspect --format '{{.State.Health.Status}}' tourism-backend 2>/dev/null || echo starting)
+    [ "$status" = "healthy" ] && { echo "Backend is healthy."; break; }
+    sleep 2
+done
+
+echo
+echo "Done. Follow progress with: docker compose logs -f backend"

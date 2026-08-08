@@ -1,401 +1,236 @@
-# 🌍 TourismToolKit - Multilingual Tourism Platform
+# TourismToolKit
 
-> Breaking language barriers for travelers in India with AI-powered translation and cultural guidance
+A multilingual travel companion for India: translation, speech, OCR, a personal
+phrasebook, and practical local information - in thirteen languages.
 
-![TourismToolKit](https://img.shields.io/badge/Tourism-ToolKit-orange?style=for-the-badge)
-![Docker](https://img.shields.io/badge/Docker-Ready-blue?style=for-the-badge)
-![Languages](https://img.shields.io/badge/Languages-13+-green?style=for-the-badge)
-![GraphQL](https://img.shields.io/badge/API-GraphQL-purple?style=for-the-badge)
-
-## ✨ What is TourismToolKit?
-
-TourismToolKit is a comprehensive multilingual platform designed to help tourists navigate India seamlessly. It combines AI-powered translation, cultural guidance, local information, and emergency assistance in one unified application.
-
-**This project was built with determination and Copilot as a debugging companion. When AI gave up, we didn't.**
-
-### 🎯 Key Features
-
-- **🗣️ Real-time Translation** - 13+ Indian languages (Hindi, Telugu, Tamil, Kannada, Malayalam, Bengali, Gujarati, Marathi, Punjabi, Urdu, Assamese, Odia)
-- **🎤 Voice Translation** - Speech-to-text and text-to-speech capabilities
-- **📷 OCR Text Extraction** - Extract text from signs, menus, and documents
-- **📖 Personal Dictionary** - Save and organize favorite phrases with translations
-- **📍 Tourist Places** - Comprehensive database of Indian landmarks and destinations
-- **🆘 Emergency Contacts** - Quick access to police, medical, fire services, and tourist helplines
-- **🌏 Cultural Guide** - Essential etiquette and customs for travelers
-- **🌙 Dark/Light Themes** - Beautiful India-inspired design with dual themes
+![Docker](https://img.shields.io/badge/Docker-ready-blue?style=flat-square)
+![Languages](https://img.shields.io/badge/languages-13-green?style=flat-square)
+![API](https://img.shields.io/badge/API-GraphQL-purple?style=flat-square)
+![License](https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square)
 
 ---
 
-## 🚀 Quick Start (Docker - Recommended)
+## What it does
 
-### Prerequisites
-- Docker & Docker Compose (v2.0+)
-- 4GB+ RAM, 10GB+ disk space
+| Feature | Status |
+|---|---|
+| Text translation between Indian languages | Working - needs Bhashini credentials |
+| Text-to-speech | Working - needs Bhashini credentials |
+| Speech-to-text | Working - needs Bhashini credentials |
+| OCR from photos of signs and menus | Working - needs Bhashini credentials |
+| Personal dictionary (save, tag, favourite, search) | Working |
+| Tourist places, emergency contacts, culture tips | Working |
+| Accounts, sessions, password reset | Working |
+| Dark / light / system themes | Working |
+| UI in 13 languages | Working |
 
-### 1-Command Setup
+The four AI features call the [Bhashini](https://bhashini.gov.in/) and
+[Canvas](https://canvas.iiit.ac.in/) APIs. Without credentials the app runs and
+everything else works; those four report that they are not configured. The
+backend logs exactly which are available at startup:
+
+```
+INFO app.main: bhashini: asr=[bn,en,gu,hi,kn,ml,mr,pa,ta,te] tts=[default,en,hi] mt=[en_hi]
+```
+
+---
+
+## Quick start
+
+**Prerequisites:** Docker with Compose v2. That is all - the images bring their
+own Python and Node.
+
 ```bash
-# Clone and start everything
-git clone https://github.com/dileepadari/TourismToolKit.git
+git clone https://github.com/Dileepadari/TourismToolKit.git
 cd TourismToolKit
-docker compose up -d --build
+
+# One required secret.
+echo "JWT_SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_urlsafe(48))')" > .env
+
+# Start, applying migrations and loading the starter content.
+SEED_DB=true docker compose up -d --build
 ```
 
-To seed data initially use
-```
-RESET_DB=true docker compose up -d --build
-```
+| | |
+|---|---|
+| App | http://localhost:3000 |
+| GraphQL API + playground | http://localhost:8000/graphql |
+| Health | http://localhost:8000/health |
 
-**That's it!** 🎉 This automatically:
-- ✅ Sets up PostgreSQL database
-- ✅ Runs database migrations and seeding
-- ✅ Starts backend API (GraphQL)
-- ✅ Starts frontend application
-- ✅ Seeds sample data for all modules
+To enable translation, speech and OCR, add your Bhashini credentials:
 
-### Access Points
-- **🌐 Frontend**: http://localhost:3000
-- **⚡ Backend API**: http://localhost:8000
-- **🔍 GraphQL Playground**: http://localhost:8000/graphql
-- **📊 API Docs**: http://localhost:8000/docs
-
----
-
-## 🏗️ Architecture & Tech Stack
-
-### Frontend
-- **Next.js 15** - React framework with App Router
-- **TypeScript** - Type-safe development
-- **Tailwind CSS** - Utility-first styling with India-themed colors
-- **Apollo Client** - GraphQL state management
-- **Framer Motion** - Smooth animations
-- **Next-themes** - Dark/light mode support
-
-### Backend
-- **FastAPI** - Modern Python web framework
-- **Strawberry GraphQL** - Schema-first GraphQL
-- **SQLModel** - Type-safe database models
-- **PostgreSQL** - Robust database system
-- **Alembic** - Database migrations
-- **Bhashini API** - AI translation services
-
-### DevOps
-- **Docker & Docker Compose** - Containerization
-- **Automated Seeding** - Sample data initialization
-- **Health Checks** - Service monitoring
-- **Hot Reload** - Development efficiency
-
----
-
-## 📊 Sample Data Included
-
-The application comes pre-loaded with comprehensive sample data:
-
-### Dictionary Entries (120+)
-- **Languages**: English ↔ Hindi, Telugu, Tamil, Kannada, Malayalam, Bengali, Gujarati, Marathi, Punjabi, Urdu, Assamese, Odia
-- **Categories**: Greetings, food, directions, emergency terms, numbers, travel vocabulary
-
-### Tourist Places (20+)
-- **Destinations**: Taj Mahal, Golden Temple, Kerala Backwaters, Hampi, Goa Beaches
-- **Details**: Images, ratings, entry fees, best visiting times, languages spoken
-
-### Emergency Contacts (18+)
-- **National**: Police (100), Medical (108), Fire (101), Tourist Helpline (1363)
-- **State-specific**: Tourism offices for major states
-- **Services**: Women helpline, child helpline, disaster management
-
-### Culture Tips (26+)
-- **Categories**: Greetings, food etiquette, clothing, religious customs, photography
-- **Importance**: High, medium, low priority tips
-- **Languages**: Available in multiple Indian languages
-
----
-
-## 🧪 Test User Accounts
-
-The system includes pre-created test accounts:
-
-| Email | Password | Role | Description |
-|-------|----------|------|-------------|
-| admin@tourismtoolkit.com | admin123 | Admin | Full access account |
-| test@example.com | password123 | User | Standard test user |
-| demo@tourismtoolkit.com | demo123 | Demo | Demo purposes |
-| tourist@india.com | tourist123 | Tourist | Tourist-focused account |
-
----
-
-## 🛠️ Development Commands
-
-### Docker Operations
 ```bash
-# View logs
-docker compose logs -f
-docker compose logs backend
-docker compose logs frontend
-
-# Restart services
-docker compose restart
-docker compose restart backend
-
-# Stop everything
-docker compose down
-
-# Reset database (with fresh seeding)
-RESET_DB=true docker compose up -d
+cp backend/.env.example backend/.env   # then fill in the BASHINI_* values
+docker compose up -d --build backend
 ```
 
-### Database Management
-```bash
-# Database shell
-docker compose exec db psql -U tourism_user -d tourism_db
+`backend/.env.example` documents every variable. Endpoints are discovered by
+naming convention, so adding a language is a config change with no code change.
 
-# Check seeded data
-docker compose exec backend python -c "
-from app.database.db import SessionLocal
-from app.database.models import *
-db = SessionLocal()
-print(f'Dictionary: {db.query(DictionaryEntry).count()}')
-print(f'Places: {db.query(Place).count()}')
-print(f'Emergency: {db.query(EmergencyContact).count()}')
-print(f'Culture: {db.query(CultureTip).count()}')
-db.close()
-"
+---
 
-# Re-seed data
-docker compose exec backend python -c "
-from app.database.seed_data import seed_all
-seed_all()
-"
+## Architecture
+
+```
+frontend/   Next.js 16 · React 19 · Apollo Client 4 · Tailwind v4
+   │  HttpOnly cookies, credentials: 'include'
+   ▼
+backend/    FastAPI · Strawberry GraphQL · SQLModel (async) · psycopg 3
+   │
+   ├── PostgreSQL 18       schema owned by Alembic
+   └── Bhashini / Canvas   translation, TTS, ASR, OCR (httpx, async)
 ```
 
-### Manual Development Setup
+**Frontend** - Next.js 16 App Router, React 19, Apollo Client 4, Tailwind v4
+(the India-inspired palette lives in `app/globals.css`), Motion for animation,
+a hand-rolled theme provider that applies the stored theme before first paint,
+and locales loaded on demand rather than all thirteen up front.
+
+**Backend** - FastAPI with a Strawberry GraphQL schema assembled from typed
+domain classes, async SQLModel over psycopg 3, Alembic migrations, and
+`pydantic-settings` for configuration. Every resolver takes its own session,
+because GraphQL executes sibling root fields concurrently.
+
+**Auth** - short-lived access token plus a rotating refresh token, both in
+`HttpOnly` cookies. The client never handles a credential, so an XSS cannot steal
+a session, and signing out revokes server-side. Refresh-token reuse is treated as
+theft and ends every session for that account.
+
+---
+
+## Development
+
 ```bash
-# Backend setup
+# Database only; run the apps on the host.
+make dev
+
+# Backend (uv manages Python and the locked dependencies)
 cd backend
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+cp .env.example .env
+uv sync
+uv run python -m app.database.bootstrap    # migrate
+uv run python -m app.database.seed_data    # optional starter content
+uv run uvicorn app.main:app --reload
 
-# Frontend setup
+# Frontend
 cd frontend
-npm install
+npm ci
 npm run dev
 ```
 
----
-
-## 🌐 Multilingual Support
-
-### Supported Languages (13+)
-| Language | Code | Native Name | Script |
-|----------|------|-------------|--------|
-| English | en | English | Latin |
-| Hindi | hi | हिन्दी | Devanagari |
-| Telugu | te | తెలుగు | Telugu |
-| Tamil | ta | தமிழ் | Tamil |
-| Kannada | kn | ಕನ್ನಡ | Kannada |
-| Malayalam | ml | മലയാളം | Malayalam |
-| Bengali | bn | বাংলা | Bengali |
-| Gujarati | gu | ગુજરાતી | Gujarati |
-| Marathi | mr | मराठी | Devanagari |
-| Punjabi | pa | ਪੰਜਾਬੀ | Gurmukhi |
-| Urdu | ur | اردو | Arabic/Nastaliq |
-| Assamese | as | অসমীয়া | Bengali-Assamese |
-| Odia | or | ଓଡ଼ିଆ | Odia |
-
-### Translation Features
-- **Real-time switching** - Instant language change without reload
-- **Native scripts** - Languages displayed in authentic writing systems
-- **Persistent selection** - Language choice saved across sessions
-- **Type-safe** - TypeScript ensures translation completeness
-- **Fallback system** - Graceful fallback to English if translation missing
+`make help` lists every target. `DEVELOPMENT.md` covers the API, the database,
+deployment and troubleshooting in depth.
 
 ---
 
-## 🚨 Troubleshooting
+## Tests
 
-### Common Issues
+Everything below runs in CI on every push and pull request.
 
-**1. Services won't start**
 ```bash
-# Check if ports are busy
-lsof -i :3000 :8000 :5432
-# Stop conflicting services
-pm2 stop all
-```
+cd backend
+uv run pytest              # ~240 tests against a real Postgres, coverage gated at 80%
+uv run ruff check app alembic tests
+uv run mypy app
 
-**2. Database connection error**
-```bash
-# Check database status
-docker compose ps db
-docker compose logs db
-```
-
-**3. Reset everything**
-```bash
-# Complete reset
-docker compose down -v
-RESET_DB=true docker compose up -d --build
-```
-
-**4. Frontend build issues**
-```bash
-# Clear cache and rebuild
 cd frontend
-rm -rf .next node_modules package-lock.json
-npm install
-npm run build
+npm test                   # Vitest
+npm run typecheck
+npm run lint
+npm run test:e2e           # Playwright (needs the stack running)
 ```
 
+Tests that exist because the bug they cover was real:
+
+- **`test_auth_flow.py`** - registration persists a row. The mutation that
+  shipped was a mock returning a valid token without writing to the database.
+- **`test_dictionary_mutations.py`** - one user cannot read or modify another's
+  entries, even when passing their user id.
+- **`test_frontend_documents.py`** - every `gql` document in the frontend
+  validates against the live schema, so a client/server mismatch fails CI rather
+  than silently returning nothing in the browser.
+- **`test_sessions.py`** - refresh rotation, replay detection, and that a
+  password-reset token cannot be redeemed as a session.
+- **Locale parity** - all 13 languages carry every key, so a gap is a test
+  failure rather than a silent fallback to English.
+
 ---
 
-## 📚 API Documentation
+## Languages
 
-### GraphQL Queries
-```graphql
-# Get tourist places
-query {
-  getPlaces(country: "India", limit: 10) {
-    id name description city state rating
-  }
-}
+UI translations exist for all thirteen. The translation *API* covers fewer, and
+`getSupportedLanguages` reports only what actually works, so the picker never
+offers something that will fail.
 
-# Search dictionary
-query {
-  searchDictionary(query: "Hello", languageFrom: "en", languageTo: "hi") {
-    id word translation pronunciation
-  }
-}
+| | Language | UI | Translate | Speech | OCR |
+|---|---|:--:|:--:|:--:|:--:|
+| en | English | ✅ | ✅ | ✅ | ✅ |
+| hi | हिन्दी | ✅ | ✅ | ✅ | ✅ |
+| te | తెలుగు | ✅ | ✅ | ✅ | ✅ |
+| ta | தமிழ் | ✅ | ✅ | ✅ | ✅ |
+| kn | ಕನ್ನಡ | ✅ | ✅ | ✅ | ✅ |
+| ml | മലയാളം | ✅ | - | ✅ | ✅ |
+| bn | বাংলা | ✅ | - | ✅ | ✅ |
+| gu | ગુજરાતી | ✅ | - | ✅ | ✅ |
+| mr | मराठी | ✅ | - | ✅ | ✅ |
+| pa | ਪੰਜਾਬੀ | ✅ | - | ✅ | ✅ |
+| ur | اردو | ✅ | - | - | - |
+| as | অসমীয়া | ✅ | - | - | - |
+| or | ଓଡ଼ିଆ | ✅ | - | - | - |
 
-# Get emergency contacts
-query {
-  getEmergencyContacts(country: "India") {
-    serviceType number description
-  }
-}
+---
+
+## Seeded content
+
+`SEED_DB=true` loads 120 dictionary entries, 20 destinations, 18 emergency
+contacts and 26 culture tips, plus demo accounts.
+
+The demo accounts use well-known passwords and exist for local exploration only.
+Do not seed a public deployment.
+
+| Email | Password |
+|---|---|
+| admin@tourismtoolkit.com | admin123 |
+| test@example.com | password123 |
+| demo@tourismtoolkit.com | demo123 |
+
+---
+
+## Common tasks
+
+```bash
+make up / make down / make logs      # stack lifecycle
+make migrate                          # apply migrations
+make migration                        # create one from model changes
+make seed                             # reload starter content
+make shell-db                         # psql
+make test / make lint                 # both projects
+make schema                           # regenerate backend/schema.graphql
+./scripts/reset-db.sh                 # destroy and rebuild the database
 ```
 
-### GraphQL Mutations
-```graphql
-# Translate text
-mutation {
-  translateText(input: {
-    text: "Hello"
-    sourceLang: "en"
-    targetLang: "hi"
-  }) {
-    translatedText success
-  }
-}
-
-# User authentication
-mutation {
-  login(input: {
-    email: "test@example.com"
-    password: "password123"
-  }) {
-    token user { id username }
-  }
-}
-```
-
-For complete API documentation, visit http://localhost:8000/graphql
+**Upgrading from an older checkout:** the database moved from PostgreSQL 15 to
+18, whose data directory is not readable by the older server. Dump, recreate,
+restore - see the comment in `docker-compose.yml`.
 
 ---
 
-## 🎨 Design System
+## Contributing
 
-### India-Themed Color Palette
-- **🧡 Saffron**: `#f97316` - Primary actions, highlights
-- **💚 Heritage**: `#22c55e` - Success, nature elements
-- **💙 Royal**: `#3b82f6` - Information, trust
-- **💛 Golden**: `#f59e0b` - Accent, warmth
+1. Branch from `main`.
+2. Keep `make lint` and `make test` green; CI enforces both.
+3. If you change the GraphQL schema, run `make schema` - the committed
+   `backend/schema.graphql` is what the frontend types are checked against.
+4. Migrations: `make migration`, then review the generated file before
+   committing. `alembic check` must report no drift.
 
-### Themes
-- **Light Mode**: Clean, bright India-inspired design
-- **Dark Mode**: Rich, elegant dark theme with proper contrast
-- **System**: Automatically follows OS preference
+`IMPROVEMENTS.md` lists the known remaining work.
 
 ---
 
-## 🤝 Contributing
+## License
 
-### Development Workflow
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Make changes and test thoroughly
-4. Commit: `git commit -m 'Add amazing feature'`
-5. Push: `git push origin feature/amazing-feature`
-6. Open a Pull Request
+MIT - see [LICENSE](LICENSE).
 
-### Code Standards
-- **TypeScript**: Full type safety required
-- **Testing**: Add tests for new features
-- **Documentation**: Update docs for API changes
-- **Formatting**: Use ESLint/Prettier configurations
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🙏 Acknowledgments
-
-- **[Bhashini](https://bhashini.gov.in/)** - AI translation services
-- **[Canvas IIIT](https://canvas.iiit.ac.in/)** - OCR services
-- **[IIIT Hyderabad](https://www.iiit.ac.in/)** - Infrastructure support
-- **GitHub Copilot** - AI development assistant
-- **Open Source Community** - Framework and library authors
-
----
-
-## 📧 Support & Contact
-
-### Getting Help
-- **Documentation**: Check `DEVELOPMENT.md` for detailed development guide
-- **GraphQL Playground**: http://localhost:8000/graphql for API testing
-- **Issues**: Create GitHub issues for bug reports or feature requests
-
-### Project Stats
-- **Languages**: 13+ Indian languages supported
-- **API Endpoints**: 50+ GraphQL queries and mutations
-- **Database Tables**: 6 main entities with relationships
-- **Seeded Data**: 180+ records across all modules
-- **Docker Services**: 3 containers (database, backend, frontend)
-
----
-
-## 🗺️ Roadmap
-
-### Current (v1.0)
-- ✅ Multilingual translation with 13+ languages
-- ✅ Voice translation capabilities
-- ✅ OCR text extraction
-- ✅ Personal dictionary management
-- ✅ Tourist places database
-- ✅ Emergency contacts and cultural tips
-- ✅ Docker deployment with seeding
-- ✅ Dark/light theme support
-
-### Planned (v2.0)
-- [ ] Mobile app (React Native)
-- [ ] Offline mode support
-- [ ] AR translation features
-- [ ] Real-time conversation translation
-- [ ] Travel itinerary planner
-- [ ] Currency converter
-- [ ] Community features
-- [ ] Advanced AI recommendations
-
----
-
-**Made with ❤️ for travelers exploring India**
-
-*"When AI gave up on this project, we didn't."*
-
----
-
-**Happy Traveling! 🇮🇳**
+Built with [Bhashini](https://bhashini.gov.in/) and
+[Canvas, IIIT Hyderabad](https://canvas.iiit.ac.in/).

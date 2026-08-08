@@ -3,11 +3,14 @@ Seed script to populate the database with beautiful Indian tourist places
 with high-quality images from Unsplash
 """
 
-from sqlmodel import Session, select
-from .db import get_engine, init_db
-from .models import Place
-from datetime import datetime
 import json
+from datetime import datetime
+
+from sqlmodel import Session, select
+
+from app.database.session import make_sync_engine
+
+from .models import Place
 
 # Tourist places data with Unsplash images
 PLACES_DATA = [
@@ -23,12 +26,12 @@ PLACES_DATA = [
         "images": [
             "https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800",
             "https://images.unsplash.com/photo-1548013146-72479768bada?w=800",
-            "https://images.unsplash.com/photo-1587135941948-670b381f08ce?w=800"
+            "https://images.unsplash.com/photo-1587135941948-670b381f08ce?w=800",
         ],
         "languages_spoken": ["hi", "en"],
         "best_time_to_visit": "October to March",
         "entry_fee": 50.0,
-        "rating": 4.9
+        "rating": 4.9,
     },
     {
         "name": "Jaipur City Palace",
@@ -42,12 +45,12 @@ PLACES_DATA = [
         "images": [
             "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800",
             "https://images.unsplash.com/photo-1477587458883-47145ed94245?w=800",
-            "https://images.unsplash.com/photo-1603262110225-e5854e1f6952?w=800"
+            "https://images.unsplash.com/photo-1603262110225-e5854e1f6952?w=800",
         ],
         "languages_spoken": ["hi", "en"],
         "best_time_to_visit": "November to February",
         "entry_fee": 30.0,
-        "rating": 4.7
+        "rating": 4.7,
     },
     {
         "name": "Hawa Mahal",
@@ -61,12 +64,12 @@ PLACES_DATA = [
         "images": [
             "https://images.unsplash.com/photo-1599661046827-dacff0c0f09b?w=800",
             "https://images.unsplash.com/photo-1603262110225-e5854e1f6952?w=800",
-            "https://images.unsplash.com/photo-1610042851028-aa2e0764cc04?w=800"
+            "https://images.unsplash.com/photo-1610042851028-aa2e0764cc04?w=800",
         ],
         "languages_spoken": ["hi", "en"],
         "best_time_to_visit": "October to March",
         "entry_fee": 10.0,
-        "rating": 4.6
+        "rating": 4.6,
     },
     {
         "name": "Golden Temple",
@@ -80,12 +83,12 @@ PLACES_DATA = [
         "images": [
             "https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=800",
             "https://images.unsplash.com/photo-1587416766556-296328ec3d8d?w=800",
-            "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800"
+            "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800",
         ],
         "languages_spoken": ["pa", "hi", "en"],
         "best_time_to_visit": "November to March",
         "entry_fee": 0.0,
-        "rating": 4.9
+        "rating": 4.9,
     },
     {
         "name": "Kerala Backwaters",
@@ -99,12 +102,12 @@ PLACES_DATA = [
         "images": [
             "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800",
             "https://images.unsplash.com/photo-1593693397690-362cb4d44234?w=800",
-            "https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?w=800"
+            "https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?w=800",
         ],
         "languages_spoken": ["ml", "en"],
         "best_time_to_visit": "September to March",
         "entry_fee": None,
-        "rating": 4.8
+        "rating": 4.8,
     },
     {
         "name": "Mysore Palace",
@@ -118,12 +121,12 @@ PLACES_DATA = [
         "images": [
             "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800",
             "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800",
-            "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800"
+            "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800",
         ],
         "languages_spoken": ["kn", "en"],
         "best_time_to_visit": "October to February",
         "entry_fee": 40.0,
-        "rating": 4.7
+        "rating": 4.7,
     },
     {
         "name": "Goa Beaches",
@@ -137,12 +140,12 @@ PLACES_DATA = [
         "images": [
             "https://images.unsplash.com/photo-1544452570-98b5d204d0d3?w=800",
             "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800",
-            "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800"
+            "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800",
         ],
         "languages_spoken": ["en", "hi", "mr"],
         "best_time_to_visit": "November to February",
         "entry_fee": 0.0,
-        "rating": 4.7
+        "rating": 4.7,
     },
     {
         "name": "Hampi",
@@ -156,12 +159,12 @@ PLACES_DATA = [
         "images": [
             "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800",
             "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800",
-            "https://images.unsplash.com/photo-1548013146-72479768bada?w=800"
+            "https://images.unsplash.com/photo-1548013146-72479768bada?w=800",
         ],
         "languages_spoken": ["kn", "en"],
         "best_time_to_visit": "October to February",
         "entry_fee": 20.0,
-        "rating": 4.8
+        "rating": 4.8,
     },
     {
         "name": "Qutub Minar",
@@ -175,12 +178,12 @@ PLACES_DATA = [
         "images": [
             "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800",
             "https://images.unsplash.com/photo-1548013146-72479768bada?w=800",
-            "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=800"
+            "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=800",
         ],
         "languages_spoken": ["hi", "en"],
         "best_time_to_visit": "October to March",
         "entry_fee": 30.0,
-        "rating": 4.5
+        "rating": 4.5,
     },
     {
         "name": "Meenakshi Temple",
@@ -194,12 +197,12 @@ PLACES_DATA = [
         "images": [
             "https://images.unsplash.com/photo-1588436706487-9d55d73a39e3?w=800",
             "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=800",
-            "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800"
+            "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800",
         ],
         "languages_spoken": ["ta", "en"],
         "best_time_to_visit": "October to March",
         "entry_fee": 0.0,
-        "rating": 4.8
+        "rating": 4.8,
     },
     {
         "name": "Valley of Flowers",
@@ -213,12 +216,12 @@ PLACES_DATA = [
         "images": [
             "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
             "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800"
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800",
         ],
         "languages_spoken": ["hi", "en"],
         "best_time_to_visit": "July to September",
         "entry_fee": 150.0,
-        "rating": 4.9
+        "rating": 4.9,
     },
     {
         "name": "Amber Fort",
@@ -232,12 +235,12 @@ PLACES_DATA = [
         "images": [
             "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800",
             "https://images.unsplash.com/photo-1477587458883-47145ed94245?w=800",
-            "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=800"
+            "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=800",
         ],
         "languages_spoken": ["hi", "en"],
         "best_time_to_visit": "October to March",
         "entry_fee": 25.0,
-        "rating": 4.7
+        "rating": 4.7,
     },
     {
         "name": "Khajuraho Temples",
@@ -251,12 +254,12 @@ PLACES_DATA = [
         "images": [
             "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800",
             "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=800",
-            "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800"
+            "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800",
         ],
         "languages_spoken": ["hi", "en"],
         "best_time_to_visit": "October to February",
         "entry_fee": 40.0,
-        "rating": 4.6
+        "rating": 4.6,
     },
     {
         "name": "Ranthambore National Park",
@@ -270,12 +273,12 @@ PLACES_DATA = [
         "images": [
             "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
             "https://images.unsplash.com/photo-1535338793278-838663aa1787?w=800",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800"
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800",
         ],
         "languages_spoken": ["hi", "en"],
         "best_time_to_visit": "October to April",
         "entry_fee": 1400.0,
-        "rating": 4.7
+        "rating": 4.7,
     },
     {
         "name": "Darjeeling Tea Gardens",
@@ -289,12 +292,12 @@ PLACES_DATA = [
         "images": [
             "https://images.unsplash.com/photo-1564982612053-742bcd23f8c1?w=800",
             "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800"
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800",
         ],
         "languages_spoken": ["bn", "ne", "hi", "en"],
         "best_time_to_visit": "April to June, September to November",
         "entry_fee": None,
-        "rating": 4.8
+        "rating": 4.8,
     },
     {
         "name": "Andaman Islands",
@@ -308,12 +311,12 @@ PLACES_DATA = [
         "images": [
             "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800",
             "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800",
-            "https://images.unsplash.com/photo-1544452570-98b5d204d0d3?w=800"
+            "https://images.unsplash.com/photo-1544452570-98b5d204d0d3?w=800",
         ],
         "languages_spoken": ["hi", "en", "bn"],
         "best_time_to_visit": "October to May",
         "entry_fee": None,
-        "rating": 4.9
+        "rating": 4.9,
     },
     {
         "name": "Konark Sun Temple",
@@ -327,12 +330,12 @@ PLACES_DATA = [
         "images": [
             "https://images.unsplash.com/photo-1588436706487-9d55d73a39e3?w=800",
             "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=800",
-            "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800"
+            "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800",
         ],
         "languages_spoken": ["or", "en"],
         "best_time_to_visit": "October to March",
         "entry_fee": 40.0,
-        "rating": 4.7
+        "rating": 4.7,
     },
     {
         "name": "Munnar Hill Station",
@@ -346,12 +349,12 @@ PLACES_DATA = [
         "images": [
             "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
             "https://images.unsplash.com/photo-1564982612053-742bcd23f8c1?w=800",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800"
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800",
         ],
         "languages_spoken": ["ml", "en"],
         "best_time_to_visit": "September to May",
         "entry_fee": None,
-        "rating": 4.7
+        "rating": 4.7,
     },
     {
         "name": "Gateway of India",
@@ -365,12 +368,12 @@ PLACES_DATA = [
         "images": [
             "https://images.unsplash.com/photo-1566552881560-0be862a7c445?w=800",
             "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800",
-            "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=800"
+            "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=800",
         ],
         "languages_spoken": ["mr", "hi", "en"],
         "best_time_to_visit": "November to February",
         "entry_fee": 0.0,
-        "rating": 4.5
+        "rating": 4.5,
     },
     {
         "name": "Ajanta Caves",
@@ -384,34 +387,33 @@ PLACES_DATA = [
         "images": [
             "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800",
             "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800",
-            "https://images.unsplash.com/photo-1548013146-72479768bada?w=800"
+            "https://images.unsplash.com/photo-1548013146-72479768bada?w=800",
         ],
         "languages_spoken": ["mr", "hi", "en"],
         "best_time_to_visit": "November to March",
         "entry_fee": 40.0,
-        "rating": 4.8
-    }
+        "rating": 4.8,
+    },
 ]
 
 
 def seed_places_data():
     """Seed the database with tourist places"""
-    engine = get_engine()
-    
+    engine = make_sync_engine()
+
     # Initialize database tables
-    init_db()
-    
+
     with Session(engine) as session:
         # Check if places already exist
         existing_places = session.exec(select(Place)).first()
-        
+
         if existing_places:
             print("⚠️  Places already seeded! Skipping...")
             return
-        
+
         print("🌍 Seeding tourist places...")
         total_places = 0
-        
+
         for place_data in PLACES_DATA:
             place = Place(
                 name=place_data["name"],
@@ -427,11 +429,11 @@ def seed_places_data():
                 best_time_to_visit=place_data["best_time_to_visit"],
                 entry_fee=place_data["entry_fee"],
                 rating=place_data["rating"],
-                created_at=datetime.utcnow()
+                created_at=datetime.utcnow(),
             )
             session.add(place)
             total_places += 1
-        
+
         session.commit()
         print(f"✅ Successfully seeded {total_places} tourist places!")
 

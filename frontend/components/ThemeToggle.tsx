@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Sun, Moon, Monitor } from 'lucide-react';
+import React from 'react';
+import { motion } from 'motion/react';
+import { Sun, Moon } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { useTheme } from '@/providers/ThemeProvider';
 
@@ -13,66 +13,38 @@ interface ThemeToggleProps {
   showLabel?: boolean;
 }
 
+// Written out in full so Tailwind's scanner can see them. Building these by
+// interpolation (`w-${...}`) meant they were never generated, under any version.
+const sizeClasses: Record<NonNullable<ThemeToggleProps['size']>, string> = {
+  sm: 'w-4 h-4',
+  md: 'w-5 h-5',
+  lg: 'w-6 h-6',
+};
+
 export default function ThemeToggle({ 
-  variant = 'icon', 
-  size = 'md', 
-  className,
-  showLabel = false 
-}: ThemeToggleProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Don't render anything until mounted (client-side only)
-  if (!mounted) {
-    return (
-      <div className={cn(
-        'p-2 rounded-lg bg-muted',
-        className
-      )}>
-        <Sun className={`w-${size === 'sm' ? '4' : size === 'lg' ? '6' : '5'} h-${size === 'sm' ? '4' : size === 'lg' ? '6' : '5'}`} />
-      </div>
-    );
-  }
-
-  return <ThemeToggleContent variant={variant} size={size} className={className} showLabel={showLabel} />;
-}
-
-function ThemeToggleContent({ 
   variant = 'icon', 
   size = 'md', 
   className, 
   showLabel = false 
 }: ThemeToggleProps) {
-  const { theme, setTheme } = useTheme();
+  const { theme, resolvedTheme, setTheme } = useTheme();
 
-  const sizeClasses = {
-    sm: 'w-4 h-4',
-    md: 'w-5 h-5',
-    lg: 'w-6 h-6'
-  };
-
-  const cycleTheme = () => {
-    let newTheme: 'light' | 'dark' | 'system';
-    if (theme === 'light') {
-      newTheme = 'dark';
-    } else if (theme === 'dark') {
-      newTheme = 'system';
-    } else {
-      newTheme = 'light';
-    }
-    setTheme(newTheme);
+  // A plain two-way switch. Cycling light -> dark -> system meant that on a
+  // machine whose OS prefers dark, "system" was visually identical to "dark":
+  // the third click looked like it had done nothing, and the choice appeared to
+  // revert on reload. "System" is still selectable in Settings, where it is
+  // labelled and cannot be mistaken for either.
+  const toggle = () => {
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
   };
 
   const getIcon = () => {
-    if (theme === 'dark') {
+    // Keyed off `resolvedTheme`, not `theme`: under "system" the stored value is
+    // not what the user is looking at.
+    if (resolvedTheme === 'dark') {
       return <Moon className={sizeClasses[size]} />;
-    } else if (theme === 'light') {
-      return <Sun className={sizeClasses[size]} />;
     } else {
-      return <Monitor className={sizeClasses[size]} />;
+      return <Sun className={sizeClasses[size]} />;
     }
   };
 
@@ -91,8 +63,7 @@ function ThemeToggleContent({
             const newTheme = e.target.value as 'light' | 'dark' | 'system';
             setTheme(newTheme);
           }}
-          className="px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring"
-        >
+          className="px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring">
           <option value="light">Light</option>
           <option value="dark">Dark</option>
           <option value="system">System</option>
@@ -106,7 +77,7 @@ function ThemeToggleContent({
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        onClick={cycleTheme}
+        onClick={toggle}
         className={cn(
           'flex items-center space-x-2 px-3 py-2 rounded-lg bg-muted hover:bg-muted/80 text-foreground transition-all',
           className
@@ -123,12 +94,12 @@ function ThemeToggleContent({
     <motion.button
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
-      onClick={cycleTheme}
+      onClick={toggle}
       className={cn(
         'p-2 rounded-lg bg-muted hover:bg-muted/80 text-foreground transition-all',
         className
       )}
-      title={`Switch to ${theme === 'dark' ? 'system' : theme === 'light' ? 'dark' : 'light'} theme`}
+      title={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} theme`}
     >
       {getIcon()}
     </motion.button>

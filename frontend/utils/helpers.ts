@@ -117,7 +117,7 @@ export const storage = {
 };
 
 // Debounce function for search inputs
-export const debounce = <T extends (...args: any[]) => any>(
+export const debounce = <T extends (...args: never[]) => unknown>(
   func: T,
   wait: number
 ): ((...args: Parameters<T>) => void) => {

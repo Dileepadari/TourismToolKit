@@ -2,13 +2,14 @@
 import { TranslationKeys } from './en';
 
 export const mr: TranslationKeys = {
-  // Navigation
   nav: {
     home: 'होम',
     dashboard: 'डॅशबोर्ड',
     translator: 'अनुवादक',
     dictionary: 'शब्दकोश',
     places: 'ठिकाणे',
+    trips: 'प्रवास',
+    guide: 'मार्गदर्शक',
     settings: 'सेटिंग्ज',
     login: 'लॉगिन',
     register: 'नोंदणी',
@@ -16,8 +17,6 @@ export const mr: TranslationKeys = {
     backToHome: 'होमवर परत जा',
     backToDashboard: 'डॅशबोर्डवर परत जा',
   },
-
-  // Common
   common: {
     welcome: 'स्वागत आहे',
     search: 'शोधा',
@@ -39,16 +38,12 @@ export const mr: TranslationKeys = {
     darkMode: 'डार्क मोड',
     lightMode: 'लाइट मोड',
   },
-
-  // Home Page
   home: {
     title: 'तुमचा अंतिम प्रवास साथी',
     subtitle: 'AI-संचालित भाषांतर, स्थानिक अंतर्दृष्टी आणि वैयक्तिकृत शिफारशींसह भाषेचे अडथळे तोडा, लपलेले रत्न शोधा आणि भारताचा कधीही न पाहिल्याप्रमाणे शोध घ्या.',
     getStarted: 'मोफत सुरू करा',
     signIn: 'साइन इन करा',
     poweredBy: 'TourismToolKit द्वारे समर्थित',
-    
-    // Features
     features: {
       title: 'प्रत्येक प्रवाशासाठी शक्तिशाली वैशिष्ट्ये',
       subtitle: 'रिअल-टाइम भाषांतरापासून स्थानिक शोधापर्यंत, आमचे टूलकिट तुम्हाला आत्मविश्वासाने शोध घेण्यासाठी सक्षम करते',
@@ -69,24 +64,18 @@ export const mr: TranslationKeys = {
         description: 'तुमच्या प्राधान्यक्रमांवर आणि स्थानावर आधारित वैयक्तिकृत शिफारशी',
       },
     },
-
-    // Stats
     stats: {
       languages: 'समर्थित भाषा',
       places: 'समाविष्ट ठिकाणे',
       translations: 'पूर्ण झालेले भाषांतर',
       travelers: 'आनंदी प्रवासी',
     },
-
-    // CTA
     cta: {
       title: 'भारत शोधण्यासाठी तयार आहात?',
       subtitle: 'त्यांच्या भारतीय साहसांसाठी TourismToolKit वर विश्वास ठेवणाऱ्या हजारो प्रवाशांसोबत सामील व्हा. आजच तुमचा प्रवास सुरू करा!',
       button: 'तुमचा प्रवास सुरू करा',
     },
   },
-
-  // Auth
   auth: {
     login: {
       title: 'परत स्वागत आहे',
@@ -117,50 +106,63 @@ export const mr: TranslationKeys = {
       signIn: 'साइन इन करा',
     },
   },
-
-  // Dashboard
   dashboard: {
     title: 'प्रवास डॅशबोर्ड',
     subtitle: 'तुमचा वैयक्तिकृत प्रवास साथी',
     welcome: 'परत स्वागत आहे',
     loading: 'तुमचे प्रवास डॅशबोर्ड लोड होत आहे...',
-    
     quickActions: {
       title: 'जलद क्रिया',
       translate: 'आता भाषांतर करा',
+      ocrScanner: 'OCR स्कॅनर',
+      ocrDescription: 'प्रतिमांमधून त्वरित मजकूर काढा',
+      voiceAssistant: 'व्हॉइस सहाय्यक',
+      voiceDescription: 'बोलण्यापासून मजकुरापर्यंत संभाषणे',
       findPlaces: 'ठिकाणे शोधा',
       learnWords: 'शब्द शिका',
+      travelGuide: 'प्रवास मार्गदर्शक',
+      guideDescription: 'सांस्कृतिक टिपा आणि माहिती',
     },
-
     stats: {
       translations: 'भाषांतरे',
       placesVisited: 'भेट दिलेली ठिकाणे',
       wordsLearned: 'शिकलेले शब्द',
       tripsPlanned: 'नियोजित प्रवास',
+      favorites: 'आवडते',
+      countries: 'देश',
     },
-
     recentActivity: {
       title: 'अलीकडील क्रियाकलाप',
       noActivity: 'अलीकडील क्रियाकलाप नाही',
     },
-
     recommendedPlaces: {
       title: 'शिफारस केलेली ठिकाणे',
       viewAll: 'सर्व ठिकाणे पहा',
     },
+    featuredPlaces: {
+      title: 'वैशिष्ट्यपूर्ण ठिकाणे',
+      symbolOfLove: 'चिरंतन प्रेमाचे प्रतीक',
+      holisticCity: 'भारताची आध्यात्मिक राजधानी',
+      techHub: 'भारताची सिलिकॉन व्हॅली',
+      pinkCity: 'गुलाबी शहर',
+      heritage: 'वारसा',
+      spiritual: 'आध्यात्मिक',
+      modern: 'आधुनिक',
+      historical: 'ऐतिहासिक',
+      visitors: 'अभ्यागत',
+      languages: 'भाषा',
+      rating: 'रेटिंग',
+    },
   },
-
-  // Translator
   translator: {
     title: 'AI अनुवादक',
     subtitle: 'अनेक भारतीय भाषांमध्ये त्वरित भाषांतर करा',
-    
     tabs: {
       text: 'मजकूर',
       voice: 'आवाज',
       image: 'प्रतिमा',
+      ocr: 'OCR',
     },
-
     textTranslation: {
       sourceLanguage: 'स्त्रोत भाषा',
       targetLanguage: 'लक्ष्य भाषा',
@@ -173,14 +175,31 @@ export const mr: TranslationKeys = {
       copy: 'कॉपी करा',
       copied: 'कॉपी केले!',
     },
-
     voiceTranslation: {
       startRecording: 'रेकॉर्डिंग सुरू करा',
       stopRecording: 'रेकॉर्डिंग थांबवा',
       recording: 'रेकॉर्ड होत आहे...',
       processing: 'प्रक्रिया होत आहे...',
+      listening: 'ऐकत आहे...',
+      speak: 'आता बोला',
     },
-
+    imageTranslation: {
+      uploadImage: 'प्रतिमा अपलोड करा',
+      takePhoto: 'फोटो काढा',
+      processing: 'प्रतिमेवर प्रक्रिया होत आहे...',
+      extracting: 'मजकूर काढत आहे...',
+      noTextFound: 'प्रतिमेत मजकूर आढळला नाही',
+      selectImage: 'मजकूर काढण्यासाठी प्रतिमा निवडा',
+    },
+    ocrScanner: {
+      title: 'OCR मजकूर स्कॅनर',
+      subtitle: 'प्रतिमांमधून मजकूर काढा आणि भाषांतर करा',
+      scanImage: 'प्रतिमा स्कॅन करा',
+      scanning: 'स्कॅन होत आहे...',
+      extractedText: 'काढलेला मजकूर',
+      noText: 'मजकूर आढळला नाही',
+      uploadOrCapture: 'प्रतिमा अपलोड करा किंवा काढा',
+    },
     quickPhrases: {
       title: 'जलद वाक्ये',
       greetings: 'नमस्कार',
@@ -189,8 +208,6 @@ export const mr: TranslationKeys = {
       directions: 'कुठे आहे...?',
     },
   },
-
-  // Dictionary
   dictionary: {
     title: 'भाषा शब्दकोश',
     subtitle: 'भाषांमधील शब्द आणि त्यांचे अर्थ शोधा',
@@ -202,8 +219,6 @@ export const mr: TranslationKeys = {
     examples: 'उदाहरणे',
     relatedWords: 'संबंधित शब्द',
   },
-
-  // Places
   places: {
     title: 'ठिकाणे शोधा',
     subtitle: 'संपूर्ण भारतातील अद्भुत गंतव्यस्थाने शोधा',
@@ -221,19 +236,18 @@ export const mr: TranslationKeys = {
     getDirections: 'दिशा मिळवा',
     addToTrip: 'प्रवासात जोडा',
   },
-
-  // Settings
   settings: {
     title: 'सेटिंग्ज',
     subtitle: 'तुमच्या प्राधान्यक्रमांचे व्यवस्थापन करा',
-    
     account: {
       title: 'खाते माहिती',
       email: 'ईमेल',
       username: 'वापरकर्ता नाव',
       fullName: 'पूर्ण नाव',
+      homeCountry: 'मूळ देश',
+      emailCannotChange: 'ईमेल बदलता येत नाही',
+      enterHomeCountry: 'तुमचा देश प्रविष्ट करा',
     },
-
     preferences: {
       title: 'प्राधान्यक्रम',
       language: 'भाषा',
@@ -241,16 +255,42 @@ export const mr: TranslationKeys = {
       lightMode: 'प्रकाश',
       darkMode: 'गडद',
       systemMode: 'सिस्टम',
+      appearance: 'स्वरूप',
+      appearanceDescription: 'तुमचा दृश्य अनुभव सानुकूल करा',
+      preferredLanguage: 'पसंतीची भाषा',
+      selectLanguage: 'तुमची पसंतीची भाषा निवडा',
     },
-
     notifications: {
       title: 'सूचना',
       email: 'ईमेल सूचना',
       push: 'पुश सूचना',
     },
-
+    privacy: {
+      title: 'गोपनीयता आणि सुरक्षा',
+      description: 'तुमच्या खात्याची सुरक्षा व्यवस्थापित करा',
+      accountStatus: 'खाते स्थिती',
+      verified: 'सत्यापित',
+      notVerified: 'सत्यापित नाही',
+    },
     save: 'बदल जतन करा',
     saving: 'जतन होत आहे...',
     saved: 'सेटिंग्ज यशस्वीरित्या जतन केल्या!',
+    updateInfo: 'तुमची वैयक्तिक माहिती अद्यतनित करा',
+  },
+  guide: {
+    title: 'प्रवास मार्गदर्शक',
+    subtitle: 'भारत फिरण्यासाठी सांस्कृतिक माहिती आणि प्रवास टिपा',
+    culturalTips: 'सांस्कृतिक टिपा',
+    localCustoms: 'स्थानिक रीतिरिवाज',
+    essentialPhrases: 'आवश्यक वाक्ये',
+    safetyTips: 'सुरक्षा टिपा',
+    transportation: 'वाहतूक',
+    cuisine: 'स्थानिक खाद्यपदार्थ',
+    attractions: 'अवश्य भेट द्यावी अशी ठिकाणे',
+    etiquette: 'सांस्कृतिक शिष्टाचार',
+    festivals: 'सण आणि कार्यक्रम',
+    shopping: 'खरेदी मार्गदर्शक',
+    emergency: 'आपत्कालीन संपर्क',
+    weather: 'हवामान आणि भेटीसाठी सर्वोत्तम वेळ',
   },
 };

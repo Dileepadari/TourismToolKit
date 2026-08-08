@@ -1,0 +1,271 @@
+input ASRInput {
+  audioData: String!
+  language: String! = "en"
+}
+
+type ASRResponse {
+  success: Boolean!
+  message: String!
+  transcribedText: String
+  language: String
+  error: String
+}
+
+type AuthResponse {
+  success: Boolean!
+  message: String!
+  token: String
+  user: User
+}
+
+type CultureTip {
+  id: Int!
+  country: String!
+  tipCategory: String!
+  tipText: String!
+  language: String!
+}
+
+"""Date with time (isoformat)"""
+scalar DateTime
+
+type DeleteResponse {
+  success: Boolean!
+  message: String!
+}
+
+type DictionaryEntry {
+  id: Int!
+  word: String!
+  translation: String!
+  languageFrom: String!
+  languageTo: String!
+  pronunciation: String
+  usageExample: String
+  tags: [String!]
+  isFavorite: Boolean!
+  createdAt: DateTime!
+}
+
+input DictionaryInput {
+  word: String!
+  translation: String!
+  languageFrom: String!
+  languageTo: String!
+  pronunciation: String = null
+  usageExample: String = null
+  tags: [String!] = null
+  isFavorite: Boolean! = false
+}
+
+type DictionaryResponse {
+  success: Boolean!
+  message: String!
+  entry: DictionaryEntry
+}
+
+type EmergencyContact {
+  id: Int!
+  country: String!
+  serviceType: String!
+  number: String!
+  description: String
+}
+
+type FavoriteResponse {
+  success: Boolean!
+  message: String!
+  isFavorite: Boolean!
+}
+
+type Language {
+  code: String!
+  name: String!
+}
+
+type LanguagesResponse {
+  languages: [Language!]!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type LogoutResponse {
+  success: Boolean!
+  message: String!
+  sessionsEnded: Int!
+}
+
+input MTInput {
+  text: String!
+  sourceLang: String!
+  targetLang: String!
+}
+
+type MTResponse {
+  sourceLang: String!
+  targetLang: String!
+  success: Boolean!
+  translatedText: String
+  message: String
+}
+
+type Mutation {
+  register(input: RegisterInput!): AuthResponse!
+  login(input: LoginInput!): AuthResponse!
+  refreshSession: AuthResponse!
+  logout(everywhere: Boolean! = false): LogoutResponse!
+  requestPasswordReset(email: String!): PasswordResetResponse!
+  resetPassword(token: String!, newPassword: String!): PasswordResetResponse!
+  addDictionaryEntry(input: DictionaryInput!, userId: Int = null @deprecated(reason: "Ignored. The entry owner is derived from the authenticated user; omit this argument.")): DictionaryResponse!
+  updateDictionaryEntry(entryId: Int!, input: DictionaryInput!, userId: Int = null @deprecated(reason: "Ignored. The entry owner is derived from the authenticated user; omit this argument.")): DictionaryResponse!
+  deleteDictionaryEntry(entryId: Int!, userId: Int = null @deprecated(reason: "Ignored. The entry owner is derived from the authenticated user; omit this argument.")): DictionaryResponse!
+  toggleFavoriteEntry(entryId: Int!, userId: Int = null @deprecated(reason: "Ignored. The entry owner is derived from the authenticated user; omit this argument.")): DictionaryResponse!
+  toggleFavoritePlace(placeId: Int!): FavoriteResponse!
+  addTravelHistory(input: TravelHistoryInput!, userId: Int = null @deprecated(reason: "Ignored. Derived from the authenticated user; omit this argument.")): TravelHistory
+  updateUserPreferences(preferredLanguage: String = null, preferredTheme: String = null, userId: Int = null @deprecated(reason: "Ignored. Derived from the authenticated user; omit this argument.")): AuthResponse!
+  updateProfile(fullName: String = null, homeCountry: String = null): ProfileResponse!
+  deleteTravelHistory(entryId: Int!): DeleteResponse!
+  generateSpeech(input: TTSInput!): TTSResponse!
+  translateText(input: MTInput!): MTResponse!
+  extractTextFromImage(input: OCRInput!): OCRResponse!
+  transcribeAudio(input: ASRInput!): ASRResponse!
+}
+
+input OCRInput {
+  imageData: String!
+  language: String! = "en"
+}
+
+type OCRResponse {
+  success: Boolean!
+  message: String
+  extractedText: String
+  language: String
+  error: String
+}
+
+type PasswordResetResponse {
+  success: Boolean!
+  message: String!
+}
+
+type Phrase {
+  phrase: String!
+  category: String!
+}
+
+type PhrasesResponse {
+  phrases: [Phrase!]!
+}
+
+type Place {
+  id: Int!
+  name: String!
+  description: String
+  country: String!
+  state: String
+  city: String!
+  latitude: Float
+  longitude: Float
+  category: String
+  images: [String!]
+  languagesSpoken: [String!]
+  bestTimeToVisit: String
+  entryFee: Float
+  rating: Float
+}
+
+type ProfileResponse {
+  success: Boolean!
+  message: String!
+  user: User
+}
+
+type Query {
+  getDictionaryEntries(languageFrom: String = null, languageTo: String = null, searchWord: String = null, userId: Int = null @deprecated(reason: "Ignored. The dictionary scope is derived from the authenticated user; omit this argument."), isFavorite: Boolean = null, limit: Int! = 100): [DictionaryEntry!]!
+  searchDictionary(query: String!, languageFrom: String! = "en", languageTo: String! = "hi", userId: Int = null @deprecated(reason: "Ignored. The dictionary scope is derived from the authenticated user; omit this argument.")): [DictionaryEntry!]!
+  getDictionaryEntry(entryId: Int!): DictionaryEntry
+  getUserDictionary(userId: Int = null @deprecated(reason: "Ignored. The dictionary scope is derived from the authenticated user; omit this argument."), languageFrom: String = null, languageTo: String = null): [DictionaryEntry!]!
+  getPlaces(country: String = null, state: String = null, city: String = null, category: String = null, limit: Int! = 50): [Place!]!
+  getPlaceById(placeId: Int!): Place
+  searchPlaces(searchQuery: String!, limit: Int! = 20): [Place!]!
+  getFavoritePlaces: [Place!]!
+  getFavoritePlaceIds: [Int!]!
+  getActiveSessions: [SessionInfo!]!
+  getEmergencyContacts(country: String! = "India"): [EmergencyContact!]!
+  getCultureTips(country: String! = "India", language: String! = "en", category: String = null, importance: String = null, limit: Int! = 50): [CultureTip!]!
+  getSupportedLanguages: LanguagesResponse!
+  supportedLanguages: [Language!]!
+  supportedMtLanguages: [Language!]!
+  supportedAsrLanguages: [Language!]!
+  supportedOcrLanguages: LanguagesResponse!
+  getCommonPhrases(language: String! = "en"): PhrasesResponse!
+  getEmergencyPhrases(language: String! = "en"): PhrasesResponse!
+  getTravelHistory(userId: Int = null @deprecated(reason: "Ignored. History is read for the authenticated user; omit this argument.")): [TravelHistory!]!
+  me: User
+}
+
+input RegisterInput {
+  email: String!
+  username: String!
+  password: String!
+  fullName: String = null
+  preferredLanguage: String! = "en"
+  preferredTheme: String! = "light"
+  homeCountry: String = null
+}
+
+type SessionInfo {
+  id: Int!
+  userAgent: String
+  createdAt: DateTime!
+  expiresAt: DateTime!
+  isCurrent: Boolean!
+}
+
+input TTSInput {
+  text: String!
+  gender: String!
+}
+
+type TTSResponse {
+  success: Boolean!
+  message: String
+  audioContent: String
+}
+
+type TravelHistory {
+  id: Int!
+  destination: String!
+  country: String!
+  visitDate: DateTime
+  notes: String
+  photos: [String!]
+  favoritePhrases: [String!]
+  createdAt: DateTime!
+}
+
+input TravelHistoryInput {
+  destination: String!
+  country: String!
+  visitDate: DateTime = null
+  notes: String = null
+  photos: [String!] = null
+  favoritePhrases: [String!] = null
+}
+
+type User {
+  id: Int!
+  email: String!
+  username: String!
+  fullName: String
+  profilePicture: String
+  preferredLanguage: String!
+  preferredTheme: String!
+  homeCountry: String
+  isVerified: Boolean!
+  createdAt: DateTime!
+}

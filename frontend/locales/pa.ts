@@ -2,13 +2,14 @@
 import { TranslationKeys } from './en';
 
 export const pa: TranslationKeys = {
-  // Navigation
   nav: {
     home: 'ਹੋਮ',
     dashboard: 'ਡੈਸ਼ਬੋਰਡ',
     translator: 'ਅਨੁਵਾਦਕ',
     dictionary: 'ਸ਼ਬਦਕੋਸ਼',
     places: 'ਸਥਾਨ',
+    trips: 'ਯਾਤਰਾਵਾਂ',
+    guide: 'ਗਾਈਡ',
     settings: 'ਸੈਟਿੰਗਜ਼',
     login: 'ਲਾਗਇਨ',
     register: 'ਰਜਿਸਟਰ',
@@ -16,8 +17,6 @@ export const pa: TranslationKeys = {
     backToHome: 'ਹੋਮ ਤੇ ਵਾਪਸ ਜਾਓ',
     backToDashboard: 'ਡੈਸ਼ਬੋਰਡ ਤੇ ਵਾਪਸ ਜਾਓ',
   },
-
-  // Common
   common: {
     welcome: 'ਸੁਆਗਤ ਹੈ',
     search: 'ਖੋਜੋ',
@@ -39,16 +38,12 @@ export const pa: TranslationKeys = {
     darkMode: 'ਡਾਰਕ ਮੋਡ',
     lightMode: 'ਲਾਈਟ ਮੋਡ',
   },
-
-  // Home Page
   home: {
     title: 'ਤੁਹਾਡਾ ਅੰਤਮ ਯਾਤਰਾ ਸਾਥੀ',
     subtitle: 'AI-ਸੰਚਾਲਿਤ ਅਨੁਵਾਦ, ਸਥਾਨਕ ਸੂਝਾਂ ਅਤੇ ਨਿੱਜੀ ਸਿਫਾਰਸ਼ਾਂ ਨਾਲ ਭਾਸ਼ਾ ਦੀਆਂ ਰੁਕਾਵਟਾਂ ਤੋੜੋ, ਛੁਪੇ ਰਤਨ ਲੱਭੋ ਅਤੇ ਭਾਰਤ ਦੀ ਖੋਜ ਉਸ ਤਰੀਕੇ ਨਾਲ ਕਰੋ ਜਿਵੇਂ ਪਹਿਲਾਂ ਕਦੇ ਨਹੀਂ ਕੀਤੀ।',
     getStarted: 'ਮੁਫਤ ਸ਼ੁਰੂ ਕਰੋ',
     signIn: 'ਸਾਈਨ ਇਨ ਕਰੋ',
     poweredBy: 'TourismToolKit ਦੁਆਰਾ ਸੰਚਾਲਿਤ',
-    
-    // Features
     features: {
       title: 'ਹਰ ਯਾਤਰੀ ਲਈ ਸ਼ਕਤੀਸ਼ਾਲੀ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ',
       subtitle: 'ਰੀਅਲ-ਟਾਈਮ ਅਨੁਵਾਦ ਤੋਂ ਸਥਾਨਕ ਖੋਜ ਤੱਕ, ਸਾਡਾ ਟੂਲਕਿਟ ਤੁਹਾਨੂੰ ਆਤਮ-ਵਿਸ਼ਵਾਸ ਨਾਲ ਖੋਜ ਕਰਨ ਦੀ ਸ਼ਕਤੀ ਦਿੰਦਾ ਹੈ',
@@ -69,24 +64,18 @@ export const pa: TranslationKeys = {
         description: 'ਤੁਹਾਡੀਆਂ ਤਰਜੀਹਾਂ ਅਤੇ ਸਥਾਨ ਦੇ ਆਧਾਰ ਤੇ ਨਿੱਜੀ ਸਿਫਾਰਸ਼ਾਂ',
       },
     },
-
-    // Stats
     stats: {
       languages: 'ਸਮਰਥਿਤ ਭਾਸ਼ਾਵਾਂ',
       places: 'ਸ਼ਾਮਲ ਕੀਤੇ ਸਥਾਨ',
       translations: 'ਪੂਰੇ ਹੋਏ ਅਨੁਵਾਦ',
       travelers: 'ਖੁਸ਼ ਯਾਤਰੀ',
     },
-
-    // CTA
     cta: {
       title: 'ਭਾਰਤ ਦੀ ਖੋਜ ਲਈ ਤਿਆਰ ਹੋ?',
       subtitle: 'ਹਜ਼ਾਰਾਂ ਯਾਤਰੀਆਂ ਨਾਲ ਜੁੜੋ ਜੋ ਆਪਣੀਆਂ ਭਾਰਤੀ ਯਾਤਰਾਵਾਂ ਲਈ TourismToolKit ਤੇ ਭਰੋਸਾ ਕਰਦੇ ਹਨ। ਅੱਜ ਹੀ ਆਪਣੀ ਯਾਤਰਾ ਸ਼ੁਰੂ ਕਰੋ!',
       button: 'ਆਪਣੀ ਯਾਤਰਾ ਸ਼ੁਰੂ ਕਰੋ',
     },
   },
-
-  // Auth
   auth: {
     login: {
       title: 'ਵਾਪਸ ਸੁਆਗਤ ਹੈ',
@@ -117,50 +106,63 @@ export const pa: TranslationKeys = {
       signIn: 'ਸਾਈਨ ਇਨ ਕਰੋ',
     },
   },
-
-  // Dashboard
   dashboard: {
     title: 'ਯਾਤਰਾ ਡੈਸ਼ਬੋਰਡ',
     subtitle: 'ਤੁਹਾਡਾ ਨਿੱਜੀ ਯਾਤਰਾ ਸਾਥੀ',
     welcome: 'ਵਾਪਸ ਸੁਆਗਤ ਹੈ',
     loading: 'ਤੁਹਾਡਾ ਯਾਤਰਾ ਡੈਸ਼ਬੋਰਡ ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...',
-    
     quickActions: {
       title: 'ਤੇਜ਼ ਕਾਰਵਾਈਆਂ',
       translate: 'ਹੁਣੇ ਅਨੁਵਾਦ ਕਰੋ',
+      ocrScanner: 'OCR ਸਕੈਨਰ',
+      ocrDescription: 'ਤਸਵੀਰਾਂ ਤੋਂ ਤੁਰੰਤ ਲਿਖਤ ਕੱਢੋ',
+      voiceAssistant: 'ਵੌਇਸ ਸਹਾਇਕ',
+      voiceDescription: 'ਬੋਲੀ ਤੋਂ ਲਿਖਤ ਗੱਲਬਾਤ',
       findPlaces: 'ਸਥਾਨ ਲੱਭੋ',
       learnWords: 'ਸ਼ਬਦ ਸਿੱਖੋ',
+      travelGuide: 'ਯਾਤਰਾ ਗਾਈਡ',
+      guideDescription: 'ਸੱਭਿਆਚਾਰਕ ਸੁਝਾਅ ਅਤੇ ਜਾਣਕਾਰੀ',
     },
-
     stats: {
       translations: 'ਅਨੁਵਾਦ',
       placesVisited: 'ਦੌਰਾ ਕੀਤੇ ਸਥਾਨ',
       wordsLearned: 'ਸਿੱਖੇ ਸ਼ਬਦ',
       tripsPlanned: 'ਯੋਜਨਾਬੱਧ ਯਾਤਰਾਵਾਂ',
+      favorites: 'ਪਸੰਦੀਦਾ',
+      countries: 'ਦੇਸ਼',
     },
-
     recentActivity: {
       title: 'ਤਾਜ਼ਾ ਗਤੀਵਿਧੀ',
       noActivity: 'ਕੋਈ ਤਾਜ਼ਾ ਗਤੀਵਿਧੀ ਨਹੀਂ',
     },
-
     recommendedPlaces: {
       title: 'ਸਿਫਾਰਸ਼ ਕੀਤੇ ਸਥਾਨ',
       viewAll: 'ਸਾਰੇ ਸਥਾਨ ਵੇਖੋ',
     },
+    featuredPlaces: {
+      title: 'ਵਿਸ਼ੇਸ਼ ਥਾਵਾਂ',
+      symbolOfLove: 'ਸਦੀਵੀ ਪਿਆਰ ਦਾ ਪ੍ਰਤੀਕ',
+      holisticCity: 'ਭਾਰਤ ਦੀ ਅਧਿਆਤਮਿਕ ਰਾਜਧਾਨੀ',
+      techHub: 'ਭਾਰਤ ਦੀ ਸਿਲੀਕਾਨ ਵੈਲੀ',
+      pinkCity: 'ਗੁਲਾਬੀ ਸ਼ਹਿਰ',
+      heritage: 'ਵਿਰਾਸਤ',
+      spiritual: 'ਅਧਿਆਤਮਿਕ',
+      modern: 'ਆਧੁਨਿਕ',
+      historical: 'ਇਤਿਹਾਸਕ',
+      visitors: 'ਦਰਸ਼ਕ',
+      languages: 'ਭਾਸ਼ਾਵਾਂ',
+      rating: 'ਰੇਟਿੰਗ',
+    },
   },
-
-  // Translator
   translator: {
     title: 'AI ਅਨੁਵਾਦਕ',
     subtitle: 'ਕਈ ਭਾਰਤੀ ਭਾਸ਼ਾਵਾਂ ਵਿੱਚ ਤੁਰੰਤ ਅਨੁਵਾਦ ਕਰੋ',
-    
     tabs: {
       text: 'ਟੈਕਸਟ',
       voice: 'ਆਵਾਜ਼',
       image: 'ਚਿੱਤਰ',
+      ocr: 'OCR',
     },
-
     textTranslation: {
       sourceLanguage: 'ਸਰੋਤ ਭਾਸ਼ਾ',
       targetLanguage: 'ਟਾਰਗੇਟ ਭਾਸ਼ਾ',
@@ -173,14 +175,31 @@ export const pa: TranslationKeys = {
       copy: 'ਕਾਪੀ ਕਰੋ',
       copied: 'ਕਾਪੀ ਕੀਤਾ!',
     },
-
     voiceTranslation: {
       startRecording: 'ਰਿਕਾਰਡਿੰਗ ਸ਼ੁਰੂ ਕਰੋ',
       stopRecording: 'ਰਿਕਾਰਡਿੰਗ ਬੰਦ ਕਰੋ',
       recording: 'ਰਿਕਾਰਡ ਹੋ ਰਿਹਾ ਹੈ...',
       processing: 'ਪ੍ਰਕਿਰਿਆ ਹੋ ਰਹੀ ਹੈ...',
+      listening: 'ਸੁਣ ਰਿਹਾ ਹੈ...',
+      speak: 'ਹੁਣ ਬੋਲੋ',
     },
-
+    imageTranslation: {
+      uploadImage: 'ਤਸਵੀਰ ਅਪਲੋਡ ਕਰੋ',
+      takePhoto: 'ਫੋਟੋ ਖਿੱਚੋ',
+      processing: 'ਤਸਵੀਰ ਦੀ ਪ੍ਰਕਿਰਿਆ ਹੋ ਰਹੀ ਹੈ...',
+      extracting: 'ਲਿਖਤ ਕੱਢੀ ਜਾ ਰਹੀ ਹੈ...',
+      noTextFound: 'ਤਸਵੀਰ ਵਿੱਚ ਕੋਈ ਲਿਖਤ ਨਹੀਂ ਮਿਲੀ',
+      selectImage: 'ਲਿਖਤ ਕੱਢਣ ਲਈ ਇੱਕ ਤਸਵੀਰ ਚੁਣੋ',
+    },
+    ocrScanner: {
+      title: 'OCR ਲਿਖਤ ਸਕੈਨਰ',
+      subtitle: 'ਤਸਵੀਰਾਂ ਤੋਂ ਲਿਖਤ ਕੱਢੋ ਅਤੇ ਅਨੁਵਾਦ ਕਰੋ',
+      scanImage: 'ਤਸਵੀਰ ਸਕੈਨ ਕਰੋ',
+      scanning: 'ਸਕੈਨ ਹੋ ਰਿਹਾ ਹੈ...',
+      extractedText: 'ਕੱਢੀ ਗਈ ਲਿਖਤ',
+      noText: 'ਕੋਈ ਲਿਖਤ ਨਹੀਂ ਮਿਲੀ',
+      uploadOrCapture: 'ਇੱਕ ਤਸਵੀਰ ਅਪਲੋਡ ਕਰੋ ਜਾਂ ਖਿੱਚੋ',
+    },
     quickPhrases: {
       title: 'ਤੇਜ਼ ਵਾਕਾਂਸ਼',
       greetings: 'ਨਮਸਤੇ',
@@ -189,8 +208,6 @@ export const pa: TranslationKeys = {
       directions: 'ਕਿੱਥੇ ਹੈ...?',
     },
   },
-
-  // Dictionary
   dictionary: {
     title: 'ਭਾਸ਼ਾ ਸ਼ਬਦਕੋਸ਼',
     subtitle: 'ਭਾਸ਼ਾਵਾਂ ਵਿੱਚ ਸ਼ਬਦਾਂ ਅਤੇ ਉਨ੍ਹਾਂ ਦੇ ਅਰਥਾਂ ਦੀ ਖੋਜ ਕਰੋ',
@@ -202,8 +219,6 @@ export const pa: TranslationKeys = {
     examples: 'ਉਦਾਹਰਨਾਂ',
     relatedWords: 'ਸਬੰਧਤ ਸ਼ਬਦ',
   },
-
-  // Places
   places: {
     title: 'ਸਥਾਨ ਲੱਭੋ',
     subtitle: 'ਪੂਰੇ ਭਾਰਤ ਵਿੱਚ ਸ਼ਾਨਦਾਰ ਮੰਜ਼ਿਲਾਂ ਦੀ ਖੋਜ ਕਰੋ',
@@ -221,19 +236,18 @@ export const pa: TranslationKeys = {
     getDirections: 'ਦਿਸ਼ਾਵਾਂ ਪ੍ਰਾਪਤ ਕਰੋ',
     addToTrip: 'ਯਾਤਰਾ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ',
   },
-
-  // Settings
   settings: {
     title: 'ਸੈਟਿੰਗਜ਼',
     subtitle: 'ਆਪਣੀਆਂ ਤਰਜੀਹਾਂ ਦਾ ਪ੍ਰਬੰਧਨ ਕਰੋ',
-    
     account: {
       title: 'ਖਾਤਾ ਜਾਣਕਾਰੀ',
       email: 'ਈਮੇਲ',
       username: 'ਵਰਤੋਂਕਾਰ ਨਾਮ',
       fullName: 'ਪੂਰਾ ਨਾਮ',
+      homeCountry: 'ਜੱਦੀ ਦੇਸ਼',
+      emailCannotChange: 'ਈਮੇਲ ਬਦਲੀ ਨਹੀਂ ਜਾ ਸਕਦੀ',
+      enterHomeCountry: 'ਆਪਣਾ ਦੇਸ਼ ਦਰਜ ਕਰੋ',
     },
-
     preferences: {
       title: 'ਤਰਜੀਹਾਂ',
       language: 'ਭਾਸ਼ਾ',
@@ -241,16 +255,42 @@ export const pa: TranslationKeys = {
       lightMode: 'ਰੋਸ਼ਨੀ',
       darkMode: 'ਹਨੇਰਾ',
       systemMode: 'ਸਿਸਟਮ',
+      appearance: 'ਦਿੱਖ',
+      appearanceDescription: 'ਆਪਣਾ ਦਿੱਖ ਅਨੁਭਵ ਅਨੁਕੂਲ ਕਰੋ',
+      preferredLanguage: 'ਪਸੰਦੀਦਾ ਭਾਸ਼ਾ',
+      selectLanguage: 'ਆਪਣੀ ਪਸੰਦੀਦਾ ਭਾਸ਼ਾ ਚੁਣੋ',
     },
-
     notifications: {
       title: 'ਸੂਚਨਾਵਾਂ',
       email: 'ਈਮੇਲ ਸੂਚਨਾਵਾਂ',
       push: 'ਪੁਸ਼ ਸੂਚਨਾਵਾਂ',
     },
-
+    privacy: {
+      title: 'ਗੋਪਨੀਯਤਾ ਅਤੇ ਸੁਰੱਖਿਆ',
+      description: 'ਆਪਣੇ ਖਾਤੇ ਦੀ ਸੁਰੱਖਿਆ ਦਾ ਪ੍ਰਬੰਧ ਕਰੋ',
+      accountStatus: 'ਖਾਤੇ ਦੀ ਸਥਿਤੀ',
+      verified: 'ਤਸਦੀਕਸ਼ੁਦਾ',
+      notVerified: 'ਤਸਦੀਕ ਨਹੀਂ ਹੋਇਆ',
+    },
     save: 'ਤਬਦੀਲੀਆਂ ਸੁਰੱਖਿਅਤ ਕਰੋ',
     saving: 'ਸੁਰੱਖਿਅਤ ਹੋ ਰਿਹਾ ਹੈ...',
     saved: 'ਸੈਟਿੰਗਜ਼ ਸਫਲਤਾਪੂਰਵਕ ਸੁਰੱਖਿਅਤ ਹੋਈਆਂ!',
+    updateInfo: 'ਆਪਣੀ ਨਿੱਜੀ ਜਾਣਕਾਰੀ ਅੱਪਡੇਟ ਕਰੋ',
+  },
+  guide: {
+    title: 'ਯਾਤਰਾ ਗਾਈਡ',
+    subtitle: 'ਭਾਰਤ ਘੁੰਮਣ ਲਈ ਸੱਭਿਆਚਾਰਕ ਜਾਣਕਾਰੀ ਅਤੇ ਯਾਤਰਾ ਸੁਝਾਅ',
+    culturalTips: 'ਸੱਭਿਆਚਾਰਕ ਸੁਝਾਅ',
+    localCustoms: 'ਸਥਾਨਕ ਰੀਤੀ-ਰਿਵਾਜ',
+    essentialPhrases: 'ਜ਼ਰੂਰੀ ਵਾਕ',
+    safetyTips: 'ਸੁਰੱਖਿਆ ਸੁਝਾਅ',
+    transportation: 'ਆਵਾਜਾਈ',
+    cuisine: 'ਸਥਾਨਕ ਖਾਣਾ',
+    attractions: 'ਜ਼ਰੂਰ ਵੇਖਣਯੋਗ ਥਾਵਾਂ',
+    etiquette: 'ਸੱਭਿਆਚਾਰਕ ਸ਼ਿਸ਼ਟਾਚਾਰ',
+    festivals: 'ਤਿਉਹਾਰ ਅਤੇ ਸਮਾਗਮ',
+    shopping: 'ਖਰੀਦਦਾਰੀ ਗਾਈਡ',
+    emergency: 'ਸੰਕਟਕਾਲੀਨ ਸੰਪਰਕ',
+    weather: 'ਮੌਸਮ ਅਤੇ ਘੁੰਮਣ ਦਾ ਸਭ ਤੋਂ ਵਧੀਆ ਸਮਾਂ',
   },
 };

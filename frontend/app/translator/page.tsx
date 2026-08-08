@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useMutation, useQuery } from '@apollo/client';
+import { motion } from 'motion/react';
+import type { ExtractTextData, ExtractTextVars, GenerateSpeechData, GenerateSpeechVars, SupportedMtLanguagesData, TranscribeAudioData, TranscribeAudioVars, TranslateTextData, TranslateTextVars } from '@/graphql/types';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { 
   Languages, 
   Camera, 
@@ -63,11 +64,11 @@ export default function Translator() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const liveRecognitionRef = useRef<any>(null);
 
-  const { data: languagesData, loading: languagesLoading } = useQuery(GET_SUPPORTED_MT_LANGUAGES);
-  const [translateText] = useMutation(TRANSLATE_TEXT_MUTATION);
-  const [generateSpeech] = useMutation(GENERATE_SPEECH_MUTATION);
-  const [extractTextFromImage] = useMutation(EXTRACT_TEXT_FROM_IMAGE_MUTATION);
-  const [transcribeAudio] = useMutation(TRANSCRIBE_AUDIO_MUTATION);
+  const { data: languagesData, loading: languagesLoading } = useQuery<SupportedMtLanguagesData>(GET_SUPPORTED_MT_LANGUAGES);
+  const [translateText] = useMutation<TranslateTextData, TranslateTextVars>(TRANSLATE_TEXT_MUTATION);
+  const [generateSpeech] = useMutation<GenerateSpeechData, GenerateSpeechVars>(GENERATE_SPEECH_MUTATION);
+  const [extractTextFromImage] = useMutation<ExtractTextData, ExtractTextVars>(EXTRACT_TEXT_FROM_IMAGE_MUTATION);
+  const [transcribeAudio] = useMutation<TranscribeAudioData, TranscribeAudioVars>(TRANSCRIBE_AUDIO_MUTATION);
 
   const languages = languagesData?.supportedMtLanguages || [
     { code: 'en', name: 'English' },
@@ -100,14 +101,13 @@ export default function Translator() {
   // Recording timer effect
   useEffect(() => {
     if (isRecording) {
+      // Counter is reset here (on start) rather than in the else branch, so the
+      // effect body no longer calls setState synchronously.
       recordingTimerRef.current = setInterval(() => {
         setRecordingTime((prev) => prev + 1);
       }, 1000);
-    } else {
-      if (recordingTimerRef.current) {
-        clearInterval(recordingTimerRef.current);
-      }
-      setRecordingTime(0);
+    } else if (recordingTimerRef.current) {
+      clearInterval(recordingTimerRef.current);
     }
     return () => {
       if (recordingTimerRef.current) {
@@ -154,7 +154,7 @@ export default function Translator() {
     setTranslatedText('');
   };
 
-  const handleSpeak = async (text: string, _language: string) => {
+  const handleSpeak = async (text: string) => {
     if (!text.trim()) {
       toast.error('No text to speak');
       return;
@@ -306,7 +306,7 @@ export default function Translator() {
       toast.error('No text to speak');
       return;
     }
-    await handleSpeak(extractedText, sourceLang);
+    await handleSpeak(extractedText);
   };
 
   const handleDirectImageTranslate = async () => {
@@ -442,6 +442,7 @@ export default function Translator() {
       };
       
       mediaRecorder.start();
+      setRecordingTime(0);
       setIsRecording(true);
       toast.success(t('translator.voiceTranslation.recording'));
     } catch (error) {
@@ -458,9 +459,15 @@ export default function Translator() {
     }
   };
 
+  // The Web Speech API is Chromium-only. Deriving this once lets the UI disable
+  // the control instead of offering a button that always fails.
+  const speechRecognitionSupported =
+    typeof window !== 'undefined' &&
+    ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+
   const startLiveTranslation = () => {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      toast.error('Speech recognition not supported in this browser');
+    if (!speechRecognitionSupported) {
+      toast.error('Live speech recognition is not supported in this browser');
       return;
     }
 
@@ -548,9 +555,7 @@ export default function Translator() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Link 
-                href="/dashboard"
-                className="text-muted-foreground hover:text-foreground"
-              >
+                href="/dashboard"className="text-muted-foreground hover:text-foreground">
                 ← {t('nav.backToDashboard')}
               </Link>
             </div>
@@ -585,8 +590,7 @@ export default function Translator() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-card rounded-xl shadow-lg p-6 mb-6 border border-border"
-        >
+          className="bg-card rounded-xl shadow-lg p-6 mb-6 border border-border">
           {languagesLoading ? (
             <div className="flex items-center justify-center py-8">
               <Loader className="w-6 h-6 animate-spin text-primary" />
@@ -602,8 +606,7 @@ export default function Translator() {
                   <select
                     value={sourceLang}
                     onChange={(e) => setSourceLang(e.target.value)}
-                    className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
-                    disabled={languagesLoading}
+                    className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent"disabled={languagesLoading}
                   >
                     {languages.map((lang: Language) => (
                         <option key={lang.code} value={lang.code}>
@@ -615,8 +618,7 @@ export default function Translator() {
 
                 <button
                   onClick={swapLanguages}
-                  className="p-3 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors mt-7"
-                  disabled={languagesLoading}
+                  className="p-3 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors mt-7"disabled={languagesLoading}
                 >
                   <ArrowLeftRight className="w-5 h-5" />
                 </button>
@@ -628,8 +630,7 @@ export default function Translator() {
                   <select
                     value={targetLang}
                     onChange={(e) => setTargetLang(e.target.value)}
-                    className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
-                    disabled={languagesLoading}
+                    className="w-full p-3 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-transparent"disabled={languagesLoading}
                   >
                     {languages.map((lang: Language) => (
                       <option key={lang.code} value={lang.code}>
@@ -675,8 +676,7 @@ export default function Translator() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-card rounded-xl shadow-lg p-6 border border-border"
-        >
+          className="bg-card rounded-xl shadow-lg p-6 border border-border">
           {/* TEXT TAB LAYOUT */}
           {activeTab === 'text' && (
             <div className="space-y-6">
@@ -691,17 +691,13 @@ export default function Translator() {
                       {sourceText && (
                         <>
                           <button
-                            onClick={() => handleSpeak(sourceText, sourceLang)}
-                            className="p-1.5 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition-colors"
-                            title="Speak source text"
-                          >
+                            onClick={() => handleSpeak(sourceText)}
+                            className="p-1.5 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition-colors"title="Speak source text">
                             <Volume2 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={handleClearText}
-                            className="p-1 hover:bg-muted rounded transition-colors"
-                            title="Clear text"
-                          >
+                            className="p-1 hover:bg-muted rounded transition-colors"title="Clear text">
                             <X className="w-4 h-4 text-muted-foreground" />
                           </button>
                         </>
@@ -712,8 +708,7 @@ export default function Translator() {
                     value={sourceText}
                     onChange={(e) => setSourceText(e.target.value)}
                     placeholder={t('translator.textTranslation.sourcePlaceholder')}
-                    className="w-full h-48 p-4 border border-input rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
-                  />
+                    className="w-full h-48 p-4 border border-input rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent resize-none"/>
                 </div>
 
                 {/* Translated Text Output */}
@@ -726,17 +721,13 @@ export default function Translator() {
                       <button
                         onClick={() => copyToClipboard(translatedText)}
                         disabled={!translatedText}
-                        className="p-1.5 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="Copy translation"
-                      >
+                        className="p-1.5 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"title="Copy translation">
                         <Copy className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleSpeak(translatedText, targetLang)}
+                        onClick={() => handleSpeak(translatedText)}
                         disabled={!translatedText}
-                        className="p-1.5 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="Speak translation"
-                      >
+                        className="p-1.5 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"title="Speak translation">
                         <Volume2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -761,8 +752,7 @@ export default function Translator() {
                 <button
                   onClick={() => handleTranslate()}
                   disabled={!sourceText.trim() || isLoading}
-                  className="px-10 py-3 bg-gradient-to-r from-primary to-accent text-primary-foreground rounded-lg font-semibold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
-                >
+                  className="px-10 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md">
                   {isLoading ? (
                     <span className="flex items-center gap-2">
                       <Loader className="w-4 h-4 animate-spin" />
@@ -788,7 +778,13 @@ export default function Translator() {
                 </div>
                 <button
                   onClick={isLiveTranslating ? stopLiveTranslation : startLiveTranslation}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                  disabled={!speechRecognitionSupported}
+                  title={
+                    speechRecognitionSupported
+                      ? undefined
+                      : 'Live translation needs the Web Speech API, which this browser does not provide'
+                  }
+                  className={`px-4 py-2 rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                     isLiveTranslating
                       ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
                       : 'bg-primary text-primary-foreground hover:bg-primary/90'
@@ -813,8 +809,7 @@ export default function Translator() {
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
-                  className="p-4 bg-primary/10 border-2 border-primary/20 rounded-lg"
-                >
+                  className="p-4 bg-primary/10 border-2 border-primary/20 rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-2 h-2 bg-destructive rounded-full animate-pulse" />
                     <span className="text-sm font-medium text-foreground">Listening...</span>
@@ -829,12 +824,9 @@ export default function Translator() {
                 {/* Upload Audio File */}
                 <div className="border-2 border-dashed border-border rounded-lg p-8 hover:border-primary/50 transition-all">
                   <input
-                    type="file"
-                    ref={audioInputRef}
+                    type="file"ref={audioInputRef}
                     onChange={handleAudioFileUpload}
-                    accept="audio/*"
-                    className="hidden"
-                  />
+                    accept="audio/*"className="hidden"/>
                   <div className="text-center space-y-4">
                     <div className="flex justify-center">
                       <div className="p-4 bg-primary/10 rounded-full">
@@ -849,8 +841,7 @@ export default function Translator() {
                     </div>
                     <button
                       onClick={() => audioInputRef.current?.click()}
-                      className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-                    >
+                      className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
                       <Upload className="w-4 h-4 inline mr-2" />
                       Choose File
                     </button>
@@ -880,8 +871,7 @@ export default function Translator() {
                         <>
                           {/* Pulsing Rings Animation */}
                           <motion.div
-                            className="absolute inset-0 rounded-full bg-destructive"
-                            animate={{
+                            className="absolute inset-0 rounded-full bg-destructive"animate={{
                               scale: [1, 1.3, 1],
                               opacity: [0.5, 0, 0.5],
                             }}
@@ -892,8 +882,7 @@ export default function Translator() {
                             }}
                           />
                           <motion.div
-                            className="absolute inset-0 rounded-full bg-destructive"
-                            animate={{
+                            className="absolute inset-0 rounded-full bg-destructive"animate={{
                               scale: [1, 1.5, 1],
                               opacity: [0.3, 0, 0.3],
                             }}
@@ -917,8 +906,7 @@ export default function Translator() {
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="text-2xl font-mono font-bold text-destructive"
-                    >
+                      className="text-2xl font-mono font-bold text-destructive">
                       {Math.floor(recordingTime / 60)}:{(recordingTime % 60).toString().padStart(2, '0')}
                     </motion.div>
                   )}
@@ -936,17 +924,15 @@ export default function Translator() {
                   {/* Action Options */}
                   <div className="grid md:grid-cols-2 gap-3">
                     <button
-                      onClick={() => handleSpeak(sourceText, sourceLang)}
-                      className="px-6 py-3 bg-muted hover:bg-muted/80 text-foreground rounded-lg font-medium transition-all flex items-center justify-center gap-2"
-                    >
+                      onClick={() => handleSpeak(sourceText)}
+                      className="px-6 py-3 bg-muted hover:bg-muted/80 text-foreground rounded-lg font-medium transition-all flex items-center justify-center gap-2">
                       <Volume2 className="w-4 h-4" />
                       Speak Text
                     </button>
                     <button
                       onClick={() => handleTranslate()}
                       disabled={isLoading}
-                      className="px-6 py-3 bg-gradient-to-r from-primary to-accent text-primary-foreground rounded-lg font-semibold hover:opacity-90 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
-                    >
+                      className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 disabled:opacity-50 transition-all flex items-center justify-center gap-2">
                       {isLoading ? (
                         <>
                           <Loader className="w-4 h-4 animate-spin" />
@@ -968,23 +954,18 @@ export default function Translator() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-6 bg-primary/5 border-2 border-primary/20 rounded-lg space-y-3"
-                >
+                  className="p-6 bg-primary/5 border-2 border-primary/20 rounded-lg space-y-3">
                   <div className="flex items-center justify-between">
                     <label className="text-sm font-medium text-foreground">Translation</label>
                     <div className="flex gap-2">
                       <button
                         onClick={() => copyToClipboard(translatedText)}
-                        className="p-2 rounded-lg bg-background hover:bg-muted transition-colors"
-                        title="Copy"
-                      >
+                        className="p-2 rounded-lg bg-background hover:bg-muted transition-colors"title="Copy">
                         <Copy className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleSpeak(translatedText, targetLang)}
-                        className="p-2 rounded-lg bg-background hover:bg-muted transition-colors"
-                        title="Speak"
-                      >
+                        onClick={() => handleSpeak(translatedText)}
+                        className="p-2 rounded-lg bg-background hover:bg-muted transition-colors"title="Speak">
                         <Volume2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -1015,8 +996,7 @@ export default function Translator() {
                     </div>
                     <button
                       onClick={handleCameraCapture}
-                      className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-                    >
+                      className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
                       <Camera className="w-4 h-4 inline mr-2" />
                       Open Camera
                     </button>
@@ -1026,12 +1006,9 @@ export default function Translator() {
                 {/* Upload Image */}
                 <div className="border-2 border-dashed border-border rounded-lg p-8 hover:border-primary/50 transition-all">
                   <input
-                    type="file"
-                    ref={imageInputRef}
+                    type="file"ref={imageInputRef}
                     onChange={handleImageSelect}
-                    accept="image/*"
-                    className="hidden"
-                  />
+                    accept="image/*"className="hidden"/>
                   <div className="text-center space-y-4">
                     <div className="flex justify-center">
                       <div className="p-4 bg-primary/10 rounded-full">
@@ -1046,8 +1023,7 @@ export default function Translator() {
                     </div>
                     <button
                       onClick={() => imageInputRef.current?.click()}
-                      className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-                    >
+                      className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
                       <Upload className="w-4 h-4 inline mr-2" />
                       Choose Image
                     </button>
@@ -1061,21 +1037,19 @@ export default function Translator() {
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="relative rounded-lg overflow-hidden border-2 border-border"
-                  >
-                    <img
+                    className="relative rounded-lg overflow-hidden border-2 border-border">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- blob URL from a
+                    local file upload; next/image cannot optimise it. */}
+                <img
                       src={imagePreview}
-                      alt="Preview"
-                      className="w-full max-h-96 object-contain bg-muted"
-                    />
+                      alt="Preview"className="w-full max-h-96 object-contain bg-muted"/>
                     <button
                       onClick={() => {
                         setImageFile(null);
                         setImagePreview(null);
                         setExtractedText('');
                       }}
-                      className="absolute top-2 right-2 p-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors"
-                    >
+                      className="absolute top-2 right-2 p-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </motion.div>
@@ -1084,13 +1058,11 @@ export default function Translator() {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="grid md:grid-cols-3 gap-3"
-                  >
+                    className="grid md:grid-cols-3 gap-3">
                     <button
                       onClick={handleDirectImageTranslate}
                       disabled={isLoading}
-                      className="px-4 py-3 bg-gradient-to-r from-primary to-accent text-primary-foreground rounded-lg font-medium hover:opacity-90 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
-                    >
+                      className="px-4 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 disabled:opacity-50 transition-all flex items-center justify-center gap-2">
                       {isLoading ? (
                         <>
                           <Loader className="w-4 h-4 animate-spin" />
@@ -1106,8 +1078,7 @@ export default function Translator() {
                     <button
                       onClick={handleExtractTextFromImage}
                       disabled={isLoading}
-                      className="px-4 py-3 bg-muted hover:bg-muted/80 text-foreground rounded-lg font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                    >
+                      className="px-4 py-3 bg-muted hover:bg-muted/80 text-foreground rounded-lg font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-50">
                       <FileText className="w-4 h-4" />
                       Extract Text
                     </button>
@@ -1119,8 +1090,7 @@ export default function Translator() {
                         }
                       }}
                       disabled={isLoading}
-                      className="px-4 py-3 bg-muted hover:bg-muted/80 text-foreground rounded-lg font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                    >
+                      className="px-4 py-3 bg-muted hover:bg-muted/80 text-foreground rounded-lg font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-50">
                       <Volume2 className="w-4 h-4" />
                       To Speech
                     </button>
@@ -1133,8 +1103,7 @@ export default function Translator() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="space-y-4"
-                >
+                  className="space-y-4">
                   <div className="flex items-center justify-between">
                     <label className="text-sm font-medium text-foreground">Extracted Text</label>
                     <Check className="w-5 h-5 text-green-500" />
@@ -1147,16 +1116,14 @@ export default function Translator() {
                   <div className="grid md:grid-cols-2 gap-3">
                     <button
                       onClick={handleSpeakExtractedText}
-                      className="px-6 py-3 bg-muted hover:bg-muted/80 text-foreground rounded-lg font-medium transition-all flex items-center justify-center gap-2"
-                    >
+                      className="px-6 py-3 bg-muted hover:bg-muted/80 text-foreground rounded-lg font-medium transition-all flex items-center justify-center gap-2">
                       <Volume2 className="w-4 h-4" />
                       Speak Text
                     </button>
                     <button
                       onClick={handleTranslateExtracted}
                       disabled={isLoading}
-                      className="px-6 py-3 bg-gradient-to-r from-primary to-accent text-primary-foreground rounded-lg font-semibold hover:opacity-90 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
-                    >
+                      className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 disabled:opacity-50 transition-all flex items-center justify-center gap-2">
                       {isLoading ? (
                         <>
                           <Loader className="w-4 h-4 animate-spin" />
@@ -1178,23 +1145,18 @@ export default function Translator() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-6 bg-primary/5 border-2 border-primary/20 rounded-lg space-y-3"
-                >
+                  className="p-6 bg-primary/5 border-2 border-primary/20 rounded-lg space-y-3">
                   <div className="flex items-center justify-between">
                     <label className="text-sm font-medium text-foreground">Translation</label>
                     <div className="flex gap-2">
                       <button
                         onClick={() => copyToClipboard(translatedText)}
-                        className="p-2 rounded-lg bg-background hover:bg-muted transition-colors"
-                        title="Copy"
-                      >
+                        className="p-2 rounded-lg bg-background hover:bg-muted transition-colors"title="Copy">
                         <Copy className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleSpeak(translatedText, targetLang)}
-                        className="p-2 rounded-lg bg-background hover:bg-muted transition-colors"
-                        title="Speak"
-                      >
+                        onClick={() => handleSpeak(translatedText)}
+                        className="p-2 rounded-lg bg-background hover:bg-muted transition-colors"title="Speak">
                         <Volume2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -1211,8 +1173,7 @@ export default function Translator() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="mt-8 bg-card rounded-xl shadow-lg p-6 border border-border"
-        >
+          className="mt-8 bg-card rounded-xl shadow-lg p-6 border border-border">
           <h3 className="text-lg font-semibold text-foreground mb-4">
             {t('translator.quickPhrases.title')}
           </h3>
@@ -1231,8 +1192,7 @@ export default function Translator() {
               <button
                 key={index}
                 onClick={() => setSourceText(phrase)}
-                className="p-3 text-left bg-muted rounded-lg text-foreground hover:bg-muted/80 transition-colors"
-              >
+                className="p-3 text-left bg-muted rounded-lg text-foreground hover:bg-muted/80 transition-colors">
                 {phrase}
               </button>
             ))}

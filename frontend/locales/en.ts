@@ -7,6 +7,7 @@ export const en = {
     translator: 'Translator',
     dictionary: 'Dictionary',
     places: 'Places',
+    trips: 'Trips',
     guide: 'Guide',
     settings: 'Settings',
     login: 'Login',
@@ -142,6 +143,8 @@ export const en = {
       placesVisited: 'Places Visited',
       wordsLearned: 'Words Learned',
       tripsPlanned: 'Trips Planned',
+      favorites: 'Favorites',
+      countries: 'Countries',
     },
 
     recentActivity: {
@@ -165,6 +168,7 @@ export const en = {
       modern: 'Modern',
       historical: 'Historical',
       visitors: 'Visitors',
+      languages: 'Languages',
       rating: 'Rating',
     },
   },

@@ -2,13 +2,14 @@
 import { TranslationKeys } from './en';
 
 export const ml: TranslationKeys = {
-  // Navigation
   nav: {
     home: 'ഹോം',
     dashboard: 'ഡാഷ്‌ബോർഡ്',
     translator: 'പരിഭാഷകൻ',
     dictionary: 'നിഘണ്ടു',
     places: 'സ്ഥലങ്ങൾ',
+    trips: 'യാത്രകൾ',
+    guide: 'ഗൈഡ്',
     settings: 'ക്രമീകരണങ്ങൾ',
     login: 'ലോഗിൻ',
     register: 'രജിസ്റ്റർ',
@@ -16,8 +17,6 @@ export const ml: TranslationKeys = {
     backToHome: 'ഹോമിലേക്ക് മടങ്ങുക',
     backToDashboard: 'ഡാഷ്‌ബോർഡിലേക്ക് മടങ്ങുക',
   },
-
-  // Common
   common: {
     welcome: 'സ്വാഗതം',
     search: 'തിരയുക',
@@ -39,16 +38,12 @@ export const ml: TranslationKeys = {
     darkMode: 'ഇരുണ്ട മോഡ്',
     lightMode: 'വെളിച്ച മോഡ്',
   },
-
-  // Home Page
   home: {
     title: 'നിങ്ങളുടെ ആത്യന്തിക യാത്രാ സഹയാത്രികൻ',
     subtitle: 'AI-പവർഡ് പരിഭാഷ, പ്രാദേശിക സ്ഥിതിവിവരക്കണക്കുകൾ, വ്യക്തിപരമായ ശുപാർശകൾ എന്നിവ ഉപയോഗിച്ച് ഭാഷാ തടസ്സങ്ങൾ തകർക്കുക, മറഞ്ഞിരിക്കുന്ന രത്നങ്ങൾ കണ്ടെത്തുക, ഇന്ത്യയെ മുമ്പൊരിക്കലും കണ്ടിട്ടില്ലാത്ത രീതിയിൽ പര്യവേക്ഷണം ചെയ്യുക.',
     getStarted: 'സൗജന്യമായി ആരംഭിക്കുക',
     signIn: 'സൈൻ ഇൻ ചെയ്യുക',
     poweredBy: 'TourismToolKit നൽകുന്നു',
-    
-    // Features
     features: {
       title: 'എല്ലാ യാത്രക്കാർക്കും ശക്തമായ സവിശേഷതകൾ',
       subtitle: 'തത്സമയ പരിഭാഷ മുതൽ പ്രാദേശിക കണ്ടെത്തൽ വരെ, ആത്മവിശ്വാസത്തോടെ പര്യവേക്ഷണം ചെയ്യാൻ ഞങ്ങളുടെ ടൂൾകിറ്റ് നിങ്ങളെ ശാക്തീകരിക്കുന്നു',
@@ -69,24 +64,18 @@ export const ml: TranslationKeys = {
         description: 'നിങ്ങളുടെ മുൻഗണനകളും സ്ഥാനവും അടിസ്ഥാനമാക്കിയുള്ള വ്യക്തിപരമാക്കിയ ശുപാർശകൾ',
       },
     },
-
-    // Stats
     stats: {
       languages: 'പിന്തുണയ്ക്കുന്ന ഭാഷകൾ',
       places: 'ഉൾപ്പെടുത്തിയ സ്ഥലങ്ങൾ',
       translations: 'നടത്തിയ പരിഭാഷകൾ',
       travelers: 'സന്തുഷ്ട യാത്രക്കാർ',
     },
-
-    // CTA
     cta: {
       title: 'ഇന്ത്യ പര്യവേക്ഷണം ചെയ്യാൻ തയ്യാറാണോ?',
       subtitle: 'അവരുടെ ഇന്ത്യൻ സാഹസികതകൾക്കായി TourismToolKit വിശ്വസിക്കുന്ന ആയിരക്കണക്കിന് യാത്രക്കാരോടൊപ്പം ചേരുക. ഇന്ന് തന്നെ നിങ്ങളുടെ യാത്ര ആരംഭിക്കുക!',
       button: 'നിങ്ങളുടെ യാത്ര ആരംഭിക്കുക',
     },
   },
-
-  // Auth
   auth: {
     login: {
       title: 'തിരിച്ചെത്തിയതിൽ സന്തോഷം',
@@ -117,50 +106,63 @@ export const ml: TranslationKeys = {
       signIn: 'സൈൻ ഇൻ ചെയ്യുക',
     },
   },
-
-  // Dashboard
   dashboard: {
     title: 'യാത്രാ ഡാഷ്‌ബോർഡ്',
     subtitle: 'നിങ്ങളുടെ വ്യക്തിപരമാക്കിയ യാത്രാ സഹയാത്രികൻ',
     welcome: 'തിരിച്ചെത്തിയതിൽ സന്തോഷം',
     loading: 'നിങ്ങളുടെ യാത്രാ ഡാഷ്‌ബോർഡ് ലോഡ് ചെയ്യുന്നു...',
-    
     quickActions: {
       title: 'ദ്രുത പ്രവർത്തനങ്ങൾ',
       translate: 'ഇപ്പോൾ വിവർത്തനം ചെയ്യുക',
+      ocrScanner: 'OCR സ്കാനർ',
+      ocrDescription: 'ചിത്രങ്ങളിൽ നിന്ന് ഉടനടി വാചകം എടുക്കുക',
+      voiceAssistant: 'വോയിസ് അസിസ്റ്റന്റ്',
+      voiceDescription: 'സംസാരത്തിൽ നിന്ന് വാചകത്തിലേക്കുള്ള സംഭാഷണങ്ങൾ',
       findPlaces: 'സ്ഥലങ്ങൾ കണ്ടെത്തുക',
       learnWords: 'വാക്കുകൾ പഠിക്കുക',
+      travelGuide: 'യാത്രാ ഗൈഡ്',
+      guideDescription: 'സാംസ്കാരിക നുറുങ്ങുകളും ഉൾക്കാഴ്ചകളും',
     },
-
     stats: {
       translations: 'പരിഭാഷകൾ',
       placesVisited: 'സന്ദർശിച്ച സ്ഥലങ്ങൾ',
       wordsLearned: 'പഠിച്ച വാക്കുകൾ',
       tripsPlanned: 'ആസൂത്രണം ചെയ്ത യാത്രകൾ',
+      favorites: 'പ്രിയപ്പെട്ടവ',
+      countries: 'രാജ്യങ്ങൾ',
     },
-
     recentActivity: {
       title: 'സമീപകാല പ്രവർത്തനം',
       noActivity: 'സമീപകാല പ്രവർത്തനം ഇല്ല',
     },
-
     recommendedPlaces: {
       title: 'ശുപാർശ ചെയ്യപ്പെട്ട സ്ഥലങ്ങൾ',
       viewAll: 'എല്ലാ സ്ഥലങ്ങളും കാണുക',
     },
+    featuredPlaces: {
+      title: 'പ്രത്യേക സ്ഥലങ്ങൾ',
+      symbolOfLove: 'ശാശ്വത പ്രണയത്തിന്റെ പ്രതീകം',
+      holisticCity: 'ഇന്ത്യയുടെ ആത്മീയ തലസ്ഥാനം',
+      techHub: 'ഇന്ത്യയുടെ സിലിക്കൺ വാലി',
+      pinkCity: 'പിങ്ക് നഗരം',
+      heritage: 'പൈതൃകം',
+      spiritual: 'ആത്മീയം',
+      modern: 'ആധുനികം',
+      historical: 'ചരിത്രപരം',
+      visitors: 'സന്ദർശകർ',
+      languages: 'ഭാഷകൾ',
+      rating: 'റേറ്റിംഗ്',
+    },
   },
-
-  // Translator
   translator: {
     title: 'AI പരിഭാഷകൻ',
     subtitle: 'ഒന്നിലധികം ഇന്ത്യൻ ഭാഷകളിൽ തൽക്ഷണം വിവർത്തനം ചെയ്യുക',
-    
     tabs: {
       text: 'വാചകം',
       voice: 'ശബ്ദം',
       image: 'ചിത്രം',
+      ocr: 'OCR',
     },
-
     textTranslation: {
       sourceLanguage: 'ഉറവിട ഭാഷ',
       targetLanguage: 'ലക്ഷ്യ ഭാഷ',
@@ -173,14 +175,31 @@ export const ml: TranslationKeys = {
       copy: 'പകർത്തുക',
       copied: 'പകർത്തി!',
     },
-
     voiceTranslation: {
       startRecording: 'റെക്കോർഡിംഗ് ആരംഭിക്കുക',
       stopRecording: 'റെക്കോർഡിംഗ് നിർത്തുക',
       recording: 'റെക്കോർഡ് ചെയ്യുന്നു...',
       processing: 'പ്രോസസ്സ് ചെയ്യുന്നു...',
+      listening: 'കേൾക്കുന്നു...',
+      speak: 'ഇപ്പോൾ സംസാരിക്കുക',
     },
-
+    imageTranslation: {
+      uploadImage: 'ചിത്രം അപ്‌ലോഡ് ചെയ്യുക',
+      takePhoto: 'ഫോട്ടോ എടുക്കുക',
+      processing: 'ചിത്രം പ്രോസസ്സ് ചെയ്യുന്നു...',
+      extracting: 'വാചകം എടുക്കുന്നു...',
+      noTextFound: 'ചിത്രത്തിൽ വാചകം കണ്ടെത്തിയില്ല',
+      selectImage: 'വാചകം എടുക്കാൻ ഒരു ചിത്രം തിരഞ്ഞെടുക്കുക',
+    },
+    ocrScanner: {
+      title: 'OCR വാചക സ്കാനർ',
+      subtitle: 'ചിത്രങ്ങളിൽ നിന്ന് വാചകം എടുത്ത് വിവർത്തനം ചെയ്യുക',
+      scanImage: 'ചിത്രം സ്കാൻ ചെയ്യുക',
+      scanning: 'സ്കാൻ ചെയ്യുന്നു...',
+      extractedText: 'എടുത്ത വാചകം',
+      noText: 'വാചകം കണ്ടെത്തിയില്ല',
+      uploadOrCapture: 'ഒരു ചിത്രം അപ്‌ലോഡ് ചെയ്യുക അല്ലെങ്കിൽ എടുക്കുക',
+    },
     quickPhrases: {
       title: 'ദ്രുത വാക്യങ്ങൾ',
       greetings: 'നമസ്കാരം',
@@ -189,8 +208,6 @@ export const ml: TranslationKeys = {
       directions: 'എവിടെയാണ്...?',
     },
   },
-
-  // Dictionary
   dictionary: {
     title: 'ഭാഷാ നിഘണ്ടു',
     subtitle: 'ഭാഷകളിലെ വാക്കുകളും അവയുടെ അർത്ഥങ്ങളും പര്യവേക്ഷണം ചെയ്യുക',
@@ -202,8 +219,6 @@ export const ml: TranslationKeys = {
     examples: 'ഉദാഹരണങ്ങൾ',
     relatedWords: 'ബന്ധപ്പെട്ട വാക്കുകൾ',
   },
-
-  // Places
   places: {
     title: 'സ്ഥലങ്ങൾ കണ്ടെത്തുക',
     subtitle: 'ഇന്ത്യയിലുടനീളം അത്ഭുതകരമായ ലക്ഷ്യസ്ഥാനങ്ങൾ പര്യവേക്ഷണം ചെയ്യുക',
@@ -221,19 +236,18 @@ export const ml: TranslationKeys = {
     getDirections: 'ദിശകൾ നേടുക',
     addToTrip: 'യാത്രയിലേക്ക് ചേർക്കുക',
   },
-
-  // Settings
   settings: {
     title: 'ക്രമീകരണങ്ങൾ',
     subtitle: 'നിങ്ങളുടെ മുൻഗണനകൾ നിയന്ത്രിക്കുക',
-    
     account: {
       title: 'അക്കൗണ്ട് വിവരങ്ങൾ',
       email: 'ഇമെയിൽ',
       username: 'ഉപയോക്തൃനാമം',
       fullName: 'പൂർണ്ണ നാമം',
+      homeCountry: 'സ്വദേശം',
+      emailCannotChange: 'ഇമെയിൽ മാറ്റാൻ കഴിയില്ല',
+      enterHomeCountry: 'നിങ്ങളുടെ രാജ്യം നൽകുക',
     },
-
     preferences: {
       title: 'മുൻഗണനകൾ',
       language: 'ഭാഷ',
@@ -241,16 +255,42 @@ export const ml: TranslationKeys = {
       lightMode: 'വെളിച്ചം',
       darkMode: 'ഇരുണ്ടത്',
       systemMode: 'സിസ്റ്റം',
+      appearance: 'രൂപം',
+      appearanceDescription: 'നിങ്ങളുടെ കാഴ്ചാനുഭവം ക്രമീകരിക്കുക',
+      preferredLanguage: 'ഇഷ്ട ഭാഷ',
+      selectLanguage: 'നിങ്ങളുടെ ഇഷ്ട ഭാഷ തിരഞ്ഞെടുക്കുക',
     },
-
     notifications: {
       title: 'അറിയിപ്പുകൾ',
       email: 'ഇമെയിൽ അറിയിപ്പുകൾ',
       push: 'പുഷ് അറിയിപ്പുകൾ',
     },
-
+    privacy: {
+      title: 'സ്വകാര്യതയും സുരക്ഷയും',
+      description: 'നിങ്ങളുടെ അക്കൗണ്ട് സുരക്ഷ കൈകാര്യം ചെയ്യുക',
+      accountStatus: 'അക്കൗണ്ട് നില',
+      verified: 'പരിശോധിച്ചു',
+      notVerified: 'പരിശോധിച്ചിട്ടില്ല',
+    },
     save: 'മാറ്റങ്ങൾ സംരക്ഷിക്കുക',
     saving: 'സംരക്ഷിക്കുന്നു...',
     saved: 'ക്രമീകരണങ്ങൾ വിജയകരമായി സംരക്ഷിച്ചു!',
+    updateInfo: 'നിങ്ങളുടെ വ്യക്തിഗത വിവരങ്ങൾ പുതുക്കുക',
+  },
+  guide: {
+    title: 'യാത്രാ ഗൈഡ്',
+    subtitle: 'ഇന്ത്യ പര്യവേക്ഷണം ചെയ്യാനുള്ള സാംസ്കാരിക ഉൾക്കാഴ്ചകളും യാത്രാ നുറുങ്ങുകളും',
+    culturalTips: 'സാംസ്കാരിക നുറുങ്ങുകൾ',
+    localCustoms: 'പ്രാദേശിക ആചാരങ്ങൾ',
+    essentialPhrases: 'അത്യാവശ്യ വാക്യങ്ങൾ',
+    safetyTips: 'സുരക്ഷാ നുറുങ്ങുകൾ',
+    transportation: 'ഗതാഗതം',
+    cuisine: 'പ്രാദേശിക ഭക്ഷണം',
+    attractions: 'കാണേണ്ട ആകർഷണങ്ങൾ',
+    etiquette: 'സാംസ്കാരിക മര്യാദകൾ',
+    festivals: 'ഉത്സവങ്ങളും പരിപാടികളും',
+    shopping: 'ഷോപ്പിംഗ് ഗൈഡ്',
+    emergency: 'അടിയന്തര ബന്ധങ്ങൾ',
+    weather: 'കാലാവസ്ഥയും സന്ദർശിക്കാൻ പറ്റിയ സമയവും',
   },
 };

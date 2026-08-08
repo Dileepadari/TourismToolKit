@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Loader } from 'lucide-react';
 import { cn } from '@/utils/cn';
 
@@ -13,7 +13,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const buttonVariants = {
-  primary: 'bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 shadow-soft hover:shadow-medium',
+  primary: 'bg-primary text-primary-foreground hover:opacity-90 shadow-soft hover:shadow-medium',
   secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-soft hover:shadow-medium',
   outline: 'border-2 border-primary text-primary hover:bg-primary/10',
   ghost: 'text-primary hover:text-primary/80 hover:bg-primary/10',

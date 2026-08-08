@@ -1,16 +1,16 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { cn } from '@/utils/cn';
 
 interface CardProps {
   children: React.ReactNode;
   className?: string;
   hover?: boolean;
-  gradient?: boolean;
+  tinted?: boolean;
   onClick?: () => void;
 }
 
-export function Card({ children, className, hover = false, gradient = false, onClick }: CardProps) {
+export function Card({ children, className, hover = false, tinted = false, onClick }: CardProps) {
   if (onClick || hover) {
     return (
       <motion.div
@@ -19,7 +19,7 @@ export function Card({ children, className, hover = false, gradient = false, onC
         whileTap={onClick ? { scale: 0.98 } : undefined}
         className={cn(
           'rounded-xl shadow-soft border border-border',
-          gradient ? 'bg-gradient-to-br from-card to-primary/5 dark:from-card dark:to-background' : 'bg-card',
+          tinted ? 'bg-primary/5' : 'bg-card',
           hover && 'transition-all duration-200 hover:shadow-medium',
           onClick && 'cursor-pointer',
           className
@@ -34,7 +34,7 @@ export function Card({ children, className, hover = false, gradient = false, onC
     <div
       className={cn(
         'rounded-xl shadow-soft border border-border',
-        gradient ? 'bg-gradient-to-br from-card to-primary/5 dark:from-card dark:to-background' : 'bg-card',
+        tinted ? 'bg-primary/5' : 'bg-card',
         className
       )}
     >

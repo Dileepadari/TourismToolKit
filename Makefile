@@ -1,4 +1,4 @@
-.PHONY: help build up down restart logs clean seed backup
+.PHONY: backup build clean dev down down-v health help logs logs-backend logs-db logs-frontend migrate migration ps restart restart-backend restart-frontend restore seed shell-backend shell-db stop-local up up-build
 
 help: ## Show this help message
 	@echo 'Tourism Toolkit - Docker Commands'
@@ -20,7 +20,9 @@ up: ## Start all services
 	@echo "  GraphQL:  http://localhost:8000/graphql"
 
 up-build: ## Build and start all services
-	docker compose up -d --build
+	# --renew-anon-volumes: compose carries anonymous volumes across recreates,
+	# so without it a freshly built image can be shadowed by stale contents.
+	docker compose up -d --build --renew-anon-volumes
 	@echo "✓ Services built and started!"
 	@echo "  Frontend: http://localhost:3000"
 	@echo "  Backend:  http://localhost:8000"
@@ -57,10 +59,10 @@ ps: ## List running containers
 	docker compose ps
 
 seed: ## Re-seed database
-	docker compose exec backend python -c "from app.database.seed_data import seed_all; seed_all()"
+	docker compose exec backend python -m app.database.seed_data
 
 shell-backend: ## Open shell in backend container
-	docker compose exec backend bash
+	docker compose exec backend sh
 
 shell-db: ## Open PostgreSQL shell
 	docker compose exec db psql -U tourism_user -d tourism_db
@@ -96,3 +98,15 @@ migrate: ## Run database migrations
 migration: ## Create a new migration
 	@read -p "Enter migration message: " msg; \
 	docker compose exec backend alembic revision --autogenerate -m "$$msg"
+
+test: ## Run the backend and frontend test suites
+	cd backend && uv run pytest
+	cd frontend && npm test
+
+lint: ## Lint and type-check both projects
+	cd backend && uv run ruff check app alembic tests && uv run mypy app
+	cd frontend && npm run lint && npm run typecheck
+
+schema: ## Regenerate backend/schema.graphql from the code
+	cd backend && uv run strawberry export-schema app.graphql.schema:schema > schema.graphql
+	@echo "✓ schema.graphql regenerated"

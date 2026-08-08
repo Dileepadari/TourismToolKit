@@ -2,13 +2,14 @@
 import { TranslationKeys } from './en';
 
 export const as: TranslationKeys = {
-  // Navigation
   nav: {
     home: 'হোম',
     dashboard: 'ডেশবৰ্ড',
     translator: 'অনুবাদক',
     dictionary: 'অভিধান',
     places: 'ঠাই',
+    trips: 'ভ্ৰমণ',
+    guide: 'গাইড',
     settings: 'ছেটিংছ',
     login: 'লগইন',
     register: 'পঞ্জীয়ন',
@@ -16,8 +17,6 @@ export const as: TranslationKeys = {
     backToHome: 'হোমলৈ উভতি যাওক',
     backToDashboard: 'ডেশবৰ্ডলৈ উভতি যাওক',
   },
-
-  // Common
   common: {
     welcome: 'স্বাগতম',
     search: 'সন্ধান কৰক',
@@ -39,16 +38,12 @@ export const as: TranslationKeys = {
     darkMode: 'ডাৰ্ক মোড',
     lightMode: 'লাইট মোড',
   },
-
-  // Home Page
   home: {
     title: 'আপোনাৰ চূড়ান্ত যাত্ৰা সংগী',
     subtitle: 'AI-চালিত অনুবাদ, স্থানীয় অন্তৰ্দৃষ্টি আৰু ব্যক্তিগত পৰামৰ্শৰ সৈতে ভাষাৰ বাধা ভাঙক, লুকাই থকা ৰত্ন আবিষ্কাৰ কৰক আৰু ভাৰতক এনেদৰে অন্বেষণ কৰক যেনেকৈ আগতে কেতিয়াও কৰা নাই।',
     getStarted: 'বিনামূলীয়াকৈ আৰম্ভ কৰক',
     signIn: 'ছাইন ইন কৰক',
     poweredBy: 'TourismToolKit দ্বাৰা চালিত',
-    
-    // Features
     features: {
       title: 'প্ৰতিজন যাত্ৰীৰ বাবে শক্তিশালী বৈশিষ্ট্য',
       subtitle: 'ৰিয়েল-টাইম অনুবাদৰ পৰা স্থানীয় আবিষ্কাৰলৈকে, আমাৰ টুলকিটে আপোনাক আত্মবিশ্বাসেৰে অন্বেষণ কৰাৰ ক্ষমতা দিয়ে',
@@ -69,24 +64,18 @@ export const as: TranslationKeys = {
         description: 'আপোনাৰ পছন্দ আৰু অৱস্থানৰ ওপৰত ভিত্তি কৰি ব্যক্তিগত পৰামৰ্শ',
       },
     },
-
-    // Stats
     stats: {
       languages: 'সমৰ্থিত ভাষা',
       places: 'সামৰি লোৱা ঠাই',
       translations: 'সম্পূৰ্ণ অনুবাদ',
       travelers: 'সুখী যাত্ৰী',
     },
-
-    // CTA
     cta: {
       title: 'ভাৰত অন্বেষণৰ বাবে সাজু?',
       subtitle: 'হাজাৰ হাজাৰ যাত্ৰীৰ সৈতে যোগদান কৰক যিয়ে তেওঁলোকৰ ভাৰতীয় সাহসিক কৰ্মৰ বাবে TourismToolKit বিশ্বাস কৰে। আজিয়েই আপোনাৰ যাত্ৰা আৰম্ভ কৰক!',
       button: 'আপোনাৰ যাত্ৰা আৰম্ভ কৰক',
     },
   },
-
-  // Auth
   auth: {
     login: {
       title: 'পুনৰ স্বাগতম',
@@ -117,50 +106,63 @@ export const as: TranslationKeys = {
       signIn: 'ছাইন ইন কৰক',
     },
   },
-
-  // Dashboard
   dashboard: {
     title: 'যাত্ৰা ডেশবৰ্ড',
     subtitle: 'আপোনাৰ ব্যক্তিগত যাত্ৰা সংগী',
     welcome: 'পুনৰ স্বাগতম',
     loading: 'আপোনাৰ যাত্ৰা ডেশবৰ্ড লোড হৈ আছে...',
-    
     quickActions: {
       title: 'দ্ৰুত কাৰ্য',
       translate: 'এতিয়াই অনুবাদ কৰক',
+      ocrScanner: 'OCR স্কেনাৰ',
+      ocrDescription: 'ছবিৰ পৰা তৎক্ষণাৎ পাঠ উলিয়াওক',
+      voiceAssistant: 'ভইচ সহায়ক',
+      voiceDescription: 'কথাৰ পৰা পাঠলৈ কথোপকথন',
       findPlaces: 'ঠাই বিচাৰক',
       learnWords: 'শব্দ শিকক',
+      travelGuide: 'ভ্ৰমণ গাইড',
+      guideDescription: 'সাংস্কৃতিক পৰামৰ্শ আৰু অন্তৰ্দৃষ্টি',
     },
-
     stats: {
       translations: 'অনুবাদ',
       placesVisited: 'ভ্ৰমণ কৰা ঠাই',
       wordsLearned: 'শিকা শব্দ',
       tripsPlanned: 'পৰিকল্পিত যাত্ৰা',
+      favorites: 'প্ৰিয়',
+      countries: 'দেশ',
     },
-
     recentActivity: {
       title: 'শেহতীয়া কাৰ্যকলাপ',
       noActivity: 'কোনো শেহতীয়া কাৰ্যকলাপ নাই',
     },
-
     recommendedPlaces: {
       title: 'পৰামৰ্শিত ঠাই',
       viewAll: 'সকলো ঠাই চাওক',
     },
+    featuredPlaces: {
+      title: 'বিশেষ স্থান',
+      symbolOfLove: 'চিৰন্তন প্ৰেমৰ প্ৰতীক',
+      holisticCity: 'ভাৰতৰ আধ্যাত্মিক ৰাজধানী',
+      techHub: 'ভাৰতৰ ছিলিকন ভেলী',
+      pinkCity: 'গুলপীয়া চহৰ',
+      heritage: 'ঐতিহ্য',
+      spiritual: 'আধ্যাত্মিক',
+      modern: 'আধুনিক',
+      historical: 'ঐতিহাসিক',
+      visitors: 'দৰ্শনাৰ্থী',
+      languages: 'ভাষা',
+      rating: 'ৰেটিং',
+    },
   },
-
-  // Translator
   translator: {
     title: 'AI অনুবাদক',
     subtitle: 'একাধিক ভাৰতীয় ভাষাত তৎক্ষণাৎ অনুবাদ কৰক',
-    
     tabs: {
       text: 'পাঠ',
       voice: 'কণ্ঠস্বৰ',
       image: 'চিত্ৰ',
+      ocr: 'OCR',
     },
-
     textTranslation: {
       sourceLanguage: 'উৎস ভাষা',
       targetLanguage: 'লক্ষ্য ভাষা',
@@ -173,14 +175,31 @@ export const as: TranslationKeys = {
       copy: 'প্ৰতিলিপি কৰক',
       copied: 'প্ৰতিলিপি কৰা হইছে!',
     },
-
     voiceTranslation: {
       startRecording: 'ৰেকৰ্ডিং আৰম্ভ কৰক',
       stopRecording: 'ৰেকৰ্ডিং বন্ধ কৰক',
       recording: 'ৰেকৰ্ড হৈ আছে...',
       processing: 'প্ৰক্ৰিয়াকৰণ হৈ আছে...',
+      listening: 'শুনি আছে...',
+      speak: 'এতিয়া কওক',
     },
-
+    imageTranslation: {
+      uploadImage: 'ছবি আপলোড কৰক',
+      takePhoto: 'ফটো লওক',
+      processing: 'ছবি প্ৰক্ৰিয়াকৰণ হৈ আছে...',
+      extracting: 'পাঠ উলিওৱা হৈ আছে...',
+      noTextFound: 'ছবিত কোনো পাঠ পোৱা নগ\'ল',
+      selectImage: 'পাঠ উলিয়াবলৈ এখন ছবি বাছনি কৰক',
+    },
+    ocrScanner: {
+      title: 'OCR পাঠ স্কেনাৰ',
+      subtitle: 'ছবিৰ পৰা পাঠ উলিয়াই অনুবাদ কৰক',
+      scanImage: 'ছবি স্কেন কৰক',
+      scanning: 'স্কেন হৈ আছে...',
+      extractedText: 'উলিওৱা পাঠ',
+      noText: 'কোনো পাঠ চিনাক্ত হোৱা নাই',
+      uploadOrCapture: 'এখন ছবি আপলোড কৰক বা লওক',
+    },
     quickPhrases: {
       title: 'দ্ৰুত বাক্যাংশ',
       greetings: 'নমস্কাৰ',
@@ -189,8 +208,6 @@ export const as: TranslationKeys = {
       directions: 'ক\'ত আছে...?',
     },
   },
-
-  // Dictionary
   dictionary: {
     title: 'ভাষা অভিধান',
     subtitle: 'ভাষাত শব্দ আৰু তেওঁলোকৰ অৰ্থ অন্বেষণ কৰক',
@@ -202,8 +219,6 @@ export const as: TranslationKeys = {
     examples: 'উদাহৰণ',
     relatedWords: 'সম্পৰ্কিত শব্দ',
   },
-
-  // Places
   places: {
     title: 'ঠাই বিচাৰক',
     subtitle: 'সমগ্ৰ ভাৰততে আচৰিত গন্তব্যসমূহ অন্বেষণ কৰক',
@@ -221,19 +236,18 @@ export const as: TranslationKeys = {
     getDirections: 'দিশ পাওক',
     addToTrip: 'যাত্ৰাত যোগ কৰক',
   },
-
-  // Settings
   settings: {
     title: 'ছেটিংছ',
     subtitle: 'আপোনাৰ পছন্দসমূহ পৰিচালনা কৰক',
-    
     account: {
       title: 'একাউণ্ট তথ্য',
       email: 'ইমেইল',
       username: 'ব্যৱহাৰকাৰী নাম',
       fullName: 'সম্পূৰ্ণ নাম',
+      homeCountry: 'নিজৰ দেশ',
+      emailCannotChange: 'ইমেইল সলনি কৰিব নোৱাৰি',
+      enterHomeCountry: 'আপোনাৰ দেশ লিখক',
     },
-
     preferences: {
       title: 'পছন্দসমূহ',
       language: 'ভাষা',
@@ -241,16 +255,42 @@ export const as: TranslationKeys = {
       lightMode: 'পোহৰ',
       darkMode: 'আন্ধাৰ',
       systemMode: 'ছিষ্টেম',
+      appearance: 'ৰূপ',
+      appearanceDescription: 'আপোনাৰ দৃশ্য অভিজ্ঞতা নিজৰ ইচ্ছামতে সজাওক',
+      preferredLanguage: 'পছন্দৰ ভাষা',
+      selectLanguage: 'আপোনাৰ পছন্দৰ ভাষা বাছনি কৰক',
     },
-
     notifications: {
       title: 'জাননী',
       email: 'ইমেইল জাননী',
       push: 'পুশ জাননী',
     },
-
+    privacy: {
+      title: 'গোপনীয়তা আৰু সুৰক্ষা',
+      description: 'আপোনাৰ একাউণ্টৰ সুৰক্ষা পৰিচালনা কৰক',
+      accountStatus: 'একাউণ্টৰ অৱস্থা',
+      verified: 'সত্যাপিত',
+      notVerified: 'সত্যাপিত নহয়',
+    },
     save: 'পৰিবৰ্তন সংৰক্ষণ কৰক',
     saving: 'সংৰক্ষণ হৈ আছে...',
     saved: 'ছেটিংছ সফলতাৰে সংৰক্ষিত হইছে!',
+    updateInfo: 'আপোনাৰ ব্যক্তিগত তথ্য আপডেট কৰক',
+  },
+  guide: {
+    title: 'ভ্ৰমণ গাইড',
+    subtitle: 'ভাৰত ভ্ৰমণৰ বাবে সাংস্কৃতিক অন্তৰ্দৃষ্টি আৰু ভ্ৰমণ পৰামৰ্শ',
+    culturalTips: 'সাংস্কৃতিক পৰামৰ্শ',
+    localCustoms: 'স্থানীয় ৰীতি-নীতি',
+    essentialPhrases: 'প্ৰয়োজনীয় বাক্য',
+    safetyTips: 'সুৰক্ষা পৰামৰ্শ',
+    transportation: 'পৰিবহণ',
+    cuisine: 'স্থানীয় খাদ্য',
+    attractions: 'অৱশ্যে চাব লগা স্থান',
+    etiquette: 'সাংস্কৃতিক শিষ্টাচাৰ',
+    festivals: 'উৎসৱ আৰু অনুষ্ঠান',
+    shopping: 'কিনা-কটা গাইড',
+    emergency: 'জৰুৰীকালীন যোগাযোগ',
+    weather: 'বতৰ আৰু ভ্ৰমণৰ উত্তম সময়',
   },
 };

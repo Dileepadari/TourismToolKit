@@ -1,105 +1,207 @@
 @import "tailwindcss";
 
+/* Tailwind v4 resolves `dark:` against prefers-color-scheme by default. The app
+   drives dark mode with a `.dark` class on <html> (see providers/ThemeProvider),
+   so the variant has to be redefined - v4 has no `darkMode: 'class'` option. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Design tokens.
+   Tailwind v4 no longer auto-detects tailwind.config.js, so the old JS config was
+   dead and ~650 class usages (bg-background, text-foreground, clay-*, shadow-soft…)
+   resolved to nothing. The palette lives here now, in the @theme block v4 reads. */
+/* Design tokens.
+   Tailwind v4 no longer auto-detects tailwind.config.js, so the palette lives
+   here, in the @theme block v4 reads.
+
+   Direction: a quiet travel palette - warm paper, ink, and earth tones borrowed
+   from terracotta, indigo dye and old maps. Flat fills and hairline borders
+   only; no gradients anywhere. */
+@theme {
+  /* Semantic colours bridge to the HSL triplets under :root / .dark below,
+     which is what lets one class follow the active theme. */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-info: hsl(var(--info));
+  --color-info-foreground: hsl(var(--info-foreground));
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  /* Terracotta - fired clay, the warm anchor of the palette. */
+  --color-clay-50: #fbf3ef;
+  --color-clay-100: #f5e2d9;
+  --color-clay-200: #e9c4b4;
+  --color-clay-300: #dba189;
+  --color-clay-400: #c87d62;
+  --color-clay-500: #b25c3e;
+  --color-clay-600: #9a4a30;
+  --color-clay-700: #7d3a26;
+  --color-clay-800: #5f2c1e;
+  --color-clay-900: #421f15;
+  --color-clay-950: #29130d;
+
+  /* Indigo - dye, deep water, evening. */
+  --color-indigo-ink-50: #eef1f6;
+  --color-indigo-ink-100: #d8dfeb;
+  --color-indigo-ink-200: #b0bed6;
+  --color-indigo-ink-300: #8399be;
+  --color-indigo-ink-400: #5b74a2;
+  --color-indigo-ink-500: #405784;
+  --color-indigo-ink-600: #33466b;
+  --color-indigo-ink-700: #283754;
+  --color-indigo-ink-800: #1d283d;
+  --color-indigo-ink-900: #141b29;
+  --color-indigo-ink-950: #0c1119;
+
+  /* Verdigris - aged copper, palm, sea. */
+  --color-verdigris-50: #eef4f2;
+  --color-verdigris-100: #d7e6e1;
+  --color-verdigris-200: #aecdc4;
+  --color-verdigris-300: #81aea2;
+  --color-verdigris-400: #588e80;
+  --color-verdigris-500: #3d7265;
+  --color-verdigris-600: #305c51;
+  --color-verdigris-700: #26493f;
+  --color-verdigris-800: #1b352e;
+  --color-verdigris-900: #12231e;
+  --color-verdigris-950: #0a1512;
+
+  /* Ochre - turmeric, sandstone, marigold. Used sparingly. */
+  --color-ochre-50: #fbf5e9;
+  --color-ochre-100: #f5e8cb;
+  --color-ochre-200: #ead099;
+  --color-ochre-300: #dbb466;
+  --color-ochre-400: #c9993f;
+  --color-ochre-500: #ad7f2c;
+  --color-ochre-600: #8d6624;
+  --color-ochre-700: #6f501f;
+  --color-ochre-800: #523b19;
+  --color-ochre-900: #382812;
+  --color-ochre-950: #21180b;
+
+  /* Shadows are barely there. Depth comes from borders, not glow. */
+  --shadow-soft: 0 1px 2px rgb(28 22 16 / 0.05);
+  --shadow-medium: 0 2px 6px rgb(28 22 16 / 0.07);
+  --shadow-strong: 0 6px 20px rgb(28 22 16 / 0.10);
+
+  --animate-fade-in: fadeIn 0.25s ease-out;
+  --animate-slide-in: slideIn 0.25s ease-out;
+  --animate-slide-up: slideUp 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes slideIn {
+  0% { transform: translateX(-8px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideUp {
+  0% { transform: translateY(8px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
 /* Base theme configuration */
 html {
-  /* Smooth transitions for theme changes */
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
   scroll-behavior: smooth;
 }
 
-/* Light theme (default) */
 :root {
-  /* Base colors */
-  --background: 0 0% 100%;
-  --foreground: 0 0% 5%;
-  
-  /* Surface colors */
+  /* Warm paper, not clinical white. */
+  --background: 36 33% 97%;
+  --foreground: 28 18% 12%;
+
   --card: 0 0% 100%;
-  --card-foreground: 0 0% 5%;
+  --card-foreground: 28 18% 12%;
   --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 5%;
-  
-  /* UI element colors */
-  --primary: 20 91% 54%; /* saffron-500 */
-  --primary-foreground: 0 0% 100%;
-  --secondary: 142 71% 45%; /* heritage-500 */
-  --secondary-foreground: 0 0% 100%;
-  --accent: 217 91% 60%; /* royal-500 */
-  --accent-foreground: 0 0% 100%;
-  
-  /* Muted colors */
-  --muted: 0 0% 96%;
-  --muted-foreground: 0 0% 40%;
-  
-  /* Border colors - increased contrast */
-  --border: 0 0% 85%;
-  --input: 0 0% 80%;
-  --ring: 20 91% 54%;
-  
-  /* Destructive/error colors */
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 100%;
-  
-  /* Success colors */
-  --success: 142 71% 45%;
-  --success-foreground: 0 0% 100%;
-  
-  /* Warning colors */
-  --warning: 38 92% 50%;
-  --warning-foreground: 0 0% 100%;
-  
-  /* Info colors */
-  --info: 217 91% 60%;
-  --info-foreground: 0 0% 100%;
-  
-  /* Radius */
+  --popover-foreground: 28 18% 12%;
+
+  /* Terracotta primary, indigo secondary, verdigris accent. */
+  --primary: 17 48% 47%;
+  --primary-foreground: 36 33% 97%;
+  --secondary: 219 35% 38%;
+  --secondary-foreground: 36 33% 97%;
+  --accent: 168 30% 34%;
+  --accent-foreground: 36 33% 97%;
+
+  --muted: 36 25% 93%;
+  --muted-foreground: 28 10% 40%;
+
+  --border: 32 20% 87%;
+  --input: 32 20% 84%;
+  --ring: 17 48% 47%;
+
+  --destructive: 4 55% 48%;
+  --destructive-foreground: 36 33% 97%;
+  --success: 155 35% 33%;
+  --success-foreground: 36 33% 97%;
+  --warning: 38 60% 44%;
+  --warning-foreground: 36 33% 97%;
+  --info: 219 35% 38%;
+  --info-foreground: 36 33% 97%;
+
   --radius: 0.5rem;
 }
 
-/* Dark theme */
 .dark {
-  /* Base colors */
-  --background: 0 0% 4%;
-  --foreground: 0 0% 98%;
-  
-  /* Surface colors */
-  --card: 0 0% 9%;
-  --card-foreground: 0 0% 98%;
-  --popover: 0 0% 9%;
-  --popover-foreground: 0 0% 98%;
-  
-  /* UI element colors */
-  --primary: 20 90% 61%; /* saffron-400 */
-  --primary-foreground: 0 0% 9%;
-  --secondary: 142 76% 59%; /* heritage-400 */
-  --secondary-foreground: 0 0% 9%;
-  --accent: 217 91% 69%; /* royal-400 */
-  --accent-foreground: 0 0% 9%;
-  
-  /* Muted colors */
-  --muted: 0 0% 15%;
-  --muted-foreground: 0 0% 70%;
-  
-  /* Border colors - increased contrast */
-  --border: 0 0% 25%;
-  --input: 0 0% 30%;
-  --ring: 20 90% 61%;
-  
-  /* Destructive/error colors */
-  --destructive: 0 72% 51%;
-  --destructive-foreground: 0 0% 93%;
-  
-  /* Success colors */
-  --success: 142 76% 36%;
-  --success-foreground: 0 0% 93%;
-  
-  /* Warning colors */
-  --warning: 32 95% 44%;
-  --warning-foreground: 0 0% 93%;
-  
-  /* Info colors */
-  --info: 217 91% 60%;
-  --info-foreground: 0 0% 93%;
+  /* Warm charcoal rather than pure black, so the palette stays in family. */
+  --background: 28 14% 8%;
+  --foreground: 36 25% 92%;
+
+  --card: 28 12% 11%;
+  --card-foreground: 36 25% 92%;
+  --popover: 28 12% 11%;
+  --popover-foreground: 36 25% 92%;
+
+  --primary: 17 52% 58%;
+  --primary-foreground: 28 20% 10%;
+  --secondary: 219 32% 62%;
+  --secondary-foreground: 28 20% 10%;
+  --accent: 168 26% 52%;
+  --accent-foreground: 28 20% 10%;
+
+  --muted: 28 10% 16%;
+  --muted-foreground: 36 12% 65%;
+
+  --border: 28 10% 22%;
+  --input: 28 10% 26%;
+  --ring: 17 52% 58%;
+
+  --destructive: 4 50% 55%;
+  --destructive-foreground: 28 20% 10%;
+  --success: 155 30% 48%;
+  --success-foreground: 28 20% 10%;
+  --warning: 38 55% 56%;
+  --warning-foreground: 28 20% 10%;
+  --info: 219 32% 62%;
+  --info-foreground: 28 20% 10%;
 }
 
 body {

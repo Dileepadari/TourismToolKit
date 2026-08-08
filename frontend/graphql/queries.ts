@@ -6,7 +6,6 @@ export const REGISTER_MUTATION = gql`
     register(input: $input) {
       success
       message
-      token
       user {
         id
         email
@@ -26,7 +25,6 @@ export const LOGIN_MUTATION = gql`
     login(input: $input) {
       success
       message
-      token
       user {
         id
         email
@@ -155,27 +153,31 @@ export const GET_PLACES_QUERY = gql`
   }
 `;
 
-// Dictionary
-export const GET_USER_DICTIONARY = gql`
-  query GetUserDictionary($userId: Int!, $languageFrom: String, $languageTo: String) {
-    getUserDictionary(userId: $userId, languageFrom: $languageFrom, languageTo: $languageTo) {
+export const GET_PLACE_BY_ID_QUERY = gql`
+  query GetPlaceById($placeId: Int!) {
+    getPlaceById(placeId: $placeId) {
       id
-      word
-      translation
-      languageFrom
-      languageTo
-      pronunciation
-      usageExample
-      tags
-      isFavorite
-      createdAt
+      name
+      description
+      country
+      state
+      city
+      latitude
+      longitude
+      category
+      images
+      languagesSpoken
+      bestTimeToVisit
+      entryFee
+      rating
     }
   }
 `;
 
-export const ADD_DICTIONARY_ENTRY_MUTATION = gql`
-  mutation AddDictionaryEntry($userId: Int!, $input: DictionaryInput!) {
-    addDictionaryEntry(userId: $userId, input: $input) {
+// Dictionary
+export const GET_USER_DICTIONARY = gql`
+  query GetUserDictionary($languageFrom: String, $languageTo: String) {
+    getUserDictionary(languageFrom: $languageFrom, languageTo: $languageTo) {
       id
       word
       translation
@@ -192,8 +194,8 @@ export const ADD_DICTIONARY_ENTRY_MUTATION = gql`
 
 // Travel History
 export const GET_TRAVEL_HISTORY = gql`
-  query GetTravelHistory($userId: Int!) {
-    getTravelHistory(userId: $userId) {
+  query GetTravelHistory {
+    getTravelHistory {
       id
       destination
       country
@@ -207,8 +209,8 @@ export const GET_TRAVEL_HISTORY = gql`
 `;
 
 export const ADD_TRAVEL_HISTORY_MUTATION = gql`
-  mutation AddTravelHistory($userId: Int!, $input: TravelHistoryInput!) {
-    addTravelHistory(userId: $userId, input: $input) {
+  mutation AddTravelHistory($input: TravelHistoryInput!) {
+    addTravelHistory(input: $input) {
       id
       destination
       country
@@ -246,33 +248,10 @@ export const GET_CULTURE_TIPS = gql`
   }
 `;
 
-// Phrases
-export const GET_EMERGENCY_PHRASES = gql`
-  query GetEmergencyPhrases($language: String!) {
-    getEmergencyPhrases(language: $language) {
-      phrases {
-        phrase
-        category
-      }
-    }
-  }
-`;
-
-export const GET_COMMON_PHRASES = gql`
-  query GetCommonPhrases($language: String!) {
-    getCommonPhrases(language: $language) {
-      phrases {
-        phrase
-        category
-      }
-    }
-  }
-`;
-
 // User Preferences
 export const UPDATE_USER_PREFERENCES_MUTATION = gql`
-  mutation UpdateUserPreferences($userId: Int!, $preferredLanguage: String, $preferredTheme: String) {
-    updateUserPreferences(userId: $userId, preferredLanguage: $preferredLanguage, preferredTheme: $preferredTheme) {
+  mutation UpdateUserPreferences($preferredLanguage: String, $preferredTheme: String) {
+    updateUserPreferences(preferredLanguage: $preferredLanguage, preferredTheme: $preferredTheme) {
       success
       message
     }
@@ -285,7 +264,6 @@ export const GET_DICTIONARY_ENTRIES = gql`
     $languageFrom: String
     $languageTo: String
     $searchWord: String
-    $userId: Int
     $isFavorite: Boolean
     $limit: Int
   ) {
@@ -293,7 +271,6 @@ export const GET_DICTIONARY_ENTRIES = gql`
       languageFrom: $languageFrom
       languageTo: $languageTo
       searchWord: $searchWord
-      userId: $userId
       isFavorite: $isFavorite
       limit: $limit
     ) {
@@ -316,13 +293,11 @@ export const SEARCH_DICTIONARY = gql`
     $query: String!
     $languageFrom: String!
     $languageTo: String!
-    $userId: Int
   ) {
     searchDictionary(
       query: $query
       languageFrom: $languageFrom
       languageTo: $languageTo
-      userId: $userId
     ) {
       id
       word
@@ -357,8 +332,8 @@ export const GET_DICTIONARY_ENTRY = gql`
 
 // Dictionary Mutations
 export const ADD_DICTIONARY_ENTRY = gql`
-  mutation AddDictionaryEntry($userId: Int!, $input: DictionaryInput!) {
-    addDictionaryEntry(userId: $userId, input: $input) {
+  mutation AddDictionaryEntry($input: DictionaryInput!) {
+    addDictionaryEntry(input: $input) {
       success
       message
       entry {
@@ -378,8 +353,8 @@ export const ADD_DICTIONARY_ENTRY = gql`
 `;
 
 export const UPDATE_DICTIONARY_ENTRY = gql`
-  mutation UpdateDictionaryEntry($entryId: Int!, $userId: Int!, $input: DictionaryInput!) {
-    updateDictionaryEntry(entryId: $entryId, userId: $userId, input: $input) {
+  mutation UpdateDictionaryEntry($entryId: Int!, $input: DictionaryInput!) {
+    updateDictionaryEntry(entryId: $entryId, input: $input) {
       success
       message
       entry {
@@ -399,8 +374,8 @@ export const UPDATE_DICTIONARY_ENTRY = gql`
 `;
 
 export const DELETE_DICTIONARY_ENTRY = gql`
-  mutation DeleteDictionaryEntry($entryId: Int!, $userId: Int!) {
-    deleteDictionaryEntry(entryId: $entryId, userId: $userId) {
+  mutation DeleteDictionaryEntry($entryId: Int!) {
+    deleteDictionaryEntry(entryId: $entryId) {
       success
       message
     }
@@ -408,14 +383,153 @@ export const DELETE_DICTIONARY_ENTRY = gql`
 `;
 
 export const TOGGLE_FAVORITE_ENTRY = gql`
-  mutation ToggleFavoriteEntry($entryId: Int!, $userId: Int!) {
-    toggleFavoriteEntry(entryId: $entryId, userId: $userId) {
+  mutation ToggleFavoriteEntry($entryId: Int!) {
+    toggleFavoriteEntry(entryId: $entryId) {
       success
       message
       entry {
         id
         isFavorite
       }
+    }
+  }
+`;
+
+// Session - tokens live in HttpOnly cookies, so these carry no credential.
+export const ME_QUERY = gql`
+  query Me {
+    me {
+      id
+      email
+      username
+      fullName
+      preferredLanguage
+      preferredTheme
+      homeCountry
+      isVerified
+    }
+  }
+`;
+
+export const REFRESH_SESSION_MUTATION = gql`
+  mutation RefreshSession {
+    refreshSession {
+      success
+      message
+      user {
+        id
+        email
+        username
+        fullName
+        preferredLanguage
+        preferredTheme
+        homeCountry
+        isVerified
+      }
+    }
+  }
+`;
+
+export const LOGOUT_MUTATION = gql`
+  mutation Logout($everywhere: Boolean) {
+    logout(everywhere: $everywhere) {
+      success
+      message
+      sessionsEnded
+    }
+  }
+`;
+
+export const REQUEST_PASSWORD_RESET_MUTATION = gql`
+  mutation RequestPasswordReset($email: String!) {
+    requestPasswordReset(email: $email) {
+      success
+      message
+    }
+  }
+`;
+
+export const RESET_PASSWORD_MUTATION = gql`
+  mutation ResetPassword($token: String!, $newPassword: String!) {
+    resetPassword(token: $token, newPassword: $newPassword) {
+      success
+      message
+    }
+  }
+`;
+
+// Saved places
+export const TOGGLE_FAVORITE_PLACE_MUTATION = gql`
+  mutation ToggleFavoritePlace($placeId: Int!) {
+    toggleFavoritePlace(placeId: $placeId) {
+      success
+      message
+      isFavorite
+    }
+  }
+`;
+
+export const GET_FAVORITE_PLACE_IDS = gql`
+  query GetFavoritePlaceIds {
+    getFavoritePlaceIds
+  }
+`;
+
+export const GET_FAVORITE_PLACES = gql`
+  query GetFavoritePlaces {
+    getFavoritePlaces {
+      id
+      name
+      description
+      country
+      state
+      city
+      category
+      rating
+      images
+    }
+  }
+`;
+
+// Profile
+export const UPDATE_PROFILE_MUTATION = gql`
+  mutation UpdateProfile($fullName: String, $homeCountry: String) {
+    updateProfile(fullName: $fullName, homeCountry: $homeCountry) {
+      success
+      message
+      user {
+        id
+        email
+        username
+        fullName
+        homeCountry
+        preferredLanguage
+        preferredTheme
+        isVerified
+      }
+    }
+  }
+`;
+
+// Travel history
+export const DELETE_TRAVEL_HISTORY_MUTATION = gql`
+  mutation DeleteTravelHistory($entryId: Int!) {
+    deleteTravelHistory(entryId: $entryId) {
+      success
+      message
+    }
+  }
+`;
+
+// Sessions
+export const GET_ACTIVE_SESSIONS = gql`
+  query GetActiveSessions {
+    getActiveSessions {
+      id
+      userAgent
+      createdAt
+      expiresAt
+      isCurrent
     }
   }
 `;

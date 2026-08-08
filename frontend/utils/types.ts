@@ -3,11 +3,12 @@ export interface User {
   id: number;
   email: string;
   username: string;
-  fullName?: string;
+  // `| null` because GraphQL sends null, not undefined, for absent optionals.
+  fullName?: string | null;
   preferredLanguage: string;
   preferredTheme: string;
-  homeCountry?: string;
-  isVerified: boolean;
+  homeCountry?: string | null;
+  isVerified?: boolean;
 }
 
 export interface AuthResponse {

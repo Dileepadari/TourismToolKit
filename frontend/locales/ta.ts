@@ -2,13 +2,13 @@
 import { TranslationKeys } from './en';
 
 export const ta: TranslationKeys = {
-  // Navigation
   nav: {
     home: 'முகப்பு',
     dashboard: 'டாஷ்போர்டு',
     translator: 'மொழிபெயர்ப்பாளர்',
     dictionary: 'அகராதி',
     places: 'இடங்கள்',
+    trips: 'பயணங்கள்',
     guide: 'வழிகாட்டி',
     settings: 'அமைப்புகள்',
     login: 'உள்நுழை',
@@ -17,8 +17,6 @@ export const ta: TranslationKeys = {
     backToHome: 'முகப்புக்குத் திரும்பு',
     backToDashboard: 'டாஷ்போர்டுக்குத் திரும்பு',
   },
-
-  // Common
   common: {
     welcome: 'வரவேற்கிறோம்',
     search: 'தேடு',
@@ -40,16 +38,12 @@ export const ta: TranslationKeys = {
     darkMode: 'இருண்ட பயன்முறை',
     lightMode: 'ஒளி பயன்முறை',
   },
-
-  // Home Page
   home: {
     title: 'உங்கள் இறுதி பயண துணை',
     subtitle: 'AI-ஆல் இயங்கும் மொழிபெயர்ப்பு, உள்ளூர் நுண்ணறிவுகள் மற்றும் தனிப்பயனாக்கப்பட்ட பரிந்துரைகளுடன் மொழி தடைகளை உடைக்கவும், மறைக்கப்பட்ட ரத்தினங்களைக் கண்டறியவும், இந்தியாவை முன்பு எப்போதும் இல்லாத வகையில் ஆராயவும்.',
     getStarted: 'இலவசமாகத் தொடங்குங்கள்',
     signIn: 'உள்நுழைக',
     poweredBy: 'TourismToolKit மூலம் இயக்கப்படுகிறது',
-    
-    // Features
     features: {
       title: 'ஒவ்வொரு பயணிக்கும் சக்திவாய்ந்த அம்சங்கள்',
       subtitle: 'நேரடி மொழிபெயர்ப்பு முதல் உள்ளூர் கண்டுபிடிப்பு வரை, எங்கள் கருவித்தொகுப்பு நம்பிக்கையுடன் ஆராய உங்களுக்கு அதிகாரம் அளிக்கிறது',
@@ -70,24 +64,18 @@ export const ta: TranslationKeys = {
         description: 'உங்கள் விருப்பத்தேர்வுகள் மற்றும் இருப்பிடத்தின் அடிப்படையில் தனிப்பயனாக்கப்பட்ட பரிந்துரைகள்',
       },
     },
-
-    // Stats
     stats: {
       languages: 'ஆதரிக்கப்படும் மொழிகள்',
       places: 'உள்ளடக்கப்பட்ட இடங்கள்',
       translations: 'செய்யப்பட்ட மொழிபெயர்ப்புகள்',
       travelers: 'மகிழ்ச்சியான பயணிகள்',
     },
-
-    // CTA
     cta: {
       title: 'இந்தியாவை ஆராய தயாரா?',
       subtitle: 'தங்கள் இந்திய சாகசங்களுக்காக TourismToolKit ஐ நம்பும் ஆயிரக்கணக்கான பயணிகளுடன் சேரவும். இன்றே உங்கள் பயணத்தைத் தொடங்குங்கள்!',
       button: 'உங்கள் பயணத்தைத் தொடங்குங்கள்',
     },
   },
-
-  // Auth
   auth: {
     login: {
       title: 'மீண்டும் வரவேற்கிறோம்',
@@ -118,50 +106,63 @@ export const ta: TranslationKeys = {
       signIn: 'உள்நுழைக',
     },
   },
-
-  // Dashboard
   dashboard: {
     title: 'பயண டாஷ்போர்டு',
     subtitle: 'உங்கள் தனிப்பயனாக்கப்பட்ட பயண துணை',
     welcome: 'மீண்டும் வரவேற்கிறோம்',
     loading: 'உங்கள் பயண டாஷ்போர்டு ஏற்றப்படுகிறது...',
-    
     quickActions: {
       title: 'விரைவு செயல்கள்',
       translate: 'இப்போது மொழிபெயர்க்கவும்',
+      ocrScanner: 'OCR ஸ்கேனர்',
+      ocrDescription: 'படங்களிலிருந்து உடனடியாக உரையை எடுக்கவும்',
+      voiceAssistant: 'குரல் உதவியாளர்',
+      voiceDescription: 'பேச்சிலிருந்து உரை உரையாடல்கள்',
       findPlaces: 'இடங்களைக் கண்டறியவும்',
       learnWords: 'சொற்களைக் கற்றுக்கொள்ளவும்',
+      travelGuide: 'பயண வழிகாட்டி',
+      guideDescription: 'கலாச்சார குறிப்புகள் மற்றும் நுண்ணறிவு',
     },
-
     stats: {
       translations: 'மொழிபெயர்ப்புகள்',
       placesVisited: 'பார்வையிட்ட இடங்கள்',
       wordsLearned: 'கற்றுக்கொண்ட சொற்கள்',
       tripsPlanned: 'திட்டமிடப்பட்ட பயணங்கள்',
+      favorites: 'பிடித்தவை',
+      countries: 'நாடுகள்',
     },
-
     recentActivity: {
       title: 'சமீபத்திய செயல்பாடு',
       noActivity: 'சமீபத்திய செயல்பாடு இல்லை',
     },
-
     recommendedPlaces: {
       title: 'பரிந்துரைக்கப்பட்ட இடங்கள்',
       viewAll: 'அனைத்து இடங்களையும் காண்க',
     },
+    featuredPlaces: {
+      title: 'சிறப்பு இடங்கள்',
+      symbolOfLove: 'நித்திய அன்பின் சின்னம்',
+      holisticCity: 'இந்தியாவின் ஆன்மீக தலைநகரம்',
+      techHub: 'இந்தியாவின் சிலிக்கான் பள்ளத்தாக்கு',
+      pinkCity: 'இளஞ்சிவப்பு நகரம்',
+      heritage: 'பாரம்பரியம்',
+      spiritual: 'ஆன்மீகம்',
+      modern: 'நவீனம்',
+      historical: 'வரலாற்று',
+      visitors: 'பார்வையாளர்கள்',
+      languages: 'மொழிகள்',
+      rating: 'மதிப்பீடு',
+    },
   },
-
-  // Translator
   translator: {
     title: 'AI மொழிபெயர்ப்பாளர்',
     subtitle: 'பல இந்திய மொழிகளில் உடனடியாக மொழிபெயர்க்கவும்',
-    
     tabs: {
       text: 'உரை',
       voice: 'குரல்',
       image: 'படம்',
+      ocr: 'OCR',
     },
-
     textTranslation: {
       sourceLanguage: 'மூல மொழி',
       targetLanguage: 'இலக்கு மொழி',
@@ -174,14 +175,31 @@ export const ta: TranslationKeys = {
       copy: 'நகலெடு',
       copied: 'நகலெடுக்கப்பட்டது!',
     },
-
     voiceTranslation: {
       startRecording: 'பதிவைத் தொடங்கு',
       stopRecording: 'பதிவை நிறுத்து',
       recording: 'பதிவு செய்கிறது...',
       processing: 'செயலாக்குகிறது...',
+      listening: 'கேட்கிறது...',
+      speak: 'இப்போது பேசுங்கள்',
     },
-
+    imageTranslation: {
+      uploadImage: 'படத்தை பதிவேற்றவும்',
+      takePhoto: 'புகைப்படம் எடுக்கவும்',
+      processing: 'படம் செயலாக்கப்படுகிறது...',
+      extracting: 'உரை எடுக்கப்படுகிறது...',
+      noTextFound: 'படத்தில் உரை எதுவும் இல்லை',
+      selectImage: 'உரையை எடுக்க ஒரு படத்தைத் தேர்ந்தெடுக்கவும்',
+    },
+    ocrScanner: {
+      title: 'OCR உரை ஸ்கேனர்',
+      subtitle: 'படங்களிலிருந்து உரையை எடுத்து மொழிபெயர்க்கவும்',
+      scanImage: 'படத்தை ஸ்கேன் செய்யவும்',
+      scanning: 'ஸ்கேன் செய்யப்படுகிறது...',
+      extractedText: 'எடுக்கப்பட்ட உரை',
+      noText: 'உரை எதுவும் கண்டறியப்படவில்லை',
+      uploadOrCapture: 'ஒரு படத்தை பதிவேற்றவும் அல்லது எடுக்கவும்',
+    },
     quickPhrases: {
       title: 'விரைவு சொற்றொடர்கள்',
       greetings: 'வணக்கம்',
@@ -190,8 +208,6 @@ export const ta: TranslationKeys = {
       directions: 'எங்கே உள்ளது...?',
     },
   },
-
-  // Dictionary
   dictionary: {
     title: 'மொழி அகராதி',
     subtitle: 'மொழிகளில் சொற்கள் மற்றும் அவற்றின் அர்த்தங்களை ஆராயுங்கள்',
@@ -203,8 +219,6 @@ export const ta: TranslationKeys = {
     examples: 'எடுத்துக்காட்டுகள்',
     relatedWords: 'தொடர்புடைய சொற்கள்',
   },
-
-  // Places
   places: {
     title: 'இடங்களைக் கண்டறியவும்',
     subtitle: 'இந்தியா முழுவதும் அற்புதமான இடங்களை ஆராயுங்கள்',
@@ -222,19 +236,18 @@ export const ta: TranslationKeys = {
     getDirections: 'திசைகளைப் பெறுக',
     addToTrip: 'பயணத்தில் சேர்க்கவும்',
   },
-
-  // Settings
   settings: {
     title: 'அமைப்புகள்',
     subtitle: 'உங்கள் விருப்பத்தேர்வுகளை நிர்வகிக்கவும்',
-    
     account: {
       title: 'கணக்கு தகவல்',
       email: 'மின்னஞ்சல்',
       username: 'பயனர்பெயர்',
       fullName: 'முழுப் பெயர்',
+      homeCountry: 'சொந்த நாடு',
+      emailCannotChange: 'மின்னஞ்சலை மாற்ற முடியாது',
+      enterHomeCountry: 'உங்கள் நாட்டை உள்ளிடவும்',
     },
-
     preferences: {
       title: 'விருப்பத்தேர்வுகள்',
       language: 'மொழி',
@@ -242,16 +255,42 @@ export const ta: TranslationKeys = {
       lightMode: 'ஒளி',
       darkMode: 'இருண்ட',
       systemMode: 'கணினி',
+      appearance: 'தோற்றம்',
+      appearanceDescription: 'உங்கள் காட்சி அனுபவத்தைத் தனிப்பயனாக்கவும்',
+      preferredLanguage: 'விருப்ப மொழி',
+      selectLanguage: 'உங்கள் விருப்ப மொழியைத் தேர்ந்தெடுக்கவும்',
     },
-
     notifications: {
       title: 'அறிவிப்புகள்',
       email: 'மின்னஞ்சல் அறிவிப்புகள்',
       push: 'புஷ் அறிவிப்புகள்',
     },
-
+    privacy: {
+      title: 'தனியுரிமை மற்றும் பாதுகாப்பு',
+      description: 'உங்கள் கணக்கின் பாதுகாப்பை நிர்வகிக்கவும்',
+      accountStatus: 'கணக்கு நிலை',
+      verified: 'சரிபார்க்கப்பட்டது',
+      notVerified: 'சரிபார்க்கப்படவில்லை',
+    },
     save: 'மாற்றங்களைச் சேமி',
     saving: 'சேமிக்கிறது...',
     saved: 'அமைப்புகள் வெற்றிகரமாகச் சேமிக்கப்பட்டன!',
+    updateInfo: 'உங்கள் தனிப்பட்ட தகவலைப் புதுப்பிக்கவும்',
+  },
+  guide: {
+    title: 'பயண வழிகாட்டி',
+    subtitle: 'இந்தியாவை ஆராய கலாச்சார நுண்ணறிவு மற்றும் பயணக் குறிப்புகள்',
+    culturalTips: 'கலாச்சார குறிப்புகள்',
+    localCustoms: 'உள்ளூர் பழக்கவழக்கங்கள்',
+    essentialPhrases: 'அத்தியாவசிய சொற்றொடர்கள்',
+    safetyTips: 'பாதுகாப்பு குறிப்புகள்',
+    transportation: 'போக்குவரத்து',
+    cuisine: 'உள்ளூர் உணவு',
+    attractions: 'கண்டிப்பாக பார்க்க வேண்டிய இடங்கள்',
+    etiquette: 'கலாச்சார நாகரிகம்',
+    festivals: 'விழாக்கள் மற்றும் நிகழ்வுகள்',
+    shopping: 'ஷாப்பிங் வழிகாட்டி',
+    emergency: 'அவசர தொடர்புகள்',
+    weather: 'வானிலை மற்றும் பார்வையிட சிறந்த நேரம்',
   },
 };

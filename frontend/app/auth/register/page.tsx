@@ -1,11 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { useMutation } from '@apollo/client';
-import { useRouter } from 'next/navigation';
+import { motion } from 'motion/react';
+import type { RegisterData, RegisterVars } from '@/graphql/types';
+import { useMutation } from '@apollo/client/react';
+import { useAuth } from '@/providers/AuthProvider';
 import Link from 'next/link';
-import { Eye, EyeOff, Globe, ArrowLeft, User, Mail, Lock, MapPin } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft, User, Mail, Lock, MapPin } from 'lucide-react';
+import { Logo } from '@/components/ui/Logo';
 import { REGISTER_MUTATION } from '@/graphql/queries';
 import toast from 'react-hot-toast';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -24,9 +26,8 @@ export default function Register() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
-  const router = useRouter();
-  const [registerMutation] = useMutation(REGISTER_MUTATION);
+  const { onSignedIn } = useAuth();
+  const [registerMutation] = useMutation<RegisterData, RegisterVars>(REGISTER_MUTATION);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,15 +54,15 @@ export default function Register() {
         }
       });
 
-      if (data.register.success) {
-        // Store token and user data
-        localStorage.setItem('authToken', data.register.token);
-        localStorage.setItem('user', JSON.stringify(data.register.user));
-        
+      // `data` is undefined when the mutation errors.
+      const result = data?.register;
+
+      if (result?.success && result.user) {
+        // Session cookies are set by the response; nothing to store client-side.
+        onSignedIn(result.user);
         toast.success('Registration successful! Welcome to TourismToolKit!');
-        router.push('/dashboard');
       } else {
-        toast.error(data.register.message || 'Registration failed');
+        toast.error(result?.message || 'Registration failed');
       }
     } catch (error) {
       toast.error('An error occurred during registration');
@@ -101,18 +102,14 @@ export default function Register() {
       {/* Header */}
       <div className="flex items-center justify-between p-6">
         <Link 
-          href="/"
-          className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
-        >
+          href="/"className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="w-5 h-5" />
           <span>{t('nav.backToHome')}</span>
         </Link>
         
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-gradient-to-r from-primary to-accent rounded-lg flex items-center justify-center">
-            <Globe className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <Logo size={32} />
+          <span className="text-xl font-bold text-foreground">
             {t('home.poweredBy')}
           </span>
         </div>
@@ -124,8 +121,7 @@ export default function Register() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="max-w-md w-full space-y-8"
-        >
+          className="max-w-md w-full space-y-8">
           <div>
             <h2 className="text-center text-3xl font-bold text-foreground">
               {t('auth.register.title')}
@@ -145,13 +141,9 @@ export default function Register() {
                     {t('auth.register.fullName')}
                   </label>
                   <input
-                    id="fullName"
-                    name="fullName"
-                    type="text"
-                    value={formData.fullName}
+                    id="fullName"name="fullName"type="text"value={formData.fullName}
                     onChange={handleChange}
-                    className="mt-1 block w-full px-3 py-3 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                    placeholder={t('auth.register.fullName')}
+                    className="mt-1 block w-full px-3 py-3 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"placeholder={t('auth.register.fullName')}
                   />
                 </div>
 
@@ -160,14 +152,10 @@ export default function Register() {
                     {t('auth.register.username')}
                   </label>
                   <input
-                    id="username"
-                    name="username"
-                    type="text"
-                    required
+                    id="username"name="username"type="text"required
                     value={formData.username}
                     onChange={handleChange}
-                    className="mt-1 block w-full px-3 py-3 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                    placeholder={t('auth.register.username')}
+                    className="mt-1 block w-full px-3 py-3 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"placeholder={t('auth.register.username')}
                   />
                 </div>
 
@@ -177,14 +165,10 @@ export default function Register() {
                     {t('auth.register.email')}
                   </label>
                   <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
+                    id="email"name="email"type="email"required
                     value={formData.email}
                     onChange={handleChange}
-                    className="mt-1 block w-full px-3 py-3 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                    placeholder={t('auth.register.email')}
+                    className="mt-1 block w-full px-3 py-3 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"placeholder={t('auth.register.email')}
                   />
                 </div>
 
@@ -195,19 +179,14 @@ export default function Register() {
                   </label>
                   <div className="mt-1 relative">
                     <input
-                      id="password"
-                      name="password"
-                      type={showPassword ? "text" : "password"}
+                      id="password"name="password"type={showPassword ? "text" : "password"}
                       required
                       value={formData.password}
                       onChange={handleChange}
-                      className="block w-full px-3 py-3 pr-12 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                      placeholder={t('auth.register.password')}
+                      className="block w-full px-3 py-3 pr-12 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"placeholder={t('auth.register.password')}
                     />
                     <button
-                      type="button"
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                      onClick={() => setShowPassword(!showPassword)}
+                      type="button"className="absolute inset-y-0 right-0 pr-3 flex items-center"onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? (
                         <EyeOff className="h-5 w-5 text-muted-foreground" />
@@ -223,14 +202,10 @@ export default function Register() {
                     {t('auth.register.confirmPassword')}
                   </label>
                   <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    required
+                    id="confirmPassword"name="confirmPassword"type="password"required
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="mt-1 block w-full px-3 py-3 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                    placeholder={t('auth.register.confirmPassword')}
+                    className="mt-1 block w-full px-3 py-3 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"placeholder={t('auth.register.confirmPassword')}
                   />
                 </div>
 
@@ -240,12 +215,9 @@ export default function Register() {
                     {t('auth.register.homeCountry')}
                   </label>
                   <select
-                    id="homeCountry"
-                    name="homeCountry"
-                    value={formData.homeCountry}
+                    id="homeCountry"name="homeCountry"value={formData.homeCountry}
                     onChange={handleChange}
-                    className="mt-1 block w-full px-3 py-3 border border-input rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                  >
+                    className="mt-1 block w-full px-3 py-3 border border-input rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring">
                     {countries.map(country => (
                       <option key={country} value={country}>{country}</option>
                     ))}
@@ -257,12 +229,9 @@ export default function Register() {
                     {t('auth.register.preferredLanguage')}
                   </label>
                   <select
-                    id="preferredLanguage"
-                    name="preferredLanguage"
-                    value={formData.preferredLanguage}
+                    id="preferredLanguage"name="preferredLanguage"value={formData.preferredLanguage}
                     onChange={handleChange}
-                    className="mt-1 block w-full px-3 py-3 border border-input rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                  >
+                    className="mt-1 block w-full px-3 py-3 border border-input rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring">
                     {languages.map(lang => (
                       <option key={lang.code} value={lang.code}>{lang.name}</option>
                     ))}
@@ -272,10 +241,8 @@ export default function Register() {
 
               <div>
                 <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-foreground bg-gradient-to-r from-primary to-accent hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
-                >
+                  type="submit"disabled={isLoading}
+                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-foreground bg-primary hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed">
                   {isLoading ? t('auth.register.creatingAccount') : t('auth.register.createAccount')}
                 </button>
               </div>
@@ -284,9 +251,7 @@ export default function Register() {
                 <span className="text-sm text-muted-foreground">
                   {t('auth.register.haveAccount')}{' '}
                   <Link 
-                    href="/auth/login"
-                    className="font-medium text-primary hover:text-primary/80"
-                  >
+                    href="/auth/login"className="font-medium text-primary hover:text-primary/80">
                     {t('auth.register.signIn')}
                   </Link>
                 </span>

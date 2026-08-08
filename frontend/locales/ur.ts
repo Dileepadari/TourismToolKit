@@ -2,13 +2,14 @@
 import { TranslationKeys } from './en';
 
 export const ur: TranslationKeys = {
-  // Navigation
   nav: {
     home: 'ہوم',
     dashboard: 'ڈیش بورڈ',
     translator: 'مترجم',
     dictionary: 'لغت',
     places: 'مقامات',
+    trips: 'سفر',
+    guide: 'گائیڈ',
     settings: 'ترتیبات',
     login: 'لاگ ان',
     register: 'رجسٹر',
@@ -16,8 +17,6 @@ export const ur: TranslationKeys = {
     backToHome: 'ہوم پر واپس جائیں',
     backToDashboard: 'ڈیش بورڈ پر واپس جائیں',
   },
-
-  // Common
   common: {
     welcome: 'خوش آمدید',
     search: 'تلاش کریں',
@@ -39,16 +38,12 @@ export const ur: TranslationKeys = {
     darkMode: 'ڈارک موڈ',
     lightMode: 'لائٹ موڈ',
   },
-
-  // Home Page
   home: {
     title: 'آپ کا حتمی سفری ساتھی',
     subtitle: 'AI سے چلنے والے ترجمے، مقامی بصیرت اور ذاتی سفارشات کے ساتھ زبان کی رکاوٹوں کو توڑیں، چھپے ہوئے جواہرات دریافت کریں اور ہندوستان کو ایسے انداز میں دریافت کریں جیسے پہلے کبھی نہیں کیا۔',
     getStarted: 'مفت شروع کریں',
     signIn: 'سائن ان کریں',
     poweredBy: 'TourismToolKit کے ذریعے فراہم کردہ',
-    
-    // Features
     features: {
       title: 'ہر مسافر کے لیے طاقتور خصوصیات',
       subtitle: 'حقیقی وقت کے ترجمے سے لے کر مقامی دریافت تک، ہماری ٹول کٹ آپ کو اعتماد کے ساتھ دریافت کرنے کی طاقت دیتی ہے',
@@ -69,24 +64,18 @@ export const ur: TranslationKeys = {
         description: 'آپ کی ترجیحات اور مقام کی بنیاد پر ذاتی سفارشات',
       },
     },
-
-    // Stats
     stats: {
       languages: 'معاون زبانیں',
       places: 'شامل مقامات',
       translations: 'مکمل شدہ ترجمے',
       travelers: 'خوش مسافر',
     },
-
-    // CTA
     cta: {
       title: 'ہندوستان کی تلاش کے لیے تیار ہیں؟',
       subtitle: 'ہزاروں مسافروں کے ساتھ شامل ہوں جو اپنی ہندوستانی مہم جوئی کے لیے TourismToolKit پر بھروسہ کرتے ہیں۔ آج ہی اپنا سفر شروع کریں!',
       button: 'اپنا سفر شروع کریں',
     },
   },
-
-  // Auth
   auth: {
     login: {
       title: 'واپس خوش آمدید',
@@ -117,50 +106,63 @@ export const ur: TranslationKeys = {
       signIn: 'سائن ان کریں',
     },
   },
-
-  // Dashboard
   dashboard: {
     title: 'سفری ڈیش بورڈ',
     subtitle: 'آپ کا ذاتی سفری ساتھی',
     welcome: 'واپس خوش آمدید',
     loading: 'آپ کا سفری ڈیش بورڈ لوڈ ہو رہا ہے...',
-    
     quickActions: {
       title: 'فوری اقدامات',
       translate: 'ابھی ترجمہ کریں',
+      ocrScanner: 'OCR اسکینر',
+      ocrDescription: 'تصاویر سے فوری طور پر متن نکالیں',
+      voiceAssistant: 'صوتی معاون',
+      voiceDescription: 'تقریر سے متن گفتگو',
       findPlaces: 'مقامات تلاش کریں',
       learnWords: 'الفاظ سیکھیں',
+      travelGuide: 'سفری گائیڈ',
+      guideDescription: 'ثقافتی تجاویز اور معلومات',
     },
-
     stats: {
       translations: 'ترجمے',
       placesVisited: 'دورہ کردہ مقامات',
       wordsLearned: 'سیکھے گئے الفاظ',
       tripsPlanned: 'منصوبہ بند سفر',
+      favorites: 'پسندیدہ',
+      countries: 'ممالک',
     },
-
     recentActivity: {
       title: 'حالیہ سرگرمی',
       noActivity: 'کوئی حالیہ سرگرمی نہیں',
     },
-
     recommendedPlaces: {
       title: 'تجویز کردہ مقامات',
       viewAll: 'تمام مقامات دیکھیں',
     },
+    featuredPlaces: {
+      title: 'نمایاں مقامات',
+      symbolOfLove: 'ابدی محبت کی علامت',
+      holisticCity: 'بھارت کا روحانی دارالحکومت',
+      techHub: 'بھارت کی سلیکون ویلی',
+      pinkCity: 'گلابی شہر',
+      heritage: 'ورثہ',
+      spiritual: 'روحانی',
+      modern: 'جدید',
+      historical: 'تاریخی',
+      visitors: 'زائرین',
+      languages: 'زبانیں',
+      rating: 'درجہ بندی',
+    },
   },
-
-  // Translator
   translator: {
     title: 'AI مترجم',
     subtitle: 'متعدد ہندوستانی زبانوں میں فوری ترجمہ کریں',
-    
     tabs: {
       text: 'متن',
       voice: 'آواز',
       image: 'تصویر',
+      ocr: 'OCR',
     },
-
     textTranslation: {
       sourceLanguage: 'ماخذ زبان',
       targetLanguage: 'ہدف زبان',
@@ -173,14 +175,31 @@ export const ur: TranslationKeys = {
       copy: 'کاپی کریں',
       copied: 'کاپی ہو گیا!',
     },
-
     voiceTranslation: {
       startRecording: 'ریکارڈنگ شروع کریں',
       stopRecording: 'ریکارڈنگ بند کریں',
       recording: 'ریکارڈ ہو رہا ہے...',
       processing: 'پروسیس ہو رہا ہے...',
+      listening: 'سن رہا ہے...',
+      speak: 'اب بولیں',
     },
-
+    imageTranslation: {
+      uploadImage: 'تصویر اپ لوڈ کریں',
+      takePhoto: 'تصویر لیں',
+      processing: 'تصویر پر کارروائی ہو رہی ہے...',
+      extracting: 'متن نکالا جا رہا ہے...',
+      noTextFound: 'تصویر میں کوئی متن نہیں ملا',
+      selectImage: 'متن نکالنے کے لیے تصویر منتخب کریں',
+    },
+    ocrScanner: {
+      title: 'OCR متن اسکینر',
+      subtitle: 'تصاویر سے متن نکالیں اور ترجمہ کریں',
+      scanImage: 'تصویر اسکین کریں',
+      scanning: 'اسکین ہو رہا ہے...',
+      extractedText: 'نکالا گیا متن',
+      noText: 'کوئی متن نہیں ملا',
+      uploadOrCapture: 'تصویر اپ لوڈ کریں یا لیں',
+    },
     quickPhrases: {
       title: 'فوری جملے',
       greetings: 'السلام علیکم',
@@ -189,8 +208,6 @@ export const ur: TranslationKeys = {
       directions: 'کہاں ہے...؟',
     },
   },
-
-  // Dictionary
   dictionary: {
     title: 'زبان کی لغت',
     subtitle: 'زبانوں میں الفاظ اور ان کے معنی دریافت کریں',
@@ -202,8 +219,6 @@ export const ur: TranslationKeys = {
     examples: 'مثالیں',
     relatedWords: 'متعلقہ الفاظ',
   },
-
-  // Places
   places: {
     title: 'مقامات تلاش کریں',
     subtitle: 'پورے ہندوستان میں حیرت انگیز مقامات دریافت کریں',
@@ -221,19 +236,18 @@ export const ur: TranslationKeys = {
     getDirections: 'سمتیں حاصل کریں',
     addToTrip: 'سفر میں شامل کریں',
   },
-
-  // Settings
   settings: {
     title: 'ترتیبات',
     subtitle: 'اپنی ترجیحات کا نظم کریں',
-    
     account: {
       title: 'اکاؤنٹ کی معلومات',
       email: 'ای میل',
       username: 'صارف نام',
       fullName: 'پورا نام',
+      homeCountry: 'آبائی ملک',
+      emailCannotChange: 'ای میل تبدیل نہیں کی جا سکتی',
+      enterHomeCountry: 'اپنا ملک درج کریں',
     },
-
     preferences: {
       title: 'ترجیحات',
       language: 'زبان',
@@ -241,16 +255,42 @@ export const ur: TranslationKeys = {
       lightMode: 'روشنی',
       darkMode: 'تاریکی',
       systemMode: 'سسٹم',
+      appearance: 'ظاہری شکل',
+      appearanceDescription: 'اپنے بصری تجربے کو اپنی مرضی کے مطابق بنائیں',
+      preferredLanguage: 'پسندیدہ زبان',
+      selectLanguage: 'اپنی پسندیدہ زبان منتخب کریں',
     },
-
     notifications: {
       title: 'اطلاعات',
       email: 'ای میل اطلاعات',
       push: 'پش اطلاعات',
     },
-
+    privacy: {
+      title: 'رازداری اور سلامتی',
+      description: 'اپنے اکاؤنٹ کی سلامتی کا انتظام کریں',
+      accountStatus: 'اکاؤنٹ کی حالت',
+      verified: 'تصدیق شدہ',
+      notVerified: 'تصدیق شدہ نہیں',
+    },
     save: 'تبدیلیاں محفوظ کریں',
     saving: 'محفوظ ہو رہا ہے...',
     saved: 'ترتیبات کامیابی سے محفوظ ہو گئیں!',
+    updateInfo: 'اپنی ذاتی معلومات اپ ڈیٹ کریں',
+  },
+  guide: {
+    title: 'سفری گائیڈ',
+    subtitle: 'بھارت کی سیر کے لیے ثقافتی معلومات اور سفری تجاویز',
+    culturalTips: 'ثقافتی تجاویز',
+    localCustoms: 'مقامی رسم و رواج',
+    essentialPhrases: 'ضروری جملے',
+    safetyTips: 'حفاظتی تجاویز',
+    transportation: 'نقل و حمل',
+    cuisine: 'مقامی کھانا',
+    attractions: 'ضرور دیکھنے کے مقامات',
+    etiquette: 'ثقافتی آداب',
+    festivals: 'تہوار اور تقریبات',
+    shopping: 'خریداری گائیڈ',
+    emergency: 'ہنگامی رابطے',
+    weather: 'موسم اور سیر کا بہترین وقت',
   },
 };
