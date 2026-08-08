@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import logging
+
 import pytest
 from pydantic import ValidationError
 
@@ -94,6 +96,37 @@ def test_cors_origins_defaults_match_the_previously_hardcoded_list():
     origins = make_settings().cors_origins
     assert "http://localhost:3000" in origins
     assert "https://tourism-toolkit.vercel.app" in origins
+    assert "https://tourism-toolkit-backend.vercel.app" in origins
+
+
+def test_cors_origin_keeps_only_the_origin_part_of_a_url():
+    """An `Origin` header is scheme://host[:port]; a configured path matches nothing.
+
+    Pasting the endpoint URL is the natural mistake, and left as-is it produces a
+    CORS failure with no clue in the logs.
+    """
+    settings = make_settings(CORS_ORIGINS="https://api.test/graphql, https://b.test/")
+    assert settings.cors_origins == ["https://api.test", "https://b.test"]
+
+
+def test_cors_origin_warns_when_it_drops_a_path(caplog):
+    # Attached to the emitting logger rather than relying on caplog's root
+    # handler: `configure_logging` runs dictConfig, which *replaces* root's
+    # handler list and drops pytest's capture handler, and it sets
+    # propagate=False on `app`. Either alone makes this pass or fail on test
+    # order. This holds regardless of what has configured logging already.
+    emitter = logging.getLogger("app.core.config")
+    emitter.addHandler(caplog.handler)
+    try:
+        with caplog.at_level(logging.WARNING, logger="app.core.config"):
+            make_settings(CORS_ORIGINS="https://api.test/graphql")
+    finally:
+        emitter.removeHandler(caplog.handler)
+    assert "includes a path" in caplog.text
+
+
+def test_cors_wildcard_is_left_alone():
+    assert make_settings(CORS_ORIGINS="*").cors_origins == ["*"]
 
 
 # --- Bhashini endpoint folding ---------------------------------------------

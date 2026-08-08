@@ -19,7 +19,11 @@ from app.database import models  # noqa: F401
 config = context.config
 
 if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+    # `disable_existing_loggers` defaults to True, which disables every logger
+    # not named in alembic.ini - including all of `app.*`. `bootstrap.py` runs
+    # Alembic in-process, so migrating at startup silently killed the
+    # application's own logging for the rest of the process.
+    fileConfig(config.config_file_name, disable_existing_loggers=False)
 
 # One source of truth for the URL. psycopg 3 serves both the sync driver Alembic
 # uses here and the async engine the app uses, off the same URL.
