@@ -164,7 +164,12 @@ jobs:
       - name: Build the frontend
         working-directory: frontend
         env:
-          NEXT_PUBLIC_GRAPHQL_URL: http://127.0.0.1:8000/graphql
+          # `localhost`, not `127.0.0.1`: Playwright serves the app on
+          # localhost:3000, and auth cookies are host-only and SameSite=Lax. The
+          # two names are different hosts to a browser, so cookies set by the API
+          # would never be sent back to the app and every signed-in journey would
+          # fail. Ports don't matter here - cookies ignore them.
+          NEXT_PUBLIC_GRAPHQL_URL: http://localhost:8000/graphql
         run: |
           npm ci
           npm run build
