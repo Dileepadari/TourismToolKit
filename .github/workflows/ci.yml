@@ -186,7 +186,12 @@ jobs:
         if: failure()
         with:
           name: playwright-report
-          path: frontend/playwright-report/
+          # test-results/ holds the screenshots, traces and error-context
+          # snapshots - the report alone does not say what the page contained.
+          path: |
+            frontend/playwright-report/
+            frontend/test-results/
+          if-no-files-found: error
           retention-days: 7
 
   docker:
