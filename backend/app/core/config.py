@@ -297,6 +297,8 @@ class Settings(BaseSettings):
     # costs real money upstream.
     rate_limit_enabled: bool = True
     rate_limit_auth: str = "10/60"
+    # Automatic and frequent for legitimate clients - see SESSION_OPERATIONS.
+    rate_limit_session: str = "60/60"
     rate_limit_ai: str = "30/60"
     rate_limit_default: str = "300/60"
 

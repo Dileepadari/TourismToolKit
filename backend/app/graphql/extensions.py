@@ -130,6 +130,7 @@ class RateLimiter(SchemaExtension):
 
         specs = {
             "auth": Limit.parse(settings.rate_limit_auth),
+            "session": Limit.parse(settings.rate_limit_session),
             "ai": Limit.parse(settings.rate_limit_ai),
             "default": Limit.parse(settings.rate_limit_default),
         }

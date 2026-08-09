@@ -35,6 +35,20 @@ interface AuthProviderProps {
  * The session is therefore established by asking the server who we are, not by
  * reading local state.
  */
+/**
+ * Whether this browser has a session worth trying to refresh.
+ *
+ * `tt_session` is the deliberately readable marker set alongside the HttpOnly
+ * credentials. Without this check every anonymous page load fired a
+ * `refreshSession` mutation that could only fail - a wasted round trip on the
+ * most common path, and enough of them to exhaust the endpoint's rate limit and
+ * lock real users out of signing in.
+ */
+function hasSessionMarker(): boolean {
+  if (typeof document === 'undefined') return false;
+  return document.cookie.split('; ').some((entry) => entry.startsWith('tt_session='));
+}
+
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -77,8 +91,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         if (current) {
           setUser(current);
-        } else {
+        } else if (hasSessionMarker()) {
           await refresh();
+        } else {
+          setUser(null);
         }
       } catch {
         if (!cancelled) setUser(null);

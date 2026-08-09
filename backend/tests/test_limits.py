@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import pytest
 
+from app.core.config import Settings
 from app.core.ratelimit import AI_OPERATIONS, AUTH_OPERATIONS, Limit, bucket_for, limiter
 
 
@@ -46,6 +47,25 @@ def test_ai_operations_use_the_ai_bucket(field: str):
 
 def test_everything_else_uses_the_default_bucket():
     assert bucket_for("getPlaces") == "default"
+
+
+def test_refresh_session_does_not_share_the_credential_bucket():
+    """It authenticates with a random cookie, not a guessable credential.
+
+    Sharing `auth` meant ordinary browsing - every page load refreshes - burned
+    the credential-stuffing allowance, and a signed-in user browsing ten pages in
+    a minute was locked out of refreshing their own session. It also locked new
+    visitors out of registering.
+    """
+    assert bucket_for("refreshSession") == "session"
+    assert "refreshSession" not in AUTH_OPERATIONS
+
+
+def test_the_session_bucket_is_more_generous_than_the_credential_bucket():
+    settings = Settings(_env_file=None)  # type: ignore[call-arg]
+    auth = Limit.parse(settings.rate_limit_auth)
+    session = Limit.parse(settings.rate_limit_session)
+    assert session.count / session.window_seconds > auth.count / auth.window_seconds
 
 
 # --- Counter behaviour ------------------------------------------------------
