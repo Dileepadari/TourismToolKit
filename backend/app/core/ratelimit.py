@@ -83,7 +83,15 @@ limiter = _MemoryBackend()
 
 
 # Mutations whose cost justifies a tighter limit than the default.
-AUTH_OPERATIONS = frozenset({"login", "register", "refreshSession"})
+#
+# The tight `auth` limit exists to blunt credential stuffing, so it covers the
+# fields that accept a guessable credential. `refreshSession` is *not* one of
+# them: it authenticates with a 32-byte random cookie, replay is already caught
+# by reuse detection, and every client calls it automatically. Sharing the
+# credential bucket meant a signed-in user browsing ten pages in a minute was
+# locked out of refreshing their own session.
+AUTH_OPERATIONS = frozenset({"login", "register"})
+SESSION_OPERATIONS = frozenset({"refreshSession"})
 AI_OPERATIONS = frozenset(
     {"translateText", "generateSpeech", "extractTextFromImage", "transcribeAudio"}
 )
@@ -92,6 +100,8 @@ AI_OPERATIONS = frozenset(
 def bucket_for(field_name: str) -> str:
     if field_name in AUTH_OPERATIONS:
         return "auth"
+    if field_name in SESSION_OPERATIONS:
+        return "session"
     if field_name in AI_OPERATIONS:
         return "ai"
     return "default"

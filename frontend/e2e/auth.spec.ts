@@ -78,6 +78,41 @@ test('register creates an account that can then sign in', async ({ page }) => {
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 15_000 });
 });
 
+test('browsing anonymously does not lock a visitor out of registering', async ({ page }) => {
+  // Every anonymous page load used to fire `refreshSession`, which shared the
+  // credential-stuffing bucket with `register`. Browsing a handful of pages
+  // exhausted the allowance and the signup that followed was refused with
+  // "Too many requests" - which is exactly how this suite failed in CI.
+  const refreshes: string[] = [];
+  page.on('request', (request) => {
+    if (request.url().includes('/graphql') && request.method() === 'POST') {
+      try {
+        const { operationName } = JSON.parse(request.postData() ?? '{}');
+        if (operationName === 'RefreshSession') refreshes.push(operationName);
+      } catch {
+        // Not JSON; not a document we care about.
+      }
+    }
+  });
+
+  for (let i = 0; i < 6; i += 1) {
+    await page.goto('/');
+    await page.goto('/auth/login');
+  }
+  expect(refreshes).toEqual([]);
+
+  const user = uniqueUser();
+  await page.goto('/auth/register');
+  await page.getByLabel(/username/i).fill(user.username);
+  await page.getByLabel(/email/i).fill(user.email);
+  await page.getByLabel(/^password/i).first().fill(user.password);
+  const confirm = page.getByLabel(/confirm password/i);
+  if (await confirm.count()) await confirm.fill(user.password);
+  await page.getByRole('button', { name: /create account|register|sign up/i }).click();
+
+  await expect(page).toHaveURL(/\/dashboard/, { timeout: 15_000 });
+});
+
 test('login rejects a wrong password without crashing', async ({ page }) => {
   await page.goto('/auth/login');
   await page.getByLabel(/email/i).fill('nobody@example.com');
