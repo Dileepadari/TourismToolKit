@@ -408,10 +408,10 @@ def seed_places_data():
         existing_places = session.exec(select(Place)).first()
 
         if existing_places:
-            print("⚠️  Places already seeded! Skipping...")
+            print("[warn]  Places already seeded! Skipping...")
             return
 
-        print("🌍 Seeding tourist places...")
+        print(" Seeding tourist places...")
         total_places = 0
 
         for place_data in PLACES_DATA:
@@ -435,7 +435,7 @@ def seed_places_data():
             total_places += 1
 
         session.commit()
-        print(f"✅ Successfully seeded {total_places} tourist places!")
+        print(f"[ok] Successfully seeded {total_places} tourist places!")
 
 
 if __name__ == "__main__":

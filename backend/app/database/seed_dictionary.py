@@ -829,7 +829,7 @@ def seed_dictionary_data():
                 total_entries += 1
 
         session.commit()
-        print(f"✅ Successfully seeded {total_entries} dictionary entries!")
+        print(f"[ok] Successfully seeded {total_entries} dictionary entries!")
 
 
 if __name__ == "__main__":

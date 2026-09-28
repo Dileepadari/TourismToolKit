@@ -10,6 +10,10 @@ phrasebook, and practical local information - in thirteen languages.
 
 ---
 
+| Landing | Features |
+|:---:|:---:|
+| <img src="docs/screenshots/landing.jpg" alt="TourismToolKit landing page"/> | <img src="docs/screenshots/features.jpg" alt="The four core features: translation, places, dictionary and travel guide"/> |
+
 ## What it does
 
 | Feature | Status |
@@ -164,19 +168,19 @@ offers something that will fail.
 
 | | Language | UI | Translate | Speech | OCR |
 |---|---|:--:|:--:|:--:|:--:|
-| en | English | ✅ | ✅ | ✅ | ✅ |
-| hi | हिन्दी | ✅ | ✅ | ✅ | ✅ |
-| te | తెలుగు | ✅ | ✅ | ✅ | ✅ |
-| ta | தமிழ் | ✅ | ✅ | ✅ | ✅ |
-| kn | ಕನ್ನಡ | ✅ | ✅ | ✅ | ✅ |
-| ml | മലയാളം | ✅ | - | ✅ | ✅ |
-| bn | বাংলা | ✅ | - | ✅ | ✅ |
-| gu | ગુજરાતી | ✅ | - | ✅ | ✅ |
-| mr | मराठी | ✅ | - | ✅ | ✅ |
-| pa | ਪੰਜਾਬੀ | ✅ | - | ✅ | ✅ |
-| ur | اردو | ✅ | - | - | - |
-| as | অসমীয়া | ✅ | - | - | - |
-| or | ଓଡ଼ିଆ | ✅ | - | - | - |
+| en | English | [ok] | [ok] | [ok] | [ok] |
+| hi | हिन्दी | [ok] | [ok] | [ok] | [ok] |
+| te | తెలుగు | [ok] | [ok] | [ok] | [ok] |
+| ta | தமிழ் | [ok] | [ok] | [ok] | [ok] |
+| kn | ಕನ್ನಡ | [ok] | [ok] | [ok] | [ok] |
+| ml | മലയാളം | [ok] | - | [ok] | [ok] |
+| bn | বাংলা | [ok] | - | [ok] | [ok] |
+| gu | ગુજરાતી | [ok] | - | [ok] | [ok] |
+| mr | मराठी | [ok] | - | [ok] | [ok] |
+| pa | ਪੰਜਾਬੀ | [ok] | - | [ok] | [ok] |
+| ur | اردو | [ok] | - | - | - |
+| as | অসমীয়া | [ok] | - | - | - |
+| or | ଓଡ଼ିଆ | [ok] | - | - | - |
 
 ---
 
@@ -234,3 +238,29 @@ MIT - see [LICENSE](LICENSE).
 
 Built with [Bhashini](https://bhashini.gov.in/) and
 [Canvas, IIIT Hyderabad](https://canvas.iiit.ac.in/).
+
+## Running the checks
+
+```bash
+# Backend: 273 tests against Postgres, with an 80% coverage floor
+cd backend
+uv run ruff check . && uv run ruff format --check .
+TEST_DATABASE_URL=postgresql+psycopg://tourism_user:tourism_password@localhost:5432/tourism_test \
+  JWT_SECRET_KEY=local-test-secret-long-enough-to-pass-validation-000 \
+  uv run pytest
+
+# Frontend: 62 unit tests
+cd frontend
+npx tsc --noEmit && npm run lint && npm test && npm run build
+
+# Repository tripwires
+ops/hygiene.sh
+```
+
+CI runs all of it on push and pull request, plus Playwright end-to-end tests
+against a built frontend and a real backend, and a Docker build. Push, pull
+request and manual dispatch only; nothing scheduled.
+
+## License
+
+MIT. See [LICENSE](LICENSE).

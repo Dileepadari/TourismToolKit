@@ -247,7 +247,7 @@ export default function UnifiedDashboard() {
     <div className="min-h-screen bg-background">
       {/* Welcome Header */}
       <Header
-        title={`${t('dashboard.welcome')}, ${user?.fullName || user?.username}! 🙏`}
+        title={`${t('dashboard.welcome')}, ${user?.fullName || user?.username}`}
         subtitle={t('dashboard.subtitle')}
         tinted={true}
       />

@@ -77,7 +77,7 @@ def seed_users():
         # Check if users already exist
         existing_users = session.exec(select(User)).all()
         if existing_users:
-            print(f"✓ Users table already has {len(existing_users)} users. Skipping seed.")
+            print(f"[ok] Users table already has {len(existing_users)} users. Skipping seed.")
             return
 
         print("Seeding users...")
@@ -101,7 +101,7 @@ def seed_users():
             print(f"  - Created user: {user.username} ({user.email})")
 
         session.commit()
-        print(f"✓ Successfully seeded {created_count} users")
+        print(f"[ok] Successfully seeded {created_count} users")
 
         # Print credentials for reference
         print("\n" + "=" * 60)

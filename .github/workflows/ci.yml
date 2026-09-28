@@ -203,3 +203,10 @@ jobs:
         run: docker build -t tourism-backend ./backend
       - name: Build frontend image
         run: docker build -t tourism-frontend ./frontend
+
+  hygiene:
+    name: Hygiene
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: ops/hygiene.sh

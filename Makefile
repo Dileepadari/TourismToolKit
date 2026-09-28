@@ -14,7 +14,7 @@ build: ## Build all Docker images
 
 up: ## Start all services
 	docker compose up -d
-	@echo "✓ Services started!"
+	@echo "[ok] Services started!"
 	@echo "  Frontend: http://localhost:3000"
 	@echo "  Backend:  http://localhost:8000"
 	@echo "  GraphQL:  http://localhost:8000/graphql"
@@ -23,7 +23,7 @@ up-build: ## Build and start all services
 	# --renew-anon-volumes: compose carries anonymous volumes across recreates,
 	# so without it a freshly built image can be shadowed by stale contents.
 	docker compose up -d --build --renew-anon-volumes
-	@echo "✓ Services built and started!"
+	@echo "[ok] Services built and started!"
 	@echo "  Frontend: http://localhost:3000"
 	@echo "  Backend:  http://localhost:8000"
 	@echo "  GraphQL:  http://localhost:8000/graphql"
@@ -31,7 +31,7 @@ up-build: ## Build and start all services
 down: ## Stop all services
 	docker compose down
 
-down-v: ## Stop all services and remove volumes (⚠️ deletes data)
+down-v: ## Stop all services and remove volumes ([warn] deletes data)
 	docker compose down -v
 
 restart: ## Restart all services
@@ -69,17 +69,17 @@ shell-db: ## Open PostgreSQL shell
 
 backup: ## Backup database to backup.sql
 	docker compose exec db pg_dump -U tourism_user tourism_db > backup_$$(date +%Y%m%d_%H%M%S).sql
-	@echo "✓ Database backed up!"
+	@echo "[ok] Database backed up!"
 
 restore: ## Restore database from backup.sql (requires backup.sql file)
 	@read -p "Enter backup file path: " backup; \
 	docker compose exec -T db psql -U tourism_user tourism_db < $$backup
-	@echo "✓ Database restored!"
+	@echo "[ok] Database restored!"
 
 clean: ## Stop services and clean up Docker resources
 	docker compose down -v
 	docker system prune -f
-	@echo "✓ Cleaned up!"
+	@echo "[ok] Cleaned up!"
 
 health: ## Check service health status
 	@docker compose ps | grep -E "(healthy|Up)"
@@ -87,7 +87,7 @@ health: ## Check service health status
 dev: ## Start development environment
 	@echo "Starting development environment..."
 	docker compose up -d db
-	@echo "✓ Database started. Use pm2 for backend/frontend in development mode."
+	@echo "[ok] Database started. Use pm2 for backend/frontend in development mode."
 
 stop-local: ## Stop local PM2 processes
 	pm2 stop all
@@ -109,4 +109,4 @@ lint: ## Lint and type-check both projects
 
 schema: ## Regenerate backend/schema.graphql from the code
 	cd backend && uv run strawberry export-schema app.graphql.schema:schema > schema.graphql
-	@echo "✓ schema.graphql regenerated"
+	@echo "[ok] schema.graphql regenerated"

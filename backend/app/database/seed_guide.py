@@ -328,29 +328,29 @@ def seed_guide_data():
         existing_tips = session.exec(select(CultureTip)).first()
 
         if existing_contacts and existing_tips:
-            print("⚠️ Guide data already seeded! Skipping...")
+            print("[warn] Guide data already seeded! Skipping...")
             return
 
-        print("🧭 Seeding guide data (emergency contacts and culture tips)...")
+        print(" Seeding guide data (emergency contacts and culture tips)...")
 
         # Seed emergency contacts
         if not existing_contacts:
-            print("📞 Seeding emergency contacts...")
+            print(" Seeding emergency contacts...")
             for contact_data in EMERGENCY_CONTACTS_DATA:
                 contact = EmergencyContact(**contact_data)
                 session.add(contact)
-            print(f"✅ Added {len(EMERGENCY_CONTACTS_DATA)} emergency contacts")
+            print(f"[ok] Added {len(EMERGENCY_CONTACTS_DATA)} emergency contacts")
 
         # Seed culture tips
         if not existing_tips:
-            print("💡 Seeding culture tips...")
+            print(" Seeding culture tips...")
             for tip_data in CULTURE_TIPS_DATA:
                 tip = CultureTip(**tip_data)
                 session.add(tip)
-            print(f"✅ Added {len(CULTURE_TIPS_DATA)} culture tips")
+            print(f"[ok] Added {len(CULTURE_TIPS_DATA)} culture tips")
 
         session.commit()
-        print("✅ Successfully seeded guide data!")
+        print("[ok] Successfully seeded guide data!")
         print(f"   - {len(EMERGENCY_CONTACTS_DATA)} emergency contacts")
         print(f"   - {len(CULTURE_TIPS_DATA)} culture tips")
 
