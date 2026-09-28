@@ -42,9 +42,15 @@ A language is not a country. It shows a two-letter code, which distinguishes all
 
 `frontend/AGENTS.md` and `frontend/CLAUDE.md` are generated on every run and rewritten if deleted. Both are gitignored; check `git status` before a `git add -A`.
 
-### main already contains the modernisation
+### main is the only branch, and that is deliberate
 
-`modernize/latest-versions` and `main` have byte-identical trees - the branch was rebased onto main and both still exist. `vercel/react-server-components-cve-vu-6fnm7k` bumped Next to 15.5.9 for an RCE advisory and is superseded: main is on 16.3.6. Both branches can go.
+There were two others and both were deleted in September 2026.
+
+`modernize/latest-versions` had a tree byte-identical to main's: same hash, empty diff. Its nine commits carried the same messages as main's with different SHAs, so it was a rebase left lying around rather than divergent work.
+
+`vercel/react-server-components-cve-vu-6fnm7k` had one commit, touching only `package.json` and the lockfile to bump Next 15.5.4 to 15.5.9 for an RCE advisory. Main is on 16.3.6, well past it.
+
+If you need either back, the tips are recoverable by SHA for as long as the host keeps them: `d6e57c1bd977287f722c156b880a3867f8767768` and `fd89fc5a84c2e83bf4f993ce8821196dec695204`.
 
 ## Checks
 
