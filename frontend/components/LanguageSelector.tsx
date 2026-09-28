@@ -9,25 +9,37 @@ import { cn } from '@/utils/cn';
 interface LanguageSelectorProps {
   className?: string;
   variant?: 'button' | 'dropdown' | 'compact';
-  showFlag?: boolean;
+  showCode?: boolean;
   showNativeName?: boolean;
 }
 
-// Language flags (using emoji flags for simplicity)
-const languageFlags: Record<string, string> = {
-  en: '🇺🇸',
-  hi: '🇮🇳',
-  te: '🇮🇳',
-  ta: '🇮🇳',
-  kn: '🇮🇳',
-  ml: '🇮🇳',
-  bn: '🇮🇳',
-  gu: '🇮🇳',
-  mr: '🇮🇳',
-  pa: '🇮🇳',
-  ur: '🇵🇰',
-  as: '🇮🇳',
-  or: '🇮🇳',
+// A short code per language, not a flag.
+//
+// The flags this replaced were wrong in three ways at once. Eleven of the
+// thirteen languages carried the identical Indian flag, so the flag
+// distinguished nothing and the user still had to read the name. English was
+// given the flag of the United States, in an app about travelling in India.
+// And Urdu was given the flag of Pakistan, though it is one of India's
+// twenty-two scheduled languages with tens of millions of speakers here - a
+// language is not a country, and saying otherwise about this one in this app
+// is worse than merely inaccurate.
+//
+// The code distinguishes all thirteen, claims no nationality, and reads the
+// same to a screen reader as it does on screen.
+const languageCodes: Record<string, string> = {
+  en: 'EN',
+  hi: 'HI',
+  te: 'TE',
+  ta: 'TA',
+  kn: 'KN',
+  ml: 'ML',
+  bn: 'BN',
+  gu: 'GU',
+  mr: 'MR',
+  pa: 'PA',
+  ur: 'UR',
+  as: 'AS',
+  or: 'OR',
 };
 
 // Native names for languages
@@ -50,7 +62,7 @@ const nativeNames: Record<string, string> = {
 export default function LanguageSelector({ 
   className, 
   variant = 'dropdown', 
-  showFlag = true,
+  showCode = true,
   showNativeName = false 
 }: LanguageSelectorProps) {
   const { selectedLanguage, supportedLanguages, setSelectedLanguage } = useLanguage();
@@ -69,8 +81,10 @@ export default function LanguageSelector({
         <button
           type="button"onClick={() => setIsOpen(!isOpen)}
           className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors">
-          {showFlag && (
-            <span className="text-lg">{languageFlags[selectedLanguage] || '🌐'}</span>
+          {showCode && (
+            <span className="text-xs font-semibold tracking-wide opacity-70">
+              {languageCodes[selectedLanguage] ?? selectedLanguage.toUpperCase()}
+            </span>
           )}
           <span>{selectedLanguage.toUpperCase()}</span>
           <ChevronDown className="w-4 h-4" />
@@ -93,8 +107,10 @@ export default function LanguageSelector({
                     language.code === selectedLanguage && 'bg-primary/10 text-primary'
                   )}
                 >
-                  {showFlag && (
-                    <span className="text-lg">{languageFlags[language.code] || '🌐'}</span>
+                  {showCode && (
+                    <span className="text-xs font-semibold tracking-wide opacity-70">
+                      {languageCodes[language.code] ?? language.code.toUpperCase()}
+                    </span>
                   )}
                   <span>{language.code.toUpperCase()}</span>
                   {language.code === selectedLanguage && (
@@ -119,9 +135,9 @@ export default function LanguageSelector({
         )}
       >
         <div className="flex items-center space-x-3">
-          {showFlag && (
+          {showCode && (
             <span className="text-xl">
-              {languageFlags[selectedLanguage] || '🌐'}
+              {languageCodes[selectedLanguage] ?? selectedLanguage.toUpperCase()}
             </span>
           )}
           <div>
@@ -172,9 +188,9 @@ export default function LanguageSelector({
                       language.code === selectedLanguage && 'bg-primary/10 text-primary'
                     )}
                   >
-                    {showFlag && (
+                    {showCode && (
                       <span className="text-xl">
-                        {languageFlags[language.code] || '🌐'}
+                        {languageCodes[language.code] ?? language.code.toUpperCase()}
                       </span>
                     )}
                     <div className="flex-1">
