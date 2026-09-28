@@ -44,11 +44,21 @@ export default function HomePage() {
     }
   ];
 
+  // Numbers this project can stand behind.
+  //
+  // These were '100+', '50K+', '1M+' and '10K+' - template placeholders that
+  // shipped as claims. "100+ Languages Supported" contradicted the app's own
+  // selector, which offers thirteen, and "1M+ Translations Made" and "10K+
+  // Happy Travelers" described a userbase that does not exist. The README is
+  // careful about what does and does not work yet; the front page should not
+  // undo that on the way in.
+  //
+  // The two that had no honest number are gone rather than relabelled: the
+  // labels live in thirteen locale files and inventing new English ones would
+  // have left twelve languages reading English. The grid already handles two.
   const stats = [
-    { value: '100+', label: t('home.stats.languages') },
-    { value: '50K+', label: t('home.stats.places') },
-    { value: '1M+', label: t('home.stats.translations') },
-    { value: '10K+', label: t('home.stats.travelers') }
+    { value: '13', label: t('home.stats.languages') },
+    { value: '20', label: t('home.stats.places') }
   ];
 
   return (
@@ -112,7 +122,7 @@ export default function HomePage() {
       {/* Stats Section */}
       <section className="py-16 bg-muted/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 gap-8">
             {stats.map((stat, index) => (
               <motion.div
                 key={index}
