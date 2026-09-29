@@ -14,6 +14,21 @@ phrasebook, and practical local information - in thirteen languages.
 |:---:|:---:|
 | <img src="docs/screenshots/landing.jpg" alt="TourismToolKit landing page"/> | <img src="docs/screenshots/features.jpg" alt="The four core features: translation, places, dictionary and travel guide"/> |
 
+### Inside, signed in
+
+Real renders against a running stack (`docker compose up`) with the seeded
+content, signed in as an ordinary traveller account.
+
+| Dashboard | Translator | Read a sign |
+|:---:|:---:|:---:|
+| <img src="docs/screenshots/01-dashboard.jpg" alt="Dashboard with quick actions for translate, OCR and voice, and the counters for words learned and places visited"/> | <img src="docs/screenshots/02-translator.jpg" alt="The text translator with source and target language, voice gender and quick phrases"/> | <img src="docs/screenshots/03-ocr.jpg" alt="The image tab of the translator, offering camera capture or an uploaded photo of a sign"/> |
+| **Dashboard** <br> <sub>Quick actions, and what you have collected so far.</sub> | **Translator** <br> <sub>Text, with quick phrases underneath for the common ones.</sub> | **Camera and OCR** <br> <sub>Photograph a sign or a menu; the text comes back translated.</sub> |
+
+| Dictionary | Places | Travel guide |
+|:---:|:---:|:---:|
+| <img src="docs/screenshots/04-dictionary.jpg" alt="The personal dictionary with 100 common words, pronunciation, an example sentence and a favourite toggle"/> | <img src="docs/screenshots/05-places.jpg" alt="Explore Places with cards for the Golden Temple, the Valley of Flowers and the Andaman Islands, each with the best time to visit, entry fee and languages spoken"/> | <img src="docs/screenshots/06-guide.jpg" alt="Travel guide showing emergency contacts: police, medical, fire, tourist, women and child helplines"/> |
+| **Dictionary** <br> <sub>Words you saved, with pronunciation and an example.</sub> | **Places** <br> <sub>Best time to go, entry fee, and which languages are spoken.</sub> | **Guide** <br> <sub>Culture notes, safety, and the numbers worth having offline.</sub> |
+
 ## What it does
 
 | Feature | Status |
