@@ -170,7 +170,7 @@ Everything below runs in CI on every push and pull request.
 
 ```bash
 cd backend
-uv run pytest              # ~240 tests against a real Postgres, coverage gated at 80%
+uv run pytest              # 273 tests against a real Postgres, coverage gated at 80%
 uv run ruff check app alembic tests
 uv run mypy app
 
