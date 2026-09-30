@@ -4,10 +4,18 @@ import type { TranslationKeys } from './en';
 /**
  * Locale loading.
  *
- * English is imported statically because it is both the default and the fallback
- * for any key a translation is missing. The other twelve are loaded on demand -
- * previously all thirteen were bundled into every page, so a visitor downloaded
- * ~3,200 lines of translations to read one language.
+ * English is imported statically because it is the default. The other twelve
+ * are loaded on demand - previously all thirteen were bundled into every page,
+ * so a visitor downloaded ~3,200 lines of translations to read one language.
+ *
+ * **There is no runtime fallback**, and this comment used to say there was.
+ * `loadLocale` returns a locale's object as it is; a missing key would be
+ * `undefined` on the page, not English. What actually guarantees completeness
+ * is the type: every locale file is declared `TranslationKeys`, so `tsc`
+ * refuses a file that has dropped a key. That is a stronger guarantee than a
+ * fallback - it fails at build time rather than rendering a blank - but it is
+ * a different one, and worth knowing before adding a locale from JSON or
+ * marking a key optional, either of which would quietly remove it.
  */
 export const SUPPORTED_LOCALES = [
   'en',
