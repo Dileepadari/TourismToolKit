@@ -1,14 +1,36 @@
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./docs/assets/adk_dev_logo_light.png">
+  <img src="./docs/assets/adk_dev_logo_dark.png" width="150" alt="ADK DEV" loading="lazy">
+</picture>
+
 # TourismToolKit
 
-A multilingual travel companion for India: translation, speech, OCR, a personal
-phrasebook, and practical local information - in thirteen languages.
+**A multilingual travel companion for India: translation, speech, OCR of a sign or a menu, a personal phrasebook, and practical local information - in thirteen languages.**
 
-![Docker](https://img.shields.io/badge/Docker-ready-blue?style=flat-square)
-![Languages](https://img.shields.io/badge/languages-13-green?style=flat-square)
-![API](https://img.shields.io/badge/API-GraphQL-purple?style=flat-square)
-![License](https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square)
+<img alt="Next.js" src="https://img.shields.io/badge/Next.js_16-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" loading="lazy">
+<img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" loading="lazy">
+<img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" loading="lazy">
+<br>
+<img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" loading="lazy">
+<img alt="Strawberry GraphQL" src="https://img.shields.io/badge/Strawberry_GraphQL-E10098?style=for-the-badge&logo=graphql&logoColor=white" loading="lazy">
+<img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" loading="lazy">
+<br>
+<img alt="Bhashini" src="https://img.shields.io/badge/Bhashini-FF6F00?style=for-the-badge" loading="lazy">
+<img alt="Docker" src="https://img.shields.io/badge/docker_compose-2496ED?style=for-the-badge&logo=docker&logoColor=white" loading="lazy">
+<img alt="Languages" src="https://img.shields.io/badge/13_languages-3DA639?style=for-the-badge" loading="lazy">
+<img alt="MIT License" src="https://img.shields.io/badge/License-MIT-A31F34?style=for-the-badge" loading="lazy">
+
+<br><br>
+
+**[Developer documentation](./DEVDOC.md)** &middot; [Screenshots](#screenshots) &middot; [What it does](#what-it-does) &middot; [Quick start](#quick-start) &middot; [Languages](#languages)
+
+</div>
 
 ---
+
+## Screenshots
 
 | Landing | Features |
 |:---:|:---:|
