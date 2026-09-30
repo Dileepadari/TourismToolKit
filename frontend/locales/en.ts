@@ -42,16 +42,16 @@ export const en = {
 
   // Home Page
   home: {
-    title: 'Your Ultimate Travel Companion',
-    subtitle: 'Break language barriers, discover hidden gems, and explore India like never before with AI-powered translation, local insights, and personalized recommendations.',
+    title: 'Travel India in your own language',
+    subtitle: 'Translate signs, menus and conversations across 13 Indian languages, look up the phrases you will actually need, and find your way around the places you are visiting.',
     getStarted: 'Get Started Free',
     signIn: 'Sign In',
     poweredBy: 'Powered by TourismToolKit',
     
     // Features
     features: {
-      title: 'Powerful Features for Every Traveler',
-      subtitle: 'From real-time translation to local discovery, our toolkit empowers you to explore confidently',
+      title: 'What it does',
+      subtitle: 'Four things, built around not being able to read the language around you',
       translation: {
         title: 'Real-time Translation',
         description: 'Translate text, speech, and images instantly across multiple Indian languages',
@@ -80,9 +80,9 @@ export const en = {
 
     // CTA
     cta: {
-      title: 'Ready to Explore India?',
-      subtitle: 'Join thousands of travelers who trust TourismToolKit for their Indian adventures. Start your journey today!',
-      button: 'Start Your Journey',
+      title: 'Ready to explore India?',
+      subtitle: 'Free, open source, and no account needed to try the translator.',
+      button: 'Start your journey',
     },
   },
 
